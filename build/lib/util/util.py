@@ -1,9 +1,9 @@
 import sys, os, time, random
 
-debug = False
+debug = True
 
 def debugprnt(text):
     if debug == True:
-        print text
+        print text + "\n"
     else:
         pass

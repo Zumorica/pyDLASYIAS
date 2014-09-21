@@ -1,8 +1,23 @@
-import util, sys, os, time, random, thread
+import sys, os, time, random, thread
 from threading import Timer
 
+debug = False
+
+def debugprnt(text):
+    if debug == True:
+        print text + "\n"
+    else:
+        pass
+
+
+
+camsl = ["cam1a", "cam1b", "cam2a", "cam2b", "cam3", "cam4a", "cam4b", "cam5", "cam6", "cam7"]
+gdoorl = False
+gdoorl = True
+
+
 class animatronic(object):
-    def __init__(self, name, kind, ailvl=20, location="cam1a"): #Only change location for special animatronics
+    def __init__(self, name, kind, ailvl=25, location="cam1a"): #Only change location for special animatronics
         self.name = name
         self.ailvl = ailvl
         self.location = location
@@ -12,20 +27,21 @@ class animatronic(object):
 
     def move(self, adyacent=[]):
         self.choice = random.choice(adyacent)
-        util.debugprnt("%s's choice was %s" % (self.name, self.choice))
+        debugprnt("%s's choice was %s" % (self.name, self.choice))
         if random.randint(0, 25) in range(0, self.ailvl):
             self.location = self.choice
-            util.debugprnt("%s moved to %s" % (self.name, self.location))
+            self.think()
+            debugprnt("%s moved to %s" % (self.name, self.location))
         else:
-            util.debugprnt("%s didn't move at all" % (self.name))
+            debugprnt("%s didn't move at all" % (self.name))
             self.think()
             return None
         
     def think(self):
         #Chicken's AI / Also, this is very confusing
         if self.kind == "chicken":
-            util.debugprnt("%s is thinking..." % (self.name))
-            time.sleep(5)
+            debugprnt("%s is thinking..." % (self.name))
+            time.sleep(2)
             if self.location == "cam1a":
                 self.move(["cam1b"])
             if self.location == "cam1b":
@@ -38,10 +54,11 @@ class animatronic(object):
                 self.move(["cam1b", "rightdoor"])
             if self.location == "rightdoor":
                 pass
+                
         #Rabbit's AI / Confusing. 
         if self.kind == "rabbit":
-            util.debugprnt("%s is thinking..." % (self.name))
-            time.sleep(5)
+            debugprnt("%s is thinking..." % (self.name))
+            time.sleep(2)
             if self.location == "cam1a":
                 self.move(["cam1b"])
             if self.location == "cam1b":
@@ -54,12 +71,9 @@ class animatronic(object):
                 self.move(["cam2a"])
             if self.location == "leftdoor":
                 pass
+                
 
-chicken = animatronic("Chicken", "chicken")
-rabbit = animatronic("Rabbit", "rabbit")
 
-animatronics = [chicken, rabbit]
-camsl = ["cam1a", "cam1b", "cam2a", "cam2b", "cam3", "cam4a", "cam4b", "cam5", "cam6", "cam7"]
 
 #Above this comment: Animatronics' AI
 #Below this comment: Main game / etc
@@ -76,6 +90,7 @@ class main(object):
         self.time = time
         self.recalculatePowUsage()
         self.secoffice()
+        self.checkAnimDoors()
 
     def recalculatetime(self):
         self.rtime = Timer(86.0, self.hour)
@@ -93,6 +108,29 @@ class main(object):
             #Freddy SHOULD appear here
             print "Game over"
             sys.exit(0)
+
+    def animAtDoors(self):
+        for animatronic in animatronics:
+            if animatronic.location == "leftdoor":
+                time.sleep(10)
+                if self.doorl == False:
+                    print "%s got you. Game over!" % (animatronic.name)
+                    time.sleep(2)
+                    sys.exit(0)
+                else:
+                    animatronic.move(["cam1a"])
+                    
+            if animatronic.location == "rightdoor":
+                time.sleep(10)
+                if self.doorr == False:
+                    print "%s got you. Game over!" % (animatronic.name)
+                    time.sleep(1)
+                    sys.exit(0)
+                else:
+                    animatronic.move(["cam1a"])
+    def checkAnimDoors(self):
+        self.animdoors = Timer(5, self.animAtDoors)
+        self.animatdoors.start()
     
     def recalculatePowUsage(self):
         self.t = Timer(long(self.usage), self.powUsage)
@@ -130,7 +168,7 @@ class main(object):
             print "----- 12 PM"
         else:
             print "----- %s AM" % (self.time)
-        usrinput = raw_input("> ")
+        usrinput = raw_input("> ")                             #Asks for input
         if usrinput.lower() in ["power", "electricity", "energy"]:
             print "Power %s %s" % (self.power, "%")
             self.secoffice()
@@ -142,22 +180,26 @@ class main(object):
             if self.doorl == False:
                 print "Closed left door."
                 self.doorl = True
+                exec("gdoorl = True")
                 self.secoffice()
 
             else:
                 print "Opened left door."
                 self.doorl = False
+                exec("gdoorl = False")
                 self.secoffice()
                 
         if usrinput.lower() in ["doorr", "right door", "rdoor", "door right", "doortright", "rightdoor", "d r", "dr"]:
             if self.doorr == False:
                 print "Closed right door."
                 self.doorr = True
+                exec("gdoorr = True")
                 self.secoffice()
 
             else:
                 print "Opened right door."
                 self.doorl = False
+                exec("gdoorr = False")
                 self.secoffice()
 
         if usrinput.lower() in ["lightl", "left light", "llight", "light left", "lightleft", "leftlight", "ll", "l l"]:
@@ -286,10 +328,11 @@ class main(object):
             print "-----"
             self.checkAnimCam(cam)
 
+            
 
-
-
-
+chicken = animatronic("Chicken", "chicken")
+rabbit = animatronic("Rabbit", "rabbit")
+animatronics = [chicken, rabbit]
 m = main()
 
 
