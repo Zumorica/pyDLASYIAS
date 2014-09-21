@@ -1,6 +1,6 @@
 import sys, os, time, random
 
-debug = True
+debug = False
 
 def debugprnt(text):
     if debug == True:
