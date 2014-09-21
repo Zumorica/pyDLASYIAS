@@ -1,4 +1,5 @@
 import util, sys, os, time, random
+from threading import Timer
 
 class animatronic(object):
     def __init__(self, name, kind, ailvl=0, location="cam1a"): #Only change location for special animatronics
@@ -60,12 +61,58 @@ camsl = ["cam1a", "cam1b", "cam2a", "cam2b", "cam3", "cam4a", "cam4b", "cam5", "
 #Below this comment: Main game / etc
 
 class main(object):
+    def __init__(self, doorl=False, doorr=False, lightl=False, lightr=False, power=100, usage=9.6):
+        self.doorl = doorl
+        self.doorr = doorr
+        self.lightl = lightl
+        self.lightr = lightr
+        self.power = power
+        self.usage = usage
+        self.powTimer()
+        self.secoffice()
+
+    def powUsage(self):
+        self.power -= 1
+    
+    def powTimer(self):
+        t = Timer(long(self.usage), self.powUsage)
+        t.start()
+        
+    def secoffice(self):
+        usrinput = raw_input("> ")
+        if usrinput.lower() in ["power", "electricity", "energy"]:
+            print "Power %s %" % (self.power)
+            self.secoffice()
+
+        if usrinput.lower() in ["cam", "sec cam", "security cam", "camera", "cams"]:
+            self.camAsk()
+
+
+        else:
+            print "What was that? Try again, please!"
+            self.secoffice()
+
+            
+    def camAsk(self):
+        print ""
+        print "Cam list:"
+        print " -- ".join(camsl)
+        usrinput = raw_input("> ")
+        if usrinput.lower() in camsl:
+            self.infoCam(usrinput)
+            camAsk()
+        elif usrinput.lower() in ["exit", "close", "x", "e", "c"]:
+            self.secoffice()
+        else:
+            print "Unknown cam"
+            self.camAsk()
+    
 
     def checkAnimCam(self, cam):
         if cam == "cam6":
             for animatronic in animatronics:
                 if animatronic.location == "cam6":
-                    print "You hear noise."
+                    print "You hear some noise."
         else:    
             for animatronic in animatronics:
                 if animatronic.location == cam:
@@ -123,15 +170,12 @@ class main(object):
             print "Restroom"
             print "-----"
             self.checkAnimCam(cam)
-main = main()
-main.infoCam("cam1a")
 
 
 
 
 
-
-
+m = main()
 
 
 
