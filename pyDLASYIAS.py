@@ -1,15 +1,74 @@
 import sys, os, time, random, thread
 from threading import Timer
 
-debug = True
 
+###Some vars.
+debug = False
+##camdic = {"cam1a" : "Stage Show",                             #A dictionary containing all cameras and their names."
+##          "cam1b" : "Dinning Area",
+##          "cam2a" : "West Hall",
+##          "cam2b" : "West Hall Corner",
+##          "cam3" : "Supply Closet",
+##          "cam4a" : "East Hall",
+##          "cam4b" : "East Hall Corner",
+##          "cam5" : "Backstage",
+##          "cam6" : "Kitchen -Camera Disabled- (AUDIO ONLY)",
+##          "cam7" : "Restrooms"}
+##
+##
+##
+#Debug print. Prints a text if var debug is true.
 def debugprnt(text):
     if debug == True:
         print text + "\n"
     else:
         pass
+##
+##
+##
+##class animatronic(object):
+##    def __init__(self, name, kind, ailvl=20, location="cam1a"):
+##        self.name = name         #Obvious
+##        self.kind = kind         #Kinds: Chicken / Rabbit / Bear (Not functional yet) / Fox (Not functional yet)
+##        self.ailvl = ailvl       #AI LVL. 0 - 20. (0 Doesn't disable at all the animatronics, but makes them very inactive.)
+##        self.location = location #Locations can be: "cam1a" "cam1b" "cam2a" "cam2b" "cam3" "cam4a" "cam4b" "cam5" "cam6" "cam7"
+##
+##    def dmove(self, room): #Direct move / Debug move. Moves an animatronic to a location.
+##        self.location = room
+##        debugprnt("DMoved %s to %s" % (self.name, room))
+##
+##
+##
+##
+##class main(object):
+##    def __init__(self, power=100, time=0, usage=1):
+##        self.leftdoor = False #False = Open / True = Closed
+##        self.rightdoor = False #Same ^^^^^^^^^^^^^^
+##        self.leftlight = False #False = Off / True = On
+##        self.rightlight = False #Same ^^^^^^^^^^^^^
+##        self.power = power
+##        self.time = time
+##        self.usage = 1
+##
+##    def securityOffice(self): #-Almost- the most important thing in main. From here you can do EVERYTHING.
+##        pass 
+        
+        
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+#Rewriting time!
 
 camsl = ["cam1a", "cam1b", "cam2a", "cam2b", "cam3", "cam4a", "cam4b", "cam5", "cam6", "cam7"] #Cam list.
 
@@ -381,6 +440,7 @@ chicken = animatronic("Chicken", "chicken")
 rabbit = animatronic("Rabbit", "rabbit")
 animatronics = [chicken, rabbit]
 m = main()
+
 
 
 
