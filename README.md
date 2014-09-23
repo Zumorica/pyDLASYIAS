@@ -1,7 +1,7 @@
 pyDontLetAnimatronicsStuffYouInASuit
 ====================================
 
-FNAF text clone
+FNAF text clone.
 If you want to collaborate, please ask me.
 
 ===================================
