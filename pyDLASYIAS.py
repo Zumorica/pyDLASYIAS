@@ -145,7 +145,7 @@ class main(object):
         self.securityOffice() #The main gameplay aspect
 
         #TIMERS#
-#These two timers work like this. 1º: Do the action. 2º: Make a new timer that repeats itself.
+#These two timers work like this. 1: Do the action. 2: Make a new timer that repeats itself.
 
     def powerTimer(self): #Timer for the power.
         self.power -= 1
