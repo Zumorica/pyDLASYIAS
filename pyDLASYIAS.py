@@ -49,18 +49,19 @@ class animatronic(object):
         self.location = room
         debugprnt("DMoved %s to %s" % (self.name, room))
 
-    def rmove(self, adyacent=[]): #Random move. Moves an animatronic to a random (adyacent) location.
+    def rmove(self, adyacent): #Random move. Moves an animatronic to a random (adyacent) location.
         self.choice = random.choice(adyacent)
         debugprnt("%s's choice was %s" % (self.name, self.choice))
         if random.randint(0, 20) in range(0, self.ailvl):
             self.location = self.choice
-            self.think()
-            
             debugprnt("%s moved to %s" % (self.name, self.location))
+            self.think()
+            return None
             
         else:
             debugprnt("%s didn't move at all" % (self.name))
             self.think()
+            return None
             
         
     def think(self):
@@ -80,7 +81,9 @@ class animatronic(object):
                 self.rmove(["cam1b", "rightdoor"])
             if self.location == "rightdoor":
                 debugprnt("%s is at rightdoor." % (self.name))
-                pass
+                time.sleep(20)
+                self.dmove("cam1a")
+            return None
             
                 
         #Rabbit's AI / Confusing. 
@@ -92,38 +95,16 @@ class animatronic(object):
             if self.location == "cam1b":
                 self.rmove(["cam1a", "cam5", "cam2a", "cam2a"]) #Do not edit cam2a, it's doubled for a reason.
             if self.location == "cam5":
-                self.rmove(["cam1b"])
+                self.rmove, (["cam1b"])
             if self.location == "cam2a":
                 self.rmove(["cam3", "leftdoor", "leftdoor"]) #Do not edit leftdoor neither
             if self.location == "cam3":
                 self.rmove(["cam2a"])
             if self.location == "leftdoor":
                 debugprnt("%s is at leftdoor." % (self.name))
-                pass
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                time.sleep(20)
+                self.dmove("cam1a")
+            return None
 
 
 
@@ -159,12 +140,29 @@ class main(object):
 
     def checkDoorTimer(self): #Timer that checks if there are animatronics at the doors
         for animatronic in animatronics:
-            if animatronic.location == "leftdoor" or animatronic.location == "rightdoor":
-                time.sleep(15)
-                if self.camon == False:
+            time.sleep(10)
+            if animatronic.location == "leftdoor":
+                if self.camon == False and self.leftdoor == False:
                     print "%s enters the security office. %s got you! Game over" % (animatronic.name, animatronic.name)
                     sys.exit(0)
                     os._exit(0)
+                    
+                elif self.leftdoor == True and self.camon == False: #Handles what happens if you aren't in camera mode and you have the door closed
+                    debugprnt("%s should have left" % (animatronic.name))
+                    animatronic.dmove("cam1a") #Direct-moves the animatronic to the starting location
+                    
+                else: #self.cam() should handle what happens if you're in "cam mode"
+                    pass
+                
+            if animatronic.location == "rightdoor":
+                if self.camon == False and self.rightdoor == False:
+                    print "%s enters the security office. %s got you! Game over" % (animatronic.name, animatronic.name)
+                    sys.exit(0)
+                    os._exit(0)
+                    
+                elif self.rightdoor == True and self.camon == False: #Handles what happens if you aren't in camera mode and you have the door closed
+                    animatronic.dmove("cam1a") #Direct-moves the animatronic to the starting location
+                    
                 else: #self.cam() should handle what happens if you're in "cam mode"
                     pass
             else:
@@ -208,7 +206,7 @@ class main(object):
                 self.securityOffice()
                 return None
 
-            else:
+            if self.leftdoor == True:
                 print "Opened left door."
                 self.leftdoor = False
                 self.usage += 2.4
@@ -224,9 +222,9 @@ class main(object):
                 self.securityOffice()
                 return None
                 
-            else:
+            if self.rightdoor == True:
                 print "Opened right door."
-                self.leftdoor = False
+                self.rightdoor = False
                 self.usage += 2.4
                 self.securityOffice()
                 return None
@@ -344,7 +342,7 @@ class main(object):
         if cam == "cam6":
             for animatronic in animatronics:
                 if animatronic.location == "cam6":
-                    if animatronic.kind == "bear":
+                    if animatronic.kind == "bear": #Yes. Not even implemented
                         print "A music box is playing."
                     else:
                         print "You hear some noise."
@@ -359,10 +357,10 @@ class main(object):
 
 ##OBJECTS AND ANIMATRONIC LIST##
 
-#chicken = animatronic("Chicken", "chicken")
+chicken = animatronic("Chicken", "chicken")
 rabbit = animatronic("Rabbit", "rabbit")
 
-animatronics = [rabbit] #Please edit this list with new animatronics if you want them to work.
+animatronics = [chicken, rabbit] #Please edit this list with new animatronics if you want them to work.
 
 m = main()
 
