@@ -1,4 +1,4 @@
 @echo off
 echo Don't let animatronics stuff you in a suit
-python pyDLASYIAS.py
+python C:\Users\Zumo\Documents\GitHub\pyDontLetAnimatronicsStuffYouInASuit\pyDLASYIAS.py
 pause

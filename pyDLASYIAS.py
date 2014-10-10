@@ -2,14 +2,15 @@ import sys, os, time, random, thread, threading
 
 '''To be worked on:
 -Hallucinations
--Bear and Fox animatronic and kind.
+-Bear and Fox kind.
+-"Inside" location. (So they don't automatically kill you)
 -Better AI -?-
 To be bugfixed:
 -Rabbit at leftdoor closing cam doesn't kill you while Chicken's AI is active
 '''
 
 ##VARS##
-debug = True
+debug = False
 camdic = {"cam1a" : "Stage Show",                             #A dictionary containing all cameras and their names."
           "cam1b" : "Dinning Area",
           "cam1c" : "Pirate Cove",
@@ -44,10 +45,14 @@ class animatronic(object):
         self.ailvl = ailvl       #AI LVL. 0 - 20. (0 Doesn't disable at all the animatronics, but makes them very inactive.)
         self.location = location #Locations can be: "cam1a" "cam1b" "cam1c" "cam2a" "cam2b" "cam3" "cam4a" "cam4b" "cam5" "cam6" "cam7"
         if self.kind == "fox":   #Fox kind variables.
-            self.foxstatus = 0 #0 = Hiding. 1 = Peeking. 2 = Looking thro. 3 = Out 4 = About to sprint
+            self.foxstatus = 0 #0 = Hiding. 1 = Peeking. 2 = Looking thro. 3 = Out 4 = About to sprint 5 = Got ya'!
             self.foxtseen = 0
-            
-        thread.start_new_thread(self.think, ()) #Multithreading.
+
+        debugprnt("%s's AI started. -%s KIND-" % (self.name, self.kind.upper()))
+        if self.kind != "fox":
+            thread.start_new_thread(self.think, ()) #Multithreading.
+        else:
+            threading.Timer(1, self.think).start()
 
         
     def dmove(self, room): #Direct move / Debug move. Moves an animatronic to a location.
@@ -72,7 +77,7 @@ class animatronic(object):
     def think(self):
         #Chicken's AI / Also, this is very confusing
         if self.kind == "chicken":
-            debugprnt("%s is thinking... -CHICKEN BEHAVIOR-" % (self.name))
+            debugprnt("%s is thinking... -CHICKEN BEHAVIOR- -%s-" % (self.name, self.location))
             time.sleep(3)
             if self.location == "cam1a":
                 self.rmove(["cam1b"])
@@ -93,7 +98,7 @@ class animatronic(object):
                 
         #Rabbit's AI / Confusing. 
         if self.kind == "rabbit":
-            debugprnt("%s is thinking... -RABBIT BEHAVIOR-" % (self.name))
+            debugprnt("%s is thinking... -RABBIT BEHAVIOR- -%s-" % (self.name, self.location))
             time.sleep(2)
             if self.location == "cam1a":
                 self.rmove(["cam1b"])
@@ -113,30 +118,34 @@ class animatronic(object):
 
         #Fox's AI
         if self.kind == "fox":
-            debugprnt("%s is thinking... -FOX BEHAVIOR-" % (self.name))
-            if self.foxstatus >= 4:
+            debugprnt("%s is thinking... -FOX BEHAVIOR- -%s-" % (self.name, self.location))
+            time.sleep(1)
+            if self.foxstatus == 4 or self.foxstatus == 5:
+                self.foxstatus = 5
                 debugprnt("%s is sprinting towards you!" % (self.name))
-                self.location = "cam2a"
                 time.sleep(2)
+                self.location = "cam2a"
+                time.sleep(random.randint(1, 2))
                 self.location = "leftdoor"
                 
-            time.sleep(3)
-            if self.foxtseen != random.randint(0, self.ailvl / 2):
+            if self.foxtseen != random.randint(0, self.ailvl / 5) and self.foxstatus != 4 and self.foxstatus != 5:
                 debugprnt("%s status is now %s" % (self.name, self.foxstatus))
                 self.foxstatus += 1
                 self.foxtseen = 0
-                time.sleep(1)
+                time.sleep(random.randint(1, 3))
+                self.think()
             else:
                 debugprnt("%s status remains at %s" % (self.name, self.foxstatus))
-                time.sleep(1)
-            self.think()
+                time.sleep(random.randint(1, 3))
+                self.think()
+            
             return None
                 
 
 
 class main(object):
     def __init__(self, power=100, time=0, sectohour=21.5, usage=9.6):
-        threading.stack_size(128*1024) #Magic.
+        threading.stack_size(128*2048) #Magic.
         self.animlvlsum = 0
         for animatronic in animatronics:
             self.animlvlsum += animatronic.ailvl
@@ -152,8 +161,10 @@ class main(object):
         self.camon = False #False = Not viewing cams / True = Viewing cams
         self.powerTimer() #Initialize the timers
         self.hourTimer()  #^
+        thread.start_new_thread(self.checkDoorTimer, ())
+        thread.start_new_thread(self.foxkindDoorCheck, ())
         self.securityOffice() #The main gameplay aspect
-        self.checkDoorTimer() #^
+        
         
         
 
@@ -173,26 +184,26 @@ class main(object):
     def checkDoorTimer(self): #Timer that checks if there are animatronics at the doors
         for animatronic in animatronics:
             time.sleep(10)
-            if animatronic.location == "leftdoor":
+            if animatronic.location == "leftdoor" and animatronic.kind != "fox":
                 if self.camon == False and self.leftdoor == False:
                     print "%s enters the security office. %s got you! Game over" % (animatronic.name, animatronic.name)
                     sys.exit(0)
                     os._exit(0)
                     
-                elif self.leftdoor == True and self.camon == False: #Handles what happens if you aren't in camera mode and you have the door closed
+                elif self.leftdoor == True and self.camon == False and animatronic.kind != "fox": #Handles what happens if you aren't in camera mode and you have the door closed
                     debugprnt("%s should have left" % (animatronic.name))
                     animatronic.dmove("cam1a") #Direct-moves the animatronic to the starting location
                     
                 else: #self.cam() should handle what happens if you're in "cam mode"
                     pass
                 
-            if animatronic.location == "rightdoor":
+            if animatronic.location == "rightdoor" and animatronic.kind != "fox":
                 if self.camon == False and self.rightdoor == False:
                     print "%s enters the security office. %s got you! Game over" % (animatronic.name, animatronic.name)
                     sys.exit(0)
                     os._exit(0)
                     
-                elif self.rightdoor == True and self.camon == False: #Handles what happens if you aren't in camera mode and you have the door closed
+                elif self.rightdoor == True and self.camon == False and animatronic.kind != "fox": #Handles what happens if you aren't in camera mode and you have the door closed
                     animatronic.dmove("cam1a") #Direct-moves the animatronic to the starting location
                     
                 else: #self.cam() should handle what happens if you're in "cam mode"
@@ -201,25 +212,24 @@ class main(object):
                 threading.Timer(5.0, self.checkDoorTimer).start()
 
     def foxkindDoorCheck(self):
+        debugprnt("Foxkind door check.")
         for animatronic in animatronics:
-            if animatronic.kind == "fox":
-                if animatronic.location == "leftdoor":
-                    if self.leftdoor == True:
-                        print "%s bangs your door" % (animatronic.name)
-                        self.powlost = random.randint(1, 15)
-                        self.power -= self.powlost
-                        print "You lost %s power" % (self.powlost)
-                        animatronic.location = "cam1c"
-                        animatronic.foxstatus = 0
-                        animatronic.foxtseen = 0
-                    else:
-                        print "%s enters the room. %s got you..."
-                        os._exit(0)
-                        sys.exit(0)
-                        return None
+            if animatronic.location == "leftdoor" and animatronic.kind == "fox":
+                if self.leftdoor == True:
+                    print "%s bangs your door" % (animatronic.name)
+                    self.powlost = random.randint(1, 15)
+                    self.power -= self.powlost
+                    print "You lost %s power" % (self.powlost)
+                    animatronic.location = "cam1c"
+                    animatronic.foxstatus = 0
+                    animatronic.foxtseen = 0
+                    self.foxkindDoorCheck()
                 else:
-                    threading.Timer(1.0, self.foxkindDoorCheck).start()
-                    return None
+                    print "%s enters the room. %s got you..." % (animatronic.name, animatronic.name)
+                    os._exit(0)
+                    sys.exit(0)
+            else:
+                threading.Timer(5.0, self.foxkindDoorCheck).start()
                     
 
         #GAMEPLAY#
@@ -404,7 +414,7 @@ class main(object):
                 elif random.randint(0, 2) == 2:
                     for animatronic in animatronics:
                         print "%s        is" % (animatronic.name)
-                        print "h e r e..."
+                        print "h e r e...?"
                         print ""
 
     def checkAnimCam(self, cam):
@@ -415,26 +425,36 @@ class main(object):
                         print "A music box is playing."
                     else:
                         print "You hear some noise."
+                        
+        if cam == "cam2a":
+            for animatronic in animatronics:
+                if animatronic.kind == "fox" and animatronic.foxstatus >= 4:
+                    print "You see %s sprinting down the hall." % (animatronic.name)
+                elif animatronic.location == cam and self.kind != "fox":
+                    self.hallucination("camkind")
+                    print "%s is here." % (animatronic.name)
+                    
         if cam == "cam1c":
             for animatronic in animatronics:
                 if animatronic.location == cam:
                     animatronic.foxtseen += 1
                     if animatronic.foxstatus <= 0:
-                        print "%s is hiding behind the curtain." % (self.name)
+                        print "%s is hiding behind the curtain." % (animatronic.name)
 
                     if animatronic.foxstatus == 1:
-                        print "%s is peeking through the curtain." % (self.name)
+                        print "%s is peeking through the curtain." % (animatronic.name)
 
                     if animatronic.foxstatus == 2:
-                        print "%s is looking through the curtain." % (self.name)
+                        print "%s is looking through the curtain." % (animatronic.name)
 
                     if animatronic.foxstatus == 3:
-                        print "%s is out." % (self.name)
+                        print "%s is out." % (animatronic.name)
 
                     if animatronic.foxstatus >= 4:
                         print "No one here..."
+                        animatronic.location = "cam2a"
                         animatronic.think()
-        
+
         else:    
             for animatronic in animatronics:
                 if animatronic.location == cam:
@@ -446,12 +466,11 @@ class main(object):
 
 
 ##OBJECTS AND ANIMATRONIC LIST##
-rabbit = animatronic("Rabbit", "rabbit")
-chicken = animatronic("Chicken", "chicken")
-fox = animatronic("Fox", "fox")
+fox = animatronic("Fox", "fox", 20, "cam1c")
+rabbit = animatronic("Rabbit", "rabbit", 20)
+chicken = animatronic("Chicken", "chicken", 20)
 
 
-animatronics = [rabbit, chicken, fox] #Please edit this list with new animatronics if you want them to work.
+animatronics = [fox, rabbit, chicken] #Please edit this list with new animatronics if you want them to work.
 
 m = main()
-
