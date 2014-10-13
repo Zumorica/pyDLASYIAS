@@ -10,3 +10,6 @@ lights and cameras without using too much power.
 
 So the game itself is made in Python 2.7.8, with no extra dependencies at all.
 To run it you only need to install python (2.7.8) and run play.bat (Also you may need to edit a line inside pyDLASYIAS.py. The line is "debug = True". Change that to "debug = False")
+
+
+(W.I.P)
