@@ -1,12 +1,12 @@
 import sys, os, time, random, thread, threading
 
 '''To be worked on:
--Hallucinations
--Bear and Fox kind.
--"Inside" location. (So they don't automatically kill you)
+-Better Hallucinations
+-Bear kind.
+-"Inside" location. (So they don't automatically kill you) (Maybe I'll work in something like a branch. Dunno)
 -Better AI -?-
 To be bugfixed:
--Rabbit at leftdoor closing cam doesn't kill you while Chicken's AI is active
+-???
 '''
 
 ##VARS##
@@ -186,23 +186,26 @@ class main(object):
         self.securityOffice() #The main gameplay aspect
 
 
+        #ETC#
+        def blackout(self): #Not a timer but well...
+            print "Power went out..."
+            time.sleep(1, 5)
+            print "Bear is at the left door."
+            print "A music box starts playing."
+            time.sleep(1, 20)
+            print "You see nothing at all."
+            print "You hear steps."
+            time.sleep(1, 5)
+            if self.time != 6:
+                print "Bear jumps at you. Game over!"
+                sys.exit(0)
+                os._exit(0)
+
 
 
         #TIMERS#
 #These two timers work like this. 1: Do the action. 2: Make a new timer that repeats itself.
-    def blackout(self): #Not a timer but well...
-        print "Power went out..."
-        time.sleep(1, 5)
-        print "Bear is at the left door."
-        print "A music box starts playing."
-        time.sleep(1, 20)
-        print "You see nothing at all."
-        print "You hear steps."
-        time.sleep(1, 5)
-        if self.time != 6:
-            print "Bear jumps at you. Game over!"
-            sys.exit(0)
-            os._exit(0)
+
 
 
 
