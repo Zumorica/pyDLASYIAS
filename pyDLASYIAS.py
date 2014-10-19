@@ -3,11 +3,8 @@ import sys, os, time, random, thread, threading
 '''To be worked on:
 -Better Hallucinations
 -Bear kind.
-<<<<<<< HEAD
 -"Inside" location. (So they don't automatically kill you) (Maybe I'll work in something like a branch. Dunno)
 -Better AI -?-
-=======
->>>>>>> 2353fdf3ecec5e269d1f601a623d48873f76d46e
 To be bugfixed:
 -???
 '''
@@ -275,7 +272,6 @@ class main(object):
         os._exit(0)
         os.system("exit")
 
-<<<<<<< HEAD
         #ETC#
         def blackout(self): #Not a timer but well...
             print "Power went out..."
@@ -296,9 +292,6 @@ class main(object):
         #TIMERS#
 #These two timers work like this. 1: Do the action. 2: Make a new timer that repeats itself.
 
-
-
-=======
     def blackout(self): #Blackout event. yay
         for animatronic in animatronics:
             if animatronic.kind == "bear":
@@ -323,7 +316,6 @@ class main(object):
 
     #TIMERS#
     #These two timers work like this. 1: Do the action. 2: Make a new timer that repeats itself.
->>>>>>> 2353fdf3ecec5e269d1f601a623d48873f76d46e
 
     def powerTimer(self): #Timer for the power.
         if self.power <= 0 - 1:
