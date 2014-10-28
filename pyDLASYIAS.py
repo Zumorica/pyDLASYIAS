@@ -10,7 +10,7 @@ To be bugfixed:
 '''
 
 ##VARS##
-debug = True
+debug = False
 camdic = {"cam1a" : "Stage Show",                             #A dictionary containing all cameras and their names."
           "cam1b" : "Dinning Area",
           "cam1c" : "Pirate Cove",
@@ -54,7 +54,7 @@ class animatronic(object):
             debugprnt("%s's AI started. -%s KIND-" % (self.name, self.kind.upper()))
             if self.kind == "bear":
                 if self.ailvl > 5:
-                    debugprnt("%s's AI IS NOW ACTIVE! -%s KIND-" % (self.name, self.kind))
+                    debugprnt("%s's AI IS NOW ACTIVE! -%s KIND-" % (self.name, self.kind.upper()))
                     threading.Timer(1, self.think).start()
 
             if self.kind == "fox":
@@ -62,7 +62,7 @@ class animatronic(object):
             else:
                 thread.start_new_thread(self.think, ()) #Multithreading.
         else:
-            debugprnt("%s's AI lvl is too high! Shutting down... -%s BEHAVIOR-" % (self.name, self.kind))
+            debugprnt("%s's AI lvl is too high! Shutting down... -%s BEHAVIOR-" % (self.name, self.kind.upper()))
             self.dmove("off")
 
 
@@ -111,7 +111,7 @@ class animatronic(object):
                 if self.location == "rightdoor":
                     debugprnt("%s is at rightdoor." % (self.name))
                     time.sleep(random.randint(15, 20))
-                    self.dmove("cam1a")
+                    self.rmove(["cam1a", "cam1b"])
                 if self.location == "inside":
                     pass
                 return None
@@ -136,7 +136,7 @@ class animatronic(object):
                 if self.location == "leftdoor":
                     debugprnt("%s is at leftdoor." % (self.name))
                     time.sleep(random.randint(15, 20))
-                    self.dmove("cam1a")
+                    self.rmove(["cam1a", "cam1b"])
                 if self.location == "inside":
                     pass
 
@@ -229,20 +229,22 @@ class animatronic(object):
                     if self.bseen == False:
                         if self.randint(0, 2) == 0:
                             print "A deep laugh can be heard."
-                        self.rmove("leftdoor")
+                        self.rmove("rightdoor")
 
-                if self.location == "leftdoor":
+                if self.location == "rightdoor":
                     pass
+
 
                 return None
 
 
 
 class main(object):
-    def __init__(self, power=100, time=0, sectohour=43, usage=9.6):
+    def __init__(self, gmode="custom", power=100, time=0, sectohour=43, usage=9.6):
         sys.setrecursionlimit(5000) #Magic.
         threading.stack_size(128*4096) #Magic.
         self.animlvlsum = 0
+        self.gmode = gmode #Game mode. Normal / Custom (custom animatronics AI) / Survival (No time, no energy) / ???
         for animatronic in animatronics:
             self.animlvlsum += animatronic.ailvl
             self.ailvl = self.animlvlsum / len(animatronics)
@@ -258,8 +260,9 @@ class main(object):
         self.usage = usage #Amount of seconds that has to pass for draining 1% power
         self.camon = False #False = Not viewing cams / True = Viewing
         self.noh = 0 #"No one here" var. Used for saying if there's someone in a cam or not.
-        self.powerTimer() #Initialize the timers
-        self.hourTimer()  #^
+        if self.gmode != "survival":
+            self.powerTimer() #Initialize the timers
+            self.hourTimer()  #^
         thread.start_new_thread(self.checkDoorTimer, ())
         thread.start_new_thread(self.foxkindDoorCheck, ())
         self.securityOffice() #The main gameplay aspect
@@ -321,18 +324,26 @@ class main(object):
         if self.power <= 0 - 1:
             self.blackout()
         else:
-            self.power -= 1
-        threading.Timer(self.usage, self.powerTimer).start()
+            self.power -= random.randint(1, 2)
+            threading.Timer(self.usage, self.powerTimer).start()
 
     def hourTimer(self): #Timer for the IN-GAME time.
         if self.time >= 6 and self.killed != True:
             print "5AM --> 6AM"
             print "You survived!"
+            if self.gmode == "custom":
+                print "NOTICE OF TERMINATION:"
+                print "Reason: Tampering with the animatronics."
+                print "General unproffesionalism. Odor."
+                print ""
+                print "Thanks, mngmnt."
+            else:
+                print "Good job, sport!"
+                print "You get 120$."
             self.shutdown()
         else:
             self.time += 1
-
-        threading.Timer(self.sectohour, self.hourTimer).start()
+            threading.Timer(self.sectohour, self.hourTimer).start()
 
     def checkDoorTimer(self): #Timer that checks if there are animatronics at the doors
         self.someonethere = False
@@ -359,7 +370,7 @@ class main(object):
                     animatronic.location == "inside"
                     debugprnt("%s is inside... -%s BEHAVIOR- -%s-" % (animatronic.name, animatronic.kind.upper(), animatronic.location))
 
-                elif self.rightdoor == True and animatronic.kind != "fox": #Handles what happens if you aren't in camera mode and you have the door closed
+                else: #Handles what happens if you aren't in camera mode and you have the door closed
                     animatronic.rmove(["cam1a", "cam1b"]) #Direct-moves the animatronic to the starting location
                     debugprnt("%s should have left -%s BEHAVIOR- -%s-" % (animatronic.name, animatronic.kind.upper(), animatronic.location))
 
@@ -376,7 +387,7 @@ class main(object):
 
             if self.rightdoor == True and self.leftdoor == True:
                 for animatronic in animatronics:
-                    if animatronic.location == "leftdoor" or "rightdoor":
+                    if animatronic.location == "leftdoor" or animatronic.location == "rightdoor":
                         self.someonethere == True #Random variable so Bear doesn't kill you if you have both doors closed but no one is there. (Idling)
 
                     if animatronic.kind == "bear" and animatronic.location != "cam4b" and animatronic.location != "rightdoor":
@@ -390,7 +401,7 @@ class main(object):
                 if self.time >= 6 or self.power <= 0 - 1:
                     pass
                 else:
-                    threading.Timer(5.0, self.checkDoorTimer).start()
+                    self.checkDoorTimer()
 
 
     def foxkindDoorCheck(self):
@@ -428,12 +439,12 @@ class main(object):
             print "----- %s %s power left. After %s seconds, 1 %s power is lost." % (self.power, "%", self.usage, "%")
             print "Security Office"
             if self.time == 0:
-                print "----- 12 PM" #I hate this time format.
+                print "----- 12 PM" #I hate this time format
+
             else:
                 print "----- %s AM" % (self.time)
 
-            #This is where input is asked.
-
+            #This is where input is asked
             #Debug mode#
             self.usrinput = raw_input("> ").lower()
             if self.usrinput in ["debug", "debugmode"]:
@@ -647,7 +658,7 @@ class main(object):
                     return None
                 else:
                     print "You're dead. You can close the game"
-                    print "...but you can't escape"
+                    print "...but the animatronics will wait for you"
                     self.shutdown()
 
 
@@ -662,21 +673,15 @@ class main(object):
                     print "            IT'S        ME"
                 elif random.randint(0, 2) == 2:
                     for animatronic in animatronics:
-                        print "%s        is h e r e...?" % (animatronic.name)
-                        print ""
-                        print ""
+                        if random.randint(0, 1) == 1:
+                            break
+                        else:
+                            print "%s        is h e r e...?" % (animatronic.name)
+                            print "IT'S"
+                            print "ME"
+
 
     def checkAnimCam(self, cam):
-        self.lac = 0 #Location animatronic count. Counts how many animatronics aren't in one room
-        self.bcount = 0 #How many bears are in a game
-        if cam == "cam6":
-            for animatronic in animatronics:
-                if animatronic.location == "cam6":
-                    if animatronic.kind == "bear": #Yes. Not even implemented
-                        print "A music box is playing."
-                    else:
-                        print "You hear some noise."
-
         if cam == "cam2a":
             for animatronic in animatronics:
                 if animatronic.kind == "fox" and animatronic.foxstatus >= 4:
@@ -706,24 +711,55 @@ class main(object):
                 if animatronic.location == cam:
                     print "%s is here." % (animatronic.name)
 
-        else:
+        if cam == "cam4b":
+            for animatronic in animatronics:
+                if animatronic.location == cam and animatronic.kind != "bear":
+                    print "%s is here." % (animatronic.name)
+
+                elif animatronic.location == cam and animatronic.kind == "bear":
+                    print "%s is looking directly to the camera." % (animatronic.name)
+
+        elif cam not in ["cam1c", "cam1a", "cam4b", "cam6", "cam2a"]:
             for animatronic in animatronics:
                 if animatronic.location == cam:
-                    if animatronic.kind == "bear":
-                        self.bcount += 1
-                        continue
-                    else:
-                        print "%s is here." % (animatronic.name)
-                else:
-                    self.lac += 1
-                if animatronic.kind == "bear" and self.lac == len(animatronics) - self.bcount and animatronic.location == cam:
-                    print "%s is here" % (animatronic.name)
+                    print "%s is here." % (animatronic.name)
 
+def launcher():
+    debug = False
+    global animatronics
+    print "pyDon't let animatronics stuff you in a suit -pyDLASYIAS-"
+    print "1 - Custom night"
+    print "2 - 20/20/20/20 mode"
+    inp = raw_input("> ")
+    if inp == "1":
+        belvl = raw_input("Input Bear's AI LVL: ")
+        if belvl > 20:
+            belvl = 20
+        ralvl = raw_input("Input Rabbit's AI LVL: ")
+        if ralvl > 20:
+            ralvl = 20
+        chilvl = raw_input("Input Chicken's AI LVL: ")
+        if chilvl > 20:
+            chilvl = 20
+        folvl = raw_input("Input Fox's AI LVL: ")
+        if folvl > 20:
+            folvl = 20
+        rabbit = animatronic("Rabbit", "rabbit", int(ralvl))
+        chicken = animatronic("Chicken", "chicken", int(chilvl))
+        fox = animatronic("Fox", "fox", int(folvl), "cam1c")
+        bear = animatronic("Bear", "bear", int(belvl))
+        animatronics = [rabbit, chicken, fox, bear]
+        m = main("custom", 100, 0)
 
-##OBJECTS AND ANIMATRONIC LIST##
-fox = animatronic("Fox", "fox", 1, "cam1c")
-rabbit = animatronic("Rabbit", "rabbit", 5,)
-chicken = animatronic("Chicken", "chicken", 5)
-bear = animatronic("Bear", "bear", 6)
-animatronics = [rabbit, fox, chicken, bear] #Please edit this list with new animatronics if you want them to work. ALSO BEAR KIND SHOULD GO LAST.
-m = main()
+    if inp == "2":
+        rabbit = animatronic("Rabbit", "rabbit", 20)
+        chicken = animatronic("Chicken", "chicken", 20)
+        fox = animatronic("Fox", "fox", 20, "cam1c")
+        bear = animatronic("Bear", "bear", 20)
+        animatronics = [rabbit, chicken, fox, bear]
+        m = main("custom", 100, 0)
+
+    else:
+        launcher()
+
+launcher()
