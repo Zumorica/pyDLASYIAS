@@ -1,0 +1,1967 @@
+thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam4a
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam4a
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam4a
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken moved to rightdoor
+Chicken is thinking... -CHICKEN BEHAVIOR- -rightdoor-
+Chicken is at rightdoor.
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam4b
+Chicken moved to cam4b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was rightdoor
+Chicken didn't move at all
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam7
+Chicken moved to cam7
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam7-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam1a
+Chicken moved to cam1a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam6
+Chicken moved to cam6
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam6-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-
+Chicken's choice was cam4a
+Chicken moved to cam4a
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam4a-
+Chicken's choice was cam1b
+Chicken moved to cam1b
+Chicken is thinking... -CHICKEN BEHAVIOR- -cam1b-

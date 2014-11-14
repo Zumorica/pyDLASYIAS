@@ -51,7 +51,7 @@ class animatronic(object):
         self.ailvl = ailvl       #AI LVL. 1 - 20. (1 Doesn't disable at all the animatronics, but makes them very inactive.)
         self.location = location #Locations can be: "cam1a" "cam1b" "cam1c" "cam2a" "cam2b" "cam3" "cam4a" "cam4b" "cam5" "cam6" "cam7"
         if self.kind == "fox":   #Fox kind variables.
-            self.foxstatus = 0 #0 = Hiding. 1 = Peeking. 2 = Looking thro. 3 = Out 4 = About to sprint 5 = Got ya'!
+            self.foxstatus = 0 #0 = Hiding. 1 = Peeking. 2 = Looking thro. 3 = Out 4 = About to sprint 5 = Sprinting
             self.foxtseen = 0
             self.foxsleep = 0
 
@@ -64,10 +64,11 @@ class animatronic(object):
             if self.kind == "bear":
                 if self.ailvl > 5:
                     debugprnt("%s's AI IS NOW ACTIVE! -%s KIND-" % (self.name, self.kind.upper()))
-                    threading.Timer(1, self.think).start()
+                    self.dmove("cam1a")
+                    thread.start_new_thread(self.think, ())
 
             if self.kind == "fox":
-                threading.Timer(1, self.think).start()
+                thread.start_new_thread(self.think, ())
             else:
                 thread.start_new_thread(self.think, ()) #Multithreading.
         else:
@@ -144,8 +145,6 @@ class animatronic(object):
                     self.rmove(["cam2a", "leftdoor", "leftdoor", "cam1a"])
                 if self.location == "leftdoor":
                     debugprnt("%s is at leftdoor." % (self.name))
-                    time.sleep(random.randint(15, 20))
-                    self.rmove(["cam1a", "cam1b"])
                 if self.location == "inside":
                     pass
                 return None
@@ -155,28 +154,29 @@ class animatronic(object):
                 debugprnt("%s is thinking... -FOX BEHAVIOR- -%s-" % (self.name, self.location))
                 time.sleep(random.randint(20, 25) / self.ailvl)
                 if self.foxstatus == 4:
+                    time.sleep(100 / self.ailvl)
                     self.foxstatus = 5
-                    debugprnt("%s is sprinting towards you!" % (self.name))
-                    time.sleep(2)
-                    self.location = "cam2a"
-                    time.sleep(random.randint(1, 2))
-                    self.location = "leftdoor"
+
 
                 if self.foxstatus >= 5:
-                    pass
+                    debugprnt("%s is sprinting towards you! -FOX BEHAVIOR- -%s-" % (self.name, self.location))
+                    time.sleep(20 / self.ailvl)
+                    self.location = "cam2a"
+                    time.sleep(20 / self.ailvl)
+                    self.location = "leftdoor"
 
                 if self.foxtseen >= 1:
-                    debugprnt("%s status remains at %s" % (self.name, self.foxstatus))
+                    debugprnt("%s status remains at %s -FOX BEHAVIOR- -%s-" % (self.name, self.foxstatus, self.location))
                     self.foxsleep += self.foxtseen
                     self.basesleep = random.randint(150, 200) / self.ailvl
                     self.foxtseen = 0
                     time.sleep(self.basesleep + self.foxsleep)
                     if random.randint(0, 1) == 1:
                         self.foxstatus += 1
-                        debugprnt("%s status is now %s" % (self.name, self.foxstatus))
+                        debugprnt("%s status is now %s -FOX BEHAVIOR- -%s-" % (self.name, self.foxstatus, self.location))
                         self.think()
                     else:
-                        debugprnt("%s status remains at %s" % (self.name, self.foxstatus))
+                        debugprnt("%s status remains at %s -FOX BEHAVIOR- -%s-" % (self.name, self.foxstatus, self.location))
                         self.think()
 
 
@@ -192,12 +192,13 @@ class animatronic(object):
 
             #Bear's AI
             if self.kind == "bear":
+                debugprnt("FYI: Bear behavior doesn't *really* work. Be careful around this.")
                 if self.location == "cam1a":
                     for animatronic in animatronics:
                         if animatronic.location != "cam1a":
                             self.bsum += 1
-                            if self.bsum == int(len(animatronics)) - 1:
-                                time.sleep(random.randint(0, 3))
+                            if self.bsum == int(len(animatronics)) + 1:
+                                time.sleep(random.randint(20, 25) / self.ailvl)
                                 if self.bseen == False:
                                     if random.randint(0, 2) == 0:
                                         print "A deep laugh can be heard."
@@ -206,34 +207,34 @@ class animatronic(object):
                                     self.think()
 
                 if self.location == "cam1b":
-                    time.sleep(random.randint(0, 3))
+                    time.sleep(random.randint(20, 25) / self.ailvl)
                     if self.bseen == False:
                         if random.randint(0, 2) == 0:
                             print "A deep laugh can be heard."
                         self.rmove("cam7")
                     else:
-                        time.sleep(3)
+                        time.sleep(random.randint(20, 25) / self.ailvl)
                         self.think()
 
                 if self.location == "cam7":
-                    time.sleep(random.randint(2, 4))
+                    time.sleep(random.randint(20, 25) / self.ailvl)
                     if self.bseen == False:
                         if random.randint(0, 2) == 0:
                             print "A deep laugh can be heard."
                         self.rmove("cam6")
                     else:
-                        time.sleep(random.randint(0, 2))
+                        time.sleep(random.randint(20, 25) / self.ailvl)
                         self.think()
 
                 if self.location == "cam4a":
-                    time.sleep(random.randint(1, 2))
+                    time.sleep(random.randint(20, 25) / self.ailvl)
                     if self.bseen == False:
                         if random.randint(0, 2) == 0:
                             print "A deep laugh can be heard."
                         self.rmove("cam4b")
 
                 if self.location == "cam4b":
-                    time.sleep(random.randint(0, 1))
+                    time.sleep(random.randint(20, 25) / self.ailvl)
                     if self.bseen == False:
                         if self.randint(0, 2) == 0:
                             print "A deep laugh can be heard."
@@ -268,9 +269,9 @@ class main(object):
         self.usage = usage #Amount of seconds that has to pass for draining 1% power
         self.camon = False #False = Not viewing cams / True = Viewing
         self.noh = 0 #"No one here" var. Used for saying if there's someone in a cam or not.
-        if self.gmode != "survival":
-            self.powerTimer() #Initialize the timers
-            self.hourTimer()  #^
+        if self.gmode != "survival": #Initialize the timers
+            self.hourTimer()
+        self.powerTimer()
         thread.start_new_thread(self.checkDoorTimer, ())
         thread.start_new_thread(self.foxkindDoorCheck, ())
         self.securityOffice() #The main gameplay aspect
@@ -344,8 +345,13 @@ class main(object):
                 print "General unproffesionalism. Odor."
                 print ""
                 print "Thanks, mngmnt."
+            if self.gmode == "overtime":
+                print "Good job, sport!"
+                print "(You've earned some overtime.)"
+                print "You get 120.50$"
             else:
                 print "Good job, sport!"
+                print "(See you next week!)"
                 print "You get 120$."
             self.shutdown()
         else:
@@ -418,11 +424,16 @@ class main(object):
         else: #Prints power, time...
             print "----- %s %s power left. After %s seconds, 1 %s power is lost." % (self.power, "%", self.usage, "%")
             print "Security Office"
-            if self.time == 0:
+            if self.gmode == "survival":
+                print "----- SURVIVAL MODE"
+
+            if self.gmode != "survival" and self.time == 0:
                 print "----- 12 PM" #I hate this time format
 
-            else:
-                print "----- %s AM" % (self.time)
+            if self.gmode != "survival" and self.time == 0:
+                "----- %s AM" % (self.time)
+
+
 
             #This is where input is asked
             #Debug mode#
@@ -444,6 +455,7 @@ class main(object):
 
             #Cameras
             if self.usrinput in ["cam", "sec cam", "security cam", "camera", "cams", "cm", "camer"]:
+                time.sleep(1)
                 self.usage -= 2.4
                 self.camon = True
                 self.cam()
@@ -622,9 +634,13 @@ class main(object):
             if self.usrinput in camdic.keys():
                 print "----- %s %s power left. After %s seconds, 1 %s power is lost." % (self.power, "%", self.usage, "%")
                 print camdic[self.usrinput] + " [Camera Mode]"
-                if self.time == 0:
-                    print "----- 12 PM"
-                else:
+                if self.gmode == "survival":
+                    print "----- SURVIVAL MODE"
+
+                if self.gmode != "survival" and self.time == 0:
+                    print "----- 12 PM" #I hate this time format
+
+                if self.gmode != "survival" and self.time != 0:
                     print "----- %s AM" % (self.time)
 
                 self.checkAnimCam(self.usrinput)
@@ -639,7 +655,8 @@ class main(object):
 
             #Closes camera mode. Also handles certains game overs.
             if self.usrinput in ["exit", "close", "x", "e", "c"]:
-                for animatronic in animatronics:
+                time.sleep(1)
+                for animatronic in animatronics: #Checks if there's "someone" inside...
                     if animatronic.location == "inside" and animatronic.kind != "bear":
                         self.die(animatronic)
 
@@ -715,6 +732,8 @@ class main(object):
         if cam == "cam2a":
             for animatronic in animatronics:
                 if animatronic.kind == "fox" and animatronic.foxstatus >= 4:
+                    animatronic.foxstatus = 5
+                    animatronic.think()
                     print "You see %s sprinting down the hall." % (animatronic.name)
                 elif animatronic.location == cam and animatronic.kind != "fox":
                     self.hallucination("camkind")
@@ -735,6 +754,9 @@ class main(object):
 
                     if animatronic.foxstatus == 3:
                         print "%s is out." % (animatronic.name)
+
+                    if animatronic.foxstatus == 4:
+                        print "%s is gone." % (animatronic.name)
 
         if cam == "cam1a":
             for animatronic in animatronics:
@@ -791,9 +813,20 @@ def launcher():
         m = main("custom", 100, 0)
 
     if inp == "3":
-        rabbit = animatronic("Rabbit", "rabbit", 20, "inside")
-        animatronics = [rabbit]
-        m = main("custom", 10, 0)
+        inp = raw_input("Input test mode code: ")
+        if inp == "1": #Death debugging.
+            rabbit = animatronic("Rabbit", "rabbit", 20, "inside")
+            animatronics = [rabbit]
+            m = main("custom", 10, 0)
+
+        if inp == "2": #Bear behavior debugging.
+            bear = animatronic("Bear", "bear", 20, "cam1a")
+            animatronics = [bear]
+            m = main("survival", 100, 0)
+
+        else:
+            print "Code invalid. Going back to the menu..."
+            launcher()
 
     else:
         launcher()
