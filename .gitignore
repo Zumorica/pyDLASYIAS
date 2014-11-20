@@ -94,3 +94,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+#pyDLASYIAS log
+log.txt

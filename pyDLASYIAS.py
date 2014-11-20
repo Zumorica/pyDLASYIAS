@@ -11,7 +11,8 @@ To be bugfixed:
 ##VARS##
 debug = False
 f = open("log.txt", "a")
-f.write(time.strftime("%d/%m/%Y - %H:%M:%S") + "\n")
+f.write(time.strftime("\n %d/%m/%Y - %H:%M:%S \n"))
+
 camdic = {"cam1a" : "Stage Show",                             #A dictionary containing all cameras and their names."
           "cam1b" : "Dinning Area",
           "cam1c" : "Pirate Cove",
@@ -23,6 +24,17 @@ camdic = {"cam1a" : "Stage Show",                             #A dictionary cont
           "cam5" : "Backstage",
           "cam6" : "Kitchen -Camera Disabled- (AUDIO ONLY)",
           "cam7" : "Restrooms"}
+
+adjcam = {"cam1a" : ["cam1b"],                                #A dictionary for adjacent rooms.
+          "cam1b" : ["cam1a", "cam1c", "cam5", "cam6", "cam7", "cam2a", "cam4a"],
+          "cam5" : ["cam1b"],
+          "cam6" : ["cam1b"],
+          "cam7" : ["cam1b"],
+          "cam2a" : ["cam2b", "cam3"],
+          "cam3" : ["cam2a"],
+          "cam2b" : ["inside", "cam2a"],
+          "cam4a" : ["cam1b", "cam4b"],
+          "cam4b" : ["cam4a", "inside"]}
 
 
 
@@ -50,6 +62,7 @@ class animatronic(object):
         self.kind = kind         #Kinds: Chicken / Rabbit / Bear (WIP) / Fox
         self.ailvl = ailvl       #AI LVL. 1 - 20. (1 Doesn't disable at all the animatronics, but makes them very inactive.)
         self.location = location #Locations can be: "cam1a" "cam1b" "cam1c" "cam2a" "cam2b" "cam3" "cam4a" "cam4b" "cam5" "cam6" "cam7"
+        self.slocation = location #Starting location
         if self.kind == "fox":   #Fox kind variables.
             self.foxstatus = 0 #0 = Hiding. 1 = Peeking. 2 = Looking thro. 3 = Out 4 = About to sprint 5 = Sprinting
             self.foxtseen = 0
@@ -195,22 +208,24 @@ class animatronic(object):
                 debugprnt("FYI: Bear behavior doesn't *really* work. Be careful around this.")
                 if self.location == "cam1a":
                     for animatronic in animatronics:
-                        if animatronic.location != "cam1a":
-                            self.bsum += 1
-                            if self.bsum == int(len(animatronics)) + 1:
-                                time.sleep(random.randint(20, 25) / self.ailvl)
-                                if self.bseen == False:
-                                    if random.randint(0, 2) == 0:
-                                        print "A deep laugh can be heard."
-                                    self.rmove("cam1b")
-                                else:
-                                    self.think()
+                        if animatronic.location == "cam1a":
+                            if animatronic.kind != "bear":
+                                break
+                                self.think()
+                                return None
+                            else:
+                                continue
+                    if self.bseen == False:
+                        self.rmove("cam1b")
+                        print "A deep laugh can be heard."
+                    else:
+                        self.think()
+
 
                 if self.location == "cam1b":
                     time.sleep(random.randint(20, 25) / self.ailvl)
                     if self.bseen == False:
-                        if random.randint(0, 2) == 0:
-                            print "A deep laugh can be heard."
+                        print "A deep laugh can be heard."
                         self.rmove("cam7")
                     else:
                         time.sleep(random.randint(20, 25) / self.ailvl)
@@ -219,8 +234,7 @@ class animatronic(object):
                 if self.location == "cam7":
                     time.sleep(random.randint(20, 25) / self.ailvl)
                     if self.bseen == False:
-                        if random.randint(0, 2) == 0:
-                            print "A deep laugh can be heard."
+                        print "A deep laugh can be heard."
                         self.rmove("cam6")
                     else:
                         time.sleep(random.randint(20, 25) / self.ailvl)
@@ -229,15 +243,13 @@ class animatronic(object):
                 if self.location == "cam4a":
                     time.sleep(random.randint(20, 25) / self.ailvl)
                     if self.bseen == False:
-                        if random.randint(0, 2) == 0:
-                            print "A deep laugh can be heard."
+                        print "A deep laugh can be heard."
                         self.rmove("cam4b")
 
                 if self.location == "cam4b":
                     time.sleep(random.randint(20, 25) / self.ailvl)
                     if self.bseen == False:
-                        if self.randint(0, 2) == 0:
-                            print "A deep laugh can be heard."
+                        print "A deep laugh can be heard."
                         self.rmove("rightdoor")
 
                 if self.location == "rightdoor":
@@ -683,7 +695,7 @@ class main(object):
 
     def die(self, animatronic):
         if animatronic.kind == "rabbit" or animatronic.kind == "chicken":
-            self.killed == True
+            self.killed = True
             time.sleep(1)
             cls()
             print "%s jumps at your face as a loud screech comes from the animatronic." % (animatronic.name)
@@ -692,7 +704,7 @@ class main(object):
             self.shutdown()
 
         if animatronic.kind == "bear":
-            self.killed == True
+            self.killed = True
             time.sleep(1)
             cls()
             print "%s grabs you and jumps at your face. A really loud screech can be heard." % (animatronic.name)
@@ -701,7 +713,7 @@ class main(object):
             self.shutdown()
 
         if animatronic.kind == "fox":
-            self.killed == True
+            self.killed = True
             time.sleep(1)
             cls()
             print "%s enters the room as a loud screech can be heard." % (animatronic.name)
@@ -735,7 +747,7 @@ class main(object):
                     animatronic.foxstatus = 5
                     animatronic.think()
                     print "You see %s sprinting down the hall." % (animatronic.name)
-                elif animatronic.location == cam and animatronic.kind != "fox":
+                if animatronic.location == cam and animatronic.kind != "fox":
                     self.hallucination("camkind")
                     print "%s is here." % (animatronic.name)
 
@@ -768,7 +780,7 @@ class main(object):
                 if animatronic.location == cam and animatronic.kind != "bear":
                     print "%s is here." % (animatronic.name)
 
-                elif animatronic.location == cam and animatronic.kind == "bear":
+                if animatronic.location == cam and animatronic.kind == "bear":
                     print "%s is looking directly to the camera." % (animatronic.name)
 
         elif cam not in ["cam1c", "cam1a", "cam4b", "cam6", "cam2a"]:
