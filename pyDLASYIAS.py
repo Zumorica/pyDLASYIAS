@@ -659,6 +659,8 @@ class main(object):
                 for animatronic in animatronics: #Checks if there's "someone" inside...
                     if animatronic.location == "inside" and animatronic.kind != "bear":
                         self.die(animatronic)
+                    if animatronic.kind == "bear":
+                        animatronic.bseen = False
 
                     else:
                         self.usage += 2.4
