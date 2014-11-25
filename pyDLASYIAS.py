@@ -206,42 +206,33 @@ class animatronic(object):
             #Bear's AI
             if self.kind == "bear":
                 debugprnt("FYI: Bear behavior doesn't *really* work. Be careful around this.")
+                time.sleep(random.randint(20, 25) / self.ailvl)
                 if self.location == "cam1a":
-                    for animatronic in animatronics:
-                        if animatronic.location == "cam1a":
-                            if animatronic.kind != "bear":
-                                break
-                                self.think()
-                                return None
-                            else:
-                                continue
-                    if self.bseen == False:
-                        self.rmove("cam1b")
-                        print "A deep laugh can be heard."
+                    if self.someoneThere("cam1a") == True:
+                        debugprnt("%s.bseen = %s -%s BEHAVIOR-" % (self.name, self.bseen, self.kind.upper()))
+                        if self.bseen == False:
+                            self.rmove("cam1b")
+                            print "A deep laugh can be heard."
+                            self.think()
                     else:
                         self.think()
 
 
                 if self.location == "cam1b":
-                    time.sleep(random.randint(20, 25) / self.ailvl)
                     if self.bseen == False:
                         print "A deep laugh can be heard."
                         self.rmove("cam7")
                     else:
-                        time.sleep(random.randint(20, 25) / self.ailvl)
                         self.think()
 
                 if self.location == "cam7":
-                    time.sleep(random.randint(20, 25) / self.ailvl)
                     if self.bseen == False:
                         print "A deep laugh can be heard."
                         self.rmove("cam6")
                     else:
-                        time.sleep(random.randint(20, 25) / self.ailvl)
                         self.think()
 
                 if self.location == "cam4a":
-                    time.sleep(random.randint(20, 25) / self.ailvl)
                     if self.bseen == False:
                         print "A deep laugh can be heard."
                         self.rmove("cam4b")
@@ -250,13 +241,22 @@ class animatronic(object):
                     time.sleep(random.randint(20, 25) / self.ailvl)
                     if self.bseen == False:
                         print "A deep laugh can be heard."
-                        self.rmove("rightdoor")
+                        self.rmove(["inside", "cam4a", "cam4a"])
 
                 if self.location == "rightdoor":
                     pass
 
 
                 return None
+
+
+    def someoneThere(self, cam): #Function for bearkind. Duh.
+        for animatronic in animatronics:
+            if animatronic.kind == "bear":
+                pass
+            elif animatronic.location == cam:
+                return True
+        return False
 
 
 
@@ -445,11 +445,15 @@ class main(object):
             if self.gmode != "survival" and self.time == 0:
                 "----- %s AM" % (self.time)
 
-
+        for animatronic in animatronics: #This for loop sets bearkind's bseen variable on false.
+            if animatronic.kind == "bear":
+                animatronic.bseen = False
 
             #This is where input is asked
             #Debug mode#
+
             self.usrinput = raw_input("> ").lower()
+
             if self.usrinput in ["debug", "debugmode"]:
                 global debug
                 if debug == True:
@@ -671,8 +675,6 @@ class main(object):
                 for animatronic in animatronics: #Checks if there's "someone" inside...
                     if animatronic.location == "inside" and animatronic.kind != "bear":
                         self.die(animatronic)
-                    if animatronic.kind == "bear":
-                        animatronic.bseen = False
 
                     else:
                         self.usage += 2.4
@@ -742,6 +744,13 @@ class main(object):
                             print "ME"
 
 
+    def someoneThere(self, cam):
+        for animatronic in animatronics:
+            if animatronic.location == cam:
+                return True
+        return False
+
+
     def checkAnimCam(self, cam):
         if cam == "cam2a":
             for animatronic in animatronics:
@@ -749,6 +758,9 @@ class main(object):
                     animatronic.foxstatus = 5
                     animatronic.think()
                     print "You see %s sprinting down the hall." % (animatronic.name)
+                    time.sleep(1)
+                    self.securityOffice()
+                    return None
                 if animatronic.location == cam and animatronic.kind != "fox":
                     self.hallucination("camkind")
                     print "%s is here." % (animatronic.name)
