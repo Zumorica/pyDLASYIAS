@@ -324,17 +324,15 @@ class main(object):
         if self.time != 6:
             bear = "Bear", "bear"
             self.die(bear)
-
-
-    #TIMERS#
-    #These two timers work like this. 1: Do the action. 2: Make a new timer that repeats itself.
+        return None
 
     def powerTimer(self): #Timer for the power.
         if self.power <= 0 - 1:
             self.blackout()
         else:
-            self.power -= random.randint(1, 3) #Sorry for this. Power is too OP and I needed to nerf it.
-            threading.Timer(self.usage, self.powerTimer).start()
+            self.power -= random.randint(1, 3) #I'm really sorry. Power was too OP.
+            threading.Timer(long(self.usage), self.powerTimer).start()
+        return None
 
     def hourTimer(self): #Timer for the IN-GAME time.
         if self.time >= 6 and self.killed != True:
@@ -359,9 +357,11 @@ class main(object):
                 print "(See you next week!)"
                 print "You get 120$."
             self.shutdown()
+            return None
         else:
             self.time += 1
             threading.Timer(self.sectohour, self.hourTimer).start()
+            return None
 
     def checkDoorTimer(self): #"Timer" that checks if there are animatronics at the doors
         time.sleep(20 / self.ailvl)
@@ -390,6 +390,7 @@ class main(object):
             pass
         else:
             self.checkDoorTimer()
+        return None
 
 
     def foxkindDoorCheck(self):
@@ -477,14 +478,14 @@ class main(object):
                 if self.leftdoor == False:
                     print "Closed left door."
                     self.leftdoor = True
-                    self.usage -= 2.4
+                    self.usage -= 3 #2.4 / 2,4
                     self.securityOffice()
                     return None
 
                 if self.leftdoor == True:
                     print "Opened left door."
                     self.leftdoor = False
-                    self.usage += 2.4
+                    self.usage += 3
                     self.securityOffice()
                     return None
 
@@ -499,14 +500,14 @@ class main(object):
                 if self.rightdoor == False:
                     print "Closed right door."
                     self.rightdoor = True
-                    self.usage -= 2.4
+                    self.usage -= 3
                     self.securityOffice()
                     return None
 
                 if self.rightdoor == True:
                     print "Opened right door."
                     self.rightdoor = False
-                    self.usage += 2.4
+                    self.usage += 3
                     self.securityOffice()
                     return None
 
@@ -620,11 +621,19 @@ class main(object):
                     self.securityOffice()
                     return None
                 else:
-                    print "You're dead. You can close the game"
+                    print "You're dead. You can close the game now."
                     print "...but you can't escape"
                     self.shutdown()
 
     def cam(self): #Camera mode. You can watch the animatronics from here.
+        if self.leftlight == True:
+            self.usage += 1.2
+            self.leftlight = False
+
+        if self.rightlight == True:
+            self.usage += 1.2
+            self.rightlight = False
+
         if self.killed == True or self.time >= 6 or self.power == 0 - 1:
             pass
         else:
@@ -855,4 +864,5 @@ def launcher():
     else:
         launcher()
 
-launcher()
+if __name__ == '__main__':
+    launcher()
