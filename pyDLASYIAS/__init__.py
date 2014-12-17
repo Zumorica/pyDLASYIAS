@@ -1,0 +1,3 @@
+import Globals
+
+Globals.init()

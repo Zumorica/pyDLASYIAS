@@ -1,3 +1,3 @@
 @echo off
-python pyDLASYIAS.py
+python game.py
 pause
