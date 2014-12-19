@@ -159,20 +159,17 @@ class main(object):
             if self.gmode != "survival" and self.time == 0:
                 print "----- 12 PM" #I hate this time format
 
-            if self.gmode != "survival" and self.time == 0:
+            if self.gmode != "survival" and self.time != 0:
                 "----- %s AM" % (self.time)
 
         for animatronic in Globals.animatronics: #This for loop sets bearkind's bseen variable on false.
             if animatronic.kind == "bear":
                 animatronic.bseen = False
 
-            #This is where input is asked
-            #Debug mode#
-
             self.usrinput = raw_input("> ").lower()
 
             if self.usrinput in ["debug", "debugmode"]:
-                if debug == True:
+                if Globals.debug == True:
                     Globals.debug = False
                 else:
                     Globals.debug = True
@@ -187,7 +184,7 @@ class main(object):
 
             #Cameras
             if self.usrinput in ["cam", "sec cam", "security cam", "camera", "cams", "cm", "camer"]:
-                time.sleep(1)
+                cls.cls(0.5, 0.5)
                 self.usage -= 2.4
                 self.camon = True
                 self.cam()
