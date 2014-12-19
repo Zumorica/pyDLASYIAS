@@ -163,9 +163,9 @@ class main(object):
             if self.gmode != "survival" and self.time != 0:
                 "----- %s AM" % (self.time)
 
-        for animatronic in Globals.animatronics: #This for loop sets bearkind's bseen variable on false.
-            if animatronic.kind == "bear":
-                animatronic.bseen = False
+            for animatronic in Globals.animatronics: #This for loop sets bearkind's bseen variable on false.
+                if animatronic.kind == "bear":
+                    animatronic.bseen = False
 
             self.usrinput = raw_input("> ").lower()
 
