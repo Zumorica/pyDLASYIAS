@@ -100,9 +100,10 @@ class main(object):
 
                 else: #Else if leftdoor is open
                     animatronic.dmove("inside") #Go inside
-                    if self.ailvl > 12: #If AILVL over 12
+                    if self.ailvl > 12: #If AILVL is over 12
                         self.leftlight = "broken" #Break the light and door
                         self.leftdoor = "broken"
+
             if animatronic.location == "rightdoor":
                 time.sleep(20 / self.ailvl)
                 if self.rightdoor == True:
@@ -453,15 +454,6 @@ class main(object):
                 print "IT'S ME   "
                 if random.randint(0, 2) == 1:
                     print "            IT'S        ME"
-                elif random.randint(0, 2) == 2:
-                    for animatronic in Globals.animatronics:
-                        if random.randint(0, 1) == 1:
-                            break
-                        else:
-                            print "%s        is h e r e...?" % (animatronic.name)
-                            print "IT'S"
-                            print "ME"
-
 
     def someoneThere(self, cam):
         for animatronic in Globals.animatronics:
@@ -519,13 +511,17 @@ class main(object):
                 if animatronic.location == cam and animatronic.kind == "bear":
                     print "%s is looking directly to the camera." % (animatronic.name)
 
+        if cam == "cam6":
+            for animatronic in Globals.animatronics:
+                if animatronic.location == cam:
+                    if animatronic.kind == "bear":
+                        print "A music box can be heard."
+                    else:
+                        print "Noise can be heard."
+
         elif cam not in ["cam1c", "cam1a", "cam4b", "cam6", "cam2a"]:
             for animatronic in Globals.animatronics:
                 if animatronic.location == cam and animatronic.kind != "bear":
                     print "%s is here." % (animatronic.name)
                 if animatronic.location == cam and animatronic.kind == "bear":
-                    if random.randint(0, 1) == 1:
-                        print "...huh?"
-
-                    else:
-                        print "..."
+                    print "%s" % (random.choice(["...huh?", "W-What's that?", "..."]))
