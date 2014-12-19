@@ -9,7 +9,7 @@ class animatronic(object): #Animatronics' class.
         self.ailvl = ailvl       #AI LVL. 1 - 20. ("0 AI LVL" is impossible to achieve, because you can't divide by zero.)
         self.location = location #This location determines where the animatronics are.
         self.slocation = location #Starting location.
-
+        Globals.animatronics.append(self) #Appends itself to animatronics' list.
         if self.kind == "fox":   #Foxkind variables.
             self.foxstatus = 0 #0 = Hiding. 1 = Peeking. 2 = Looking thro. 3 = Out 4 = About to sprint 5 = Sprinting
             self.foxtseen = 0 #Times seen.
@@ -26,6 +26,7 @@ class animatronic(object): #Animatronics' class.
                     self.dmove("cam1a")
                 else:
                     self.dmove("off")
+
             thread.start_new_thread(self.think, ()) #Multithreading. This makes the game possible
 
 
@@ -157,13 +158,15 @@ class animatronic(object): #Animatronics' class.
             if self.kind == "bear":
                 if self.ailvl > 5:
                     debug.debugprint("FYI: Bear behavior doesn't *really* work. Be careful around this.")
-                    time.sleep(random.randint(20, 25) / self.ailvl)
+                    time.sleep(40 / self.ailvl)
                     if self.location == "cam1a":
                         if self.someoneThere("cam1a") == True:
                             debug.debugprint("%s.bseen = %s -%s BEHAVIOR-" % (self.name, self.bseen, self.kind.upper()))
                             if self.bseen == False:
                                 self.rmove("cam1b")
+                                print ""
                                 print "A deep laugh can be heard."
+                                print "> "
                                 self.think()
                         else:
                             self.think()
@@ -171,27 +174,35 @@ class animatronic(object): #Animatronics' class.
 
                     if self.location == "cam1b":
                         if self.bseen == False:
-                            print "A deep laugh can be heard."
-                            self.rmove("cam7")
+                                print ""
+                                print "A deep laugh can be heard."
+                                print "> "
+                                self.rmove("cam7")
                         else:
                             self.think()
 
                     if self.location == "cam7":
                         if self.bseen == False:
-                            print "A deep laugh can be heard."
-                            self.rmove("cam6")
+                                print ""
+                                print "A deep laugh can be heard."
+                                print "> "
+                                self.rmove("cam6")
                         else:
                             self.think()
 
                     if self.location == "cam4a":
                         if self.bseen == False:
-                            print "A deep laugh can be heard."
-                            self.rmove("cam4b")
+                                print ""
+                                print "A deep laugh can be heard."
+                                print "> "
+                                self.rmove("cam4b")
 
                     if self.location == "cam4b":
-                        time.sleep(random.randint(20, 25) / self.ailvl)
+                        time.sleep(40 / self.ailvl)
                         if self.bseen == False:
+                            print ""
                             print "A deep laugh can be heard."
+                            print "> "
                             self.rmove(["inside", "cam4a", "cam4a"])
 
                     if self.location == "rightdoor":
