@@ -12,17 +12,9 @@ def launcher():
     inp = raw_input("> ")
     if inp == "1":
         belvl = raw_input("Input Bear's AI LVL: ")
-        if belvl > 20:
-            belvl = 20
         ralvl = raw_input("Input Rabbit's AI LVL: ")
-        if ralvl > 20:
-            ralvl = 20
         chilvl = raw_input("Input Chicken's AI LVL: ")
-        if chilvl > 20:
-            chilvl = 20
         folvl = raw_input("Input Fox's AI LVL: ")
-        if folvl > 20:
-            folvl = 20
         rabbit = animatronics.animatronic("Rabbit", "rabbit", int(ralvl))
         chicken = animatronics.animatronic("Chicken", "chicken", int(chilvl))
         fox = animatronics.animatronic("Fox", "fox", int(folvl), "cam1c")
