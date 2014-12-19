@@ -5,7 +5,6 @@ from pyDLASYIAS import main
 from pyDLASYIAS import Globals
 
 def launcher():
-    global animatronics
     print "pyDon't let animatronics stuff you in a suit -pyDLASYIAS-"
     print "1 - Custom night"
     print "2 - 20/20/20/20 mode"
@@ -28,7 +27,6 @@ def launcher():
         chicken = animatronics.animatronic("Chicken", "chicken", int(chilvl))
         fox = animatronics.animatronic("Fox", "fox", int(folvl), "cam1c")
         bear = animatronics.animatronic("Bear", "bear", int(belvl))
-        Globals.animatronics = [rabbit, chicken, fox, bear]
         m = main.main("custom", 100, 0)
 
     if inp == "2":
@@ -36,19 +34,16 @@ def launcher():
         chicken = animatronics.animatronic("Chicken", "chicken", 20)
         fox = animatronics.animatronic("Fox", "fox", 20, "cam1c")
         bear = animatronics.animatronic("Bear", "bear", 20)
-        Globals.animatronics = [rabbit, chicken, fox, bear]
         m = main.main("custom", 100, 0)
 
     if inp == "3":
         inp = raw_input("Input test mode code: ")
         if inp == "1": #Death debugging.
             rabbit = animatronics.animatronic("Rabbit", "rabbit", 20, "inside")
-            Globals.animatronics = [rabbit]
-            m = main("custom", 10, 0)
+            m = main.main("custom", 10, 0)
 
         if inp == "2": #Bear behavior debugging.
             bear = animatronics.animatronic("Bear", "bear", 20, "cam1a")
-            Globals.animatronics = [bear]
             m = main.main("survival", 100, 0)
 
         else:
