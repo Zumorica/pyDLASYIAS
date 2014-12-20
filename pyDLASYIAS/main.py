@@ -56,14 +56,17 @@ class main(object):
                     pass
 
     def powerTimer(self): #Timer for the power.
-        if self.power <= 0 - 1:
-            self.blackout()
+        if self.killed == True or self.time >= 6 or self.power == 0 - 1:
+            pass
         else:
-            self.usedpow = random.randint(1, 3)
-            self.power -= self.usedpow
-            debug.debugprint("Power goes down by %s" % (self.usedpow))
-            threading.Timer(long(self.usage), self.powerTimer).start()
-        return None
+            if self.power <= 0 - 1:
+                self.blackout()
+            else:
+                self.usedpow = random.randint(1, 3)
+                self.power -= self.usedpow
+                debug.debugprint("Power goes down by %s" % (self.usedpow))
+                threading.Timer(long(self.usage), self.powerTimer).start()
+            return None
 
     def hourTimer(self): #Timer for the IN-GAME time.
         if self.time >= 6 and self.killed != True:
@@ -93,24 +96,27 @@ class main(object):
             return None
 
     def checkDoorTimer(self): #"Timer" that checks if there are animatronics at the doors
-        time.sleep(20 / self.ailvl)
         for animatronic in Globals.animatronics: #Checks for animatronics
             if animatronic.location == "leftdoor": #If animatronic is at left door
-                time.sleep(20 / self.ailvl)
+                time.sleep(20 / animatronic.ailvl)
                 if self.leftdoor == True: #If leftdoor is closed
                     animatronic.rmove("cam1b") #Go back to cam1b or not
 
                 else: #Else if leftdoor is open
+                    time.sleep(20 / animatronic.ailvl)
                     animatronic.dmove("inside") #Go inside
                     if self.ailvl > 12: #If AILVL is over 12
                         self.leftlight = "broken" #Break the light and door
                         self.leftdoor = "broken"
 
             if animatronic.location == "rightdoor":
-                time.sleep(20 / self.ailvl)
+                time.sleep(20 / animatronic.ailvl)
                 if self.rightdoor == True:
                     animatronic.rmove("cam1b")
+
+
                 else:
+                    time.sleep(20 / animatronic.ailvl)
                     animatronic.dmove("inside")
                     if self.ailvl > 12:
                         self.rightlight = "broken"
@@ -119,6 +125,7 @@ class main(object):
         if self.time >= 6 or self.power <= 0:
             pass
         else:
+            time.sleep(20 / self.ailvl)
             self.checkDoorTimer()
         return None
 
