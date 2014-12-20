@@ -95,3 +95,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# pyDLASYIAS
+__FUTURE__/
