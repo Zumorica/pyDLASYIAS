@@ -38,6 +38,10 @@ def launcher():
             bear = animatronics.animatronic("Bear", "bear", 20, "cam1a")
             m = main.main("survival", 100, 0)
 
+        if inp == "3":
+            chicken = animatronics.animatronic("Chicken", "chicken", 20, "cam1a")
+            m = main.main("survival", 100, 0)
+
         else:
             print "Code invalid. Going back to the menu..."
             launcher()

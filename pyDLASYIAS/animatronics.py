@@ -159,6 +159,7 @@ class animatronic(object): #Animatronics' class.
                     time.sleep(random.randint(150, 200) / self.ailvl)
                     self.think()
 
+
             #Bear's AI
             if self.kind == "bear":
                 if self.ailvl > 5:
@@ -168,7 +169,7 @@ class animatronic(object): #Animatronics' class.
                         if self.someoneThere("cam1a") == True:
                             debug.debugprint("%s.bseen = %s" % (self.name, self.bseen), self)
                             if self.bseen == False:
-                                self.rmove("cam1b")
+                                self.rmove(["cam1b"])
                                 print ""
                                 print "A deep laugh can be heard."
                                 print "> "
@@ -191,7 +192,7 @@ class animatronic(object): #Animatronics' class.
                                 print ""
                                 print "A deep laugh can be heard."
                                 print "> "
-                                self.rmove("cam6")
+                                self.rmove(["cam6"])
                         else:
                             self.think()
 
@@ -200,7 +201,7 @@ class animatronic(object): #Animatronics' class.
                                 print ""
                                 print "A deep laugh can be heard."
                                 print "> "
-                                self.rmove("cam4b")
+                                self.rmove(["cam4b"])
 
                     if self.location == "cam4b":
                         time.sleep(40 / self.ailvl)
