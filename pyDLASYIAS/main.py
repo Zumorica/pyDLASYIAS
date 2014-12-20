@@ -59,7 +59,9 @@ class main(object):
         if self.power <= 0 - 1:
             self.blackout()
         else:
-            self.power -= random.randint(1, 3) #I'm really sorry. Power was too OP.
+            self.usedpow = random.randint(1, 3)
+            self.power -= self.usedpow
+            debug.debugprint("Power goes down by %s" % (self.usedpow))
             threading.Timer(long(self.usage), self.powerTimer).start()
         return None
 
