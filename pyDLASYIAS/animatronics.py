@@ -19,6 +19,8 @@ class animatronic(object): #Animatronics' class.
             self.bseen = False #Being seen. If the camera is active, this variable will be true. Else, it will be false.
 
         if self.ailvl <= 20:
+            if self.ailvl == 0:
+                self.ailvl = 0.5
             debug.debugprint("%s's AI started." % (self.name.upper()), self)
             if self.kind == "bear":
                 if self.ailvl > 5:
