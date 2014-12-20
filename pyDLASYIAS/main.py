@@ -3,7 +3,7 @@ from utils import cls
 from utils import debug
 
 class main(object):
-    def __init__(self, gmode="custom", power=100, time=0, sectohour=43, usage=9.6):
+    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, usage=9.6):
         sys.setrecursionlimit(5000) #Magic.
         threading.stack_size(128*4096) #Magic.
         self.animlvlsum = 0
