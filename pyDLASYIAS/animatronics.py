@@ -49,18 +49,16 @@ class animatronic(object): #Animatronics' class.
             debug.debugprint("DMoved %s to %s" % (self.name, room), self)
         return None
 
-    def rmove(self, room): #Random move. Moves an animatronic (or not) to a location.
-        self.choice = random.choice(room) #Yup. You can input lists!
+    def rmove(self, room): #Random move. Moves an animatronic (or not) to a location or locations. CAUTION: ROOM MUST BE A LIST.
+        self.choice = random.choice(list(room))
         debug.debugprint("%s's choice was %s" % (self.name, self.choice), self)
         if random.randint(0, self.ailvl / 2) in range(0, self.ailvl / 2):
             self.location = self.choice
             debug.debugprint("%s moved to %s" % (self.name, self.choice), self)
-            self.think()
             return None
 
         else:
             debug.debugprint("%s didn't move at all" % (self.name), self)
-            self.think()
             return None
 
     def think(self):
@@ -88,11 +86,13 @@ class animatronic(object): #Animatronics' class.
                 if self.location == "cam4b":
                     self.rmove(["cam4a", "rightdoor", "cam1a"])
                 if self.location == "rightdoor":
-                    debug.debugprint("%s is at rightdoor." % (self.name), self)
+                    pass
                 if self.location == "inside":
                     pass
-                return None
                 time.sleep(random.randint(20, 25) / self.ailvl)
+                self.think()
+                return None
+
 
 
             #Rabbit's AI
@@ -112,11 +112,12 @@ class animatronic(object): #Animatronics' class.
                 if self.location == "cam2b":
                     self.rmove(["cam2a", "leftdoor", "cam1a"])
                 if self.location == "leftdoor":
-                    debug.debugprint("%s is at leftdoor." % (self.name), self)
+                    self.think()
                 if self.location == "inside":
                     pass
-                return None
                 time.sleep(random.randint(20, 25) / self.ailvl)
+                self.think()
+                return None
 
             #Fox's AI
             if self.kind == "fox":
@@ -183,7 +184,7 @@ class animatronic(object): #Animatronics' class.
                                 print ""
                                 print "A deep laugh can be heard."
                                 print "> "
-                                self.rmove("cam7")
+                                self.rmove(["cam7"])
                         else:
                             self.think()
 
