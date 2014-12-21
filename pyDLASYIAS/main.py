@@ -15,23 +15,22 @@ class main(object):
         self.rightdoor = False #Same ^^^^^^^^^^^^^^
         self.leftlight = False #False = Off / True = On
         self.rightlight = False #Same ^^^^^^^^^^^^^
-        self.power = power #Power
-        self.killed = False #Killed or not
+        self.power = power #Power. Int variable
+        self.killed = False #False = Alive / True = Dead.
         self.usrinput = "" #User input. Used in self.securityOffice() and self.cam()
-        self.time = time - 1 #The "-1" is because automatically the timer sums 1.
+        self.time = time - 1 #The "-1" is there because the timer automatically sums 1 to the variable.
         self.sectohour = sectohour #Seconds needed for a IN-GAME hour
-        self.usage = usage #Amount of seconds that has to pass for draining 1% power
-        self.camon = False #False = Not viewing cams / True = Viewing
-        self.noh = 0 #"No one here" var. Used for saying if there's someone in a cam or not.
-        if self.gmode != "survival": #Initialize the timers
+        self.usage = usage #Int variable. Amount of seconds required to lose one porcent of power.
+        self.camon = False #False = Not viewing cams / True = Viewing cams.
+        if self.gmode != "survival": #Initializes the hour timer if the gamemode isn't survival.
             self.hourTimer()
-        self.powerTimer()
-        thread.start_new_thread(self.checkDoorTimer, ())
+        self.powerTimer() #Power timer.
+        thread.start_new_thread(self.checkDoorTimer, ()) #These two threads checks if there's animatronics at the left or right doors and moves them into your office.
         thread.start_new_thread(self.foxkindDoorCheck, ())
         self.securityOffice() #The main gameplay aspect
 
-    def shutdown(self): #Shuts down the whole game/Restarts it.
-        debug.debugprint("Shutting down")
+    def shutdown(self): #Shuts down the whole game.
+        debug.debugprint("Shutting down...")
         for animatronic in Globals.animatronics:
             animatronic.dmove("off")
         sys.exit(0)
@@ -41,14 +40,15 @@ class main(object):
     def blackout(self): #Blackout event. yay
         for animatronic in Globals.animatronics:
             if animatronic.kind == "bear":
+                print ""
                 print "Power went out..."
-                cls.cls(random.randint(2, 8))
+                cls.cls(random.randint(2, 7), random.randint(0, 2))
                 print "%s is at the left door." % (animatronic.name)
                 print "A music box starts playing."
-                cls.cls(random.randint(0, random.randint(1, 10)))
+                cls.cls(random.randint(2, 10))
                 print "You see nothing at all."
                 print "You hear steps."
-                cls.cls(random.randint(1, random.randint(3, 8)))
+                cls.cls(random.randint(3, 8))
                 if self.time != 6:
                     self.die(animatronic)
                     break
@@ -56,38 +56,38 @@ class main(object):
                     pass
 
     def powerTimer(self): #Timer for the power.
-        if self.killed == True or self.time >= 6 or self.power == 0 - 1:
+        if self.killed == True or self.time >= 6 or self.power == 0 - 1: #Checks if the game has finished
             pass
         else:
             if self.power <= 0 - 1:
                 self.blackout()
             else:
-                self.usedpow = random.randint(1, 3)
+                self.usedpow = random.randint(1, 2) #Since I can't change the usage when a timer has been set, it randomly takes more power.
                 self.power -= self.usedpow
                 debug.debugprint("Power goes down by %s" % (self.usedpow))
                 threading.Timer(long(self.usage), self.powerTimer).start()
             return None
 
     def hourTimer(self): #Timer for the IN-GAME time.
-        if self.time >= 6 and self.killed != True:
-            cls.cls(1)
+        if self.time >= 6 and self.killed != True: #This is what happens after 6AM. Yay!
+            cls.cls(0.5, 0.5)
             print "5AM --> 6AM"
             print "You survived!"
-            cls.cls(5)
+            cls.cls(4.5, 0.5)
             if self.gmode == "custom":
                 print "NOTICE OF TERMINATION:"
                 print "Reason: Tampering with the animatronics."
                 print "General unproffesionalism. Odor."
                 print ""
                 print "Thanks, mngmnt."
-            if self.gmode == "overtime":
+            elif self.gmode == "overtime":
                 print "Good job, sport!"
                 print "(You've earned some overtime.)"
                 print "You get 120.50$"
             else:
                 print "Good job, sport!"
                 print "(See you next week!)"
-                print "You get 120$."
+                print "You get 120$"
             self.shutdown()
             return None
         else:
@@ -166,11 +166,12 @@ class main(object):
             if self.gmode == "survival":
                 print "----- SURVIVAL MODE"
 
-            if self.gmode != "survival" and self.time == 0:
-                print "----- 12 PM" #I hate this time format
+            else:
+                if self.time == 0:
+                    print "----- 12 PM" #I hate this time format
 
-            if self.gmode != "survival" and self.time != 0:
-                "----- %s AM" % (self.time)
+                else:
+                    print "----- %s AM" % (self.time)
 
             for animatronic in Globals.animatronics: #This for loop sets bearkind's bseen variable on false.
                 if animatronic.kind == "bear":
@@ -193,7 +194,7 @@ class main(object):
                 return None #"Closes" the current security office.
 
             #Cameras
-            if self.usrinput in ["cam", "sec cam", "security cam", "camera", "cams", "cm", "camer"]:
+            if self.usrinput in ["cam", "sec cam", "security cam", "camera", "cams", "cm", "cameras"]:
                 cls.cls(0.5, 0.5)
                 self.usage -= 2.4
                 self.camon = True
