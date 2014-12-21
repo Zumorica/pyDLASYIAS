@@ -100,25 +100,25 @@ class main(object):
             if animatronic.location == "leftdoor": #If animatronic is at left door
                 time.sleep(20 / animatronic.ailvl)
                 if self.leftdoor == True: #If leftdoor is closed
-                    animatronic.rmove("cam1b") #Go back to cam1b or not
+                    animatronic.rmove(["cam1b"]) #Go back to cam1b or not
 
                 else: #Else if leftdoor is open
                     time.sleep(20 / animatronic.ailvl)
-                    animatronic.dmove("inside") #Go inside
-                    if self.ailvl > 12: #If AILVL is over 12
+                    animatronic.rmove(["inside"]) #Random move the animatronic inside or not.
+                    if self.ailvl > 12 and animatronic.location == "inside": #If AILVL is over 12 and the animatronic is inside...
                         self.leftlight = "broken" #Break the light and door
                         self.leftdoor = "broken"
 
             if animatronic.location == "rightdoor":
                 time.sleep(20 / animatronic.ailvl)
                 if self.rightdoor == True:
-                    animatronic.rmove("cam1b")
+                    animatronic.rmove(["cam1b"])
 
 
                 else:
                     time.sleep(20 / animatronic.ailvl)
-                    animatronic.dmove("inside")
-                    if self.ailvl > 12:
+                    animatronic.rmove(["inside"])
+                    if self.ailvl > 12 and animatronic.location == "inside":
                         self.rightlight = "broken"
                         self.rightdoor = "broken"
 
@@ -405,9 +405,8 @@ class main(object):
             if self.usrinput in ["exit", "close", "x", "e", "c"]:
                 time.sleep(1)
                 for animatronic in Globals.animatronics: #Checks if there's "someone" inside...
-                    if animatronic.location == "inside":
-                        if animatronic.kind != "bear":
-                            self.die(animatronic)
+                    if animatronic.location == "inside" and animatronic.kind != "bear":
+                        self.die(animatronic)
 
                     else:
                         self.usage += 2.4
