@@ -1,3 +1,3 @@
 import Globals
 
-Globals.init()
+Globals.init() #Inits all global variables. 
