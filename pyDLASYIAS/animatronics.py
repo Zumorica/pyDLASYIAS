@@ -1,6 +1,7 @@
-import sys, os, time, random, thread, threading, Globals
-from utils import cls
-from utils import debug
+import sys, os, time, random, _thread, threading
+import pyDLASYIAS.Globals as Globals
+import pyDLASYIAS.utils.debug as debug
+import pyDLASYIAS.utils.cls as cls
 
 class animatronic(object): #Animatronics' class.
     def __init__(self, name, kind, ailvl=20, location="cam1a"):
@@ -29,17 +30,17 @@ class animatronic(object): #Animatronics' class.
                 else:
                     self.dmove("off")
 
-            thread.start_new_thread(self.think, ()) #Multithreading. This makes the game possible
+            _thread.start_new_thread(self.think, ()) #Multithreading. This makes the game possible
 
         else:
-            print "%s's AI LEVEL IS OVER 20. BE CAREFUL!" % (self.name.upper())
+            print("%s's AI LEVEL IS OVER 20. BE CAREFUL!" % (self.name.upper()))
             if self.kind == "bear":
                 if self.ailvl > 5:
                     debug.debugprint("%s's AI IS NOW ACTIVE!" % (self.name.upper()), self)
                     self.dmove("cam1a")
                 else:
                     self.dmove("off")
-            thread.start_new_thread(self.think, ()) #Multithreading. This makes the game possible
+            _thread.start_new_thread(self.think, ()) #Multithreading. This makes the game possible
 
     def dmove(self, room): #Direct move / Debug move. Moves an animatronic to a location.
         self.location = room
@@ -52,7 +53,7 @@ class animatronic(object): #Animatronics' class.
     def rmove(self, room): #Random move. Moves an animatronic (or not) to a location or locations. CAUTION: ROOM MUST BE A LIST.
         self.choice = random.choice(list(room))
         debug.debugprint("%s's choice was %s" % (self.name, self.choice), self)
-        if random.randint(0, self.ailvl / 2) in range(0, self.ailvl / 2):
+        if random.randint(0, self.ailvl) in range(0, self.ailvl):
             self.location = self.choice
             debug.debugprint("%s moved to %s" % (self.name, self.choice), self)
             return None
@@ -171,9 +172,9 @@ class animatronic(object): #Animatronics' class.
                             debug.debugprint("%s.bseen = %s" % (self.name, self.bseen), self)
                             if self.bseen == False:
                                 self.rmove(["cam1b"])
-                                print ""
-                                print "A deep laugh can be heard."
-                                print "> "
+                                print("")
+                                print("A deep laugh can be heard.")
+                                print("> ")
                                 self.think()
                         else:
                             self.think()
@@ -181,35 +182,35 @@ class animatronic(object): #Animatronics' class.
 
                     if self.location == "cam1b":
                         if self.bseen == False:
-                                print ""
-                                print "A deep laugh can be heard."
-                                print "> "
+                                print("")
+                                print("A deep laugh can be heard.")
+                                print("> ")
                                 self.rmove(["cam7"])
                         else:
                             self.think()
 
                     if self.location == "cam7":
                         if self.bseen == False:
-                                print ""
-                                print "A deep laugh can be heard."
-                                print "> "
+                                print("")
+                                print("A deep laugh can be heard.")
+                                print("> ")
                                 self.rmove(["cam6"])
                         else:
                             self.think()
 
                     if self.location == "cam4a":
                         if self.bseen == False:
-                                print ""
-                                print "A deep laugh can be heard."
-                                print "> "
+                                print("")
+                                print("A deep laugh can be heard.")
+                                print("> ")
                                 self.rmove(["cam4b"])
 
                     if self.location == "cam4b":
                         time.sleep(40 / self.ailvl)
                         if self.bseen == False:
-                            print ""
-                            print "A deep laugh can be heard."
-                            print "> "
+                            print("")
+                            print("A deep laugh can be heard.")
+                            print("> ")
                             self.rmove(["inside", "cam4a", "cam4a"])
 
                     if self.location == "rightdoor":

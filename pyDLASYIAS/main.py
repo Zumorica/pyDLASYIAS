@@ -1,6 +1,7 @@
-import sys, os, time, random, thread, threading, Globals
-from utils import cls
-from utils import debug
+import sys, os, time, random, _thread, threading
+import pyDLASYIAS.Globals as Globals
+import pyDLASYIAS.utils.debug as debug
+import pyDLASYIAS.utils.cls as cls
 
 class main(object):
     def __init__(self, gmode="custom", power=100, time=0, sectohour=86, usage=9.6):
@@ -25,8 +26,8 @@ class main(object):
         if self.gmode != "survival": #Initializes the hour timer if the gamemode isn't survival.
             self.hourTimer()
         self.powerTimer() #Power timer.
-        thread.start_new_thread(self.checkDoorTimer, ()) #These two threads checks if there's animatronics at the left or right doors and moves them into your office.
-        thread.start_new_thread(self.foxkindDoorCheck, ())
+        _thread.start_new_thread(self.checkDoorTimer, ()) #These two threads checks if there's animatronics at the left or right doors and moves them into your office.
+        _thread.start_new_thread(self.foxkindDoorCheck, ())
         self.securityOffice() #The main gameplay aspect
 
     def shutdown(self): #Shuts down the whole game.
@@ -40,14 +41,14 @@ class main(object):
     def blackout(self): #Blackout event. yay
         for animatronic in Globals.animatronics:
             if animatronic.kind == "bear":
-                print ""
-                print "Power went out..."
+                print("")
+                print("Power went out...")
                 cls.cls(random.randint(2, 7), random.randint(0, 2))
-                print "%s is at the left door." % (animatronic.name)
-                print "A music box starts playing."
+                print("%s is at the left door." % (animatronic.name))
+                print("A music box starts playing.")
                 cls.cls(random.randint(2, 10))
-                print "You see nothing at all."
-                print "You hear steps."
+                print("You see nothing at all.")
+                print("You hear steps.")
                 cls.cls(random.randint(3, 8))
                 if self.time != 6:
                     self.die(animatronic)
@@ -65,29 +66,29 @@ class main(object):
                 self.usedpow = random.randint(1, 2) #Since I can't change the usage when a timer has been set, it randomly takes more power.
                 self.power -= self.usedpow
                 debug.debugprint("Power goes down by %s" % (self.usedpow))
-                threading.Timer(long(self.usage), self.powerTimer).start()
+                threading.Timer(int(self.usage), self.powerTimer).start()
             return None
 
     def hourTimer(self): #Timer for the IN-GAME time.
         if self.time >= 6 and self.killed != True: #This is what happens after 6AM. Yay!
             cls.cls(0.5, 0.5)
-            print "5AM --> 6AM"
-            print "You survived!"
+            print("5AM --> 6AM")
+            print("You survived!")
             cls.cls(4.5, 0.5)
             if self.gmode == "custom":
-                print "NOTICE OF TERMINATION:"
-                print "Reason: Tampering with the animatronics."
-                print "General unproffesionalism. Odor."
-                print ""
-                print "Thanks, mngmnt."
+                print("NOTICE OF TERMINATION:")
+                print("Reason: Tampering with the animatronics.")
+                print("General unproffesionalism. Odor.")
+                print("")
+                print("Thanks, mngmnt.")
             elif self.gmode == "overtime":
-                print "Good job, sport!"
-                print "(You've earned some overtime.)"
-                print "You get 120.50$"
+                print("Good job, sport!")
+                print("(You've earned some overtime.)")
+                print("You get 120.50$")
             else:
-                print "Good job, sport!"
-                print "(See you next week!)"
-                print "You get 120$"
+                print("Good job, sport!")
+                print("(See you next week!)")
+                print("You get 120$")
             self.shutdown()
             return None
         else:
@@ -139,10 +140,10 @@ class main(object):
             for animatronic in Globals.animatronics:
                 if animatronic.location == "leftdoor" and animatronic.kind == "fox":
                     if self.leftdoor == True:
-                        print "%s bangs your door" % (animatronic.name)
+                        print("%s bangs your door" % (animatronic.name))
                         self.powlost = random.randint(1, 15)
                         self.power -= self.powlost
-                        print "You lost %s power" % (self.powlost)
+                        print("You lost %s power" % (self.powlost))
                         animatronic.location = "cam1c"
                         animatronic.foxstatus = 0
                         animatronic.foxtseen = 0
@@ -161,23 +162,23 @@ class main(object):
         if self.power < 0 or self.time >= 6 or self.killed == True: #Checks if there's a blackout/You survived/You're dead
             pass
         else: #Prints power, time...
-            print "----- %s %s power left. After %s seconds, 1 %s power is lost." % (self.power, "%", self.usage, "%")
-            print "Security Office"
+            print("----- %s %s power left. After %s seconds, 1 %s power is lost." % (self.power, "%", self.usage, "%"))
+            print("Security Office")
             if self.gmode == "survival":
-                print "----- SURVIVAL MODE"
+                print("----- SURVIVAL MODE")
 
             else:
                 if self.time == 0:
-                    print "----- 12 PM" #I hate this time format
+                    print("----- 12 PM") #I hate this time format
 
                 else:
-                    print "----- %s AM" % (self.time)
+                    print("----- %s AM" % (self.time))
 
             for animatronic in Globals.animatronics: #This for loop sets bearkind's bseen variable on false.
                 if animatronic.kind == "bear":
                     animatronic.bseen = False
 
-            self.usrinput = raw_input("> ").lower()
+            self.usrinput = input("> ").lower()
 
             if self.usrinput in ["debug", "debugmode"]:
                 if Globals.debug == True:
@@ -189,7 +190,7 @@ class main(object):
                 return None
             #Power
             if self.usrinput in ["power", "electricity", "energy"]:
-                print "Power left: %s %s" % (self.power, "%")
+                print("Power left: %s %s" % (self.power, "%"))
                 self.securityOffice()
                 return None #"Closes" the current security office.
 
@@ -210,21 +211,21 @@ class main(object):
             #Left door
             if self.usrinput in ["doorl", "left door", "ldoor", "door left", "doortleft", "leftdoor", "dl", "d l"]:
                 if self.leftdoor == False:
-                    print "Closed left door."
+                    print("Closed left door.")
                     self.leftdoor = True
                     self.usage -= 3 #2.4 / 2,4
                     self.securityOffice()
                     return None
 
                 if self.leftdoor == True:
-                    print "Opened left door."
+                    print("Opened left door.")
                     self.leftdoor = False
                     self.usage += 3
                     self.securityOffice()
                     return None
 
                 if self.leftdoor == "broken":
-                    print "Left door doesn't work..."
+                    print("Left door doesn't work...")
                     self.securityOffice()
                     return None
 
@@ -232,28 +233,28 @@ class main(object):
             #Right door
             if self.usrinput in ["doorr", "right door", "rdoor", "door right", "doortright", "rightdoor", "d r", "dr"]:
                 if self.rightdoor == False:
-                    print "Closed right door."
+                    print("Closed right door.")
                     self.rightdoor = True
                     self.usage -= 3
                     self.securityOffice()
                     return None
 
                 if self.rightdoor == True:
-                    print "Opened right door."
+                    print("Opened right door.")
                     self.rightdoor = False
                     self.usage += 3
                     self.securityOffice()
                     return None
 
                 if self.rightdoor == "broken":
-                    print "Right door doesn't work..."
+                    print("Right door doesn't work...")
                     self.securityOffice()
                     return None
 
             #Left light
             if self.usrinput in ["lightl", "left light", "llight", "light left", "lightleft", "leftlight", "ll", "l l"]:
                 if self.leftlight == True:
-                    print "Left light is now OFF."
+                    print("Left light is now OFF.")
                     self.leftlight = False
                     self.usage += 1.2
                     self.securityOffice()
@@ -262,27 +263,27 @@ class main(object):
                 if self.leftlight == False:
                     self.leftlight = True
                     if self.rightlight == True:
-                        print "Right light is now OFF."
+                        print("Right light is now OFF.")
                         self.rightlight = False
                         self.usage += 1.2
                     self.usage -= 1.2
-                    print "Left light is now ON."
+                    print("Left light is now ON.")
                     self.foxkindDoorCheck()
                     for animatronic in Globals.animatronics:
                         if animatronic.location == "leftdoor":
-                            print "%s is at the left door, looking at you." % (animatronic.name)
+                            print("%s is at the left door, looking at you." % (animatronic.name))
                     self.securityOffice()
                     return None
 
                 if self.leftlight == "broken":
-                    print "Left light doesn't work..."
+                    print("Left light doesn't work...")
                     self.securityOffice()
                     return None
 
             #Right light
             if self.usrinput in ["lightr", "right light", "rlight", "light right", "lightright", "rightlight", "lr", "l r"]:
                 if self.rightlight == True:
-                    print "Right light is now OFF."
+                    print("Right light is now OFF.")
                     self.rightlight = False
                     self.usage += 1.2
                     self.securityOffice()
@@ -291,59 +292,59 @@ class main(object):
                 if self.rightlight == False:
                     self.rightlight = True
                     if self.leftlight == True:
-                        print "Left light is now OFF."
+                        print("Left light is now OFF.")
                         self.leftlight = False
                         self.usage += 1.2
                     self.usage -= 1.2
-                    print "Right light is now ON."
+                    print("Right light is now ON.")
                     for animatronic in Globals.animatronics:
                         if animatronic.location == "rightdoor":
-                            print "%s is at the right door, looking at you." % (animatronic.name)
+                            print("%s is at the right door, looking at you." % (animatronic.name))
                     self.securityOffice()
                     return None
 
                 if self.rightlight == "broken":
-                    print "Right light doesn't work..."
+                    print("Right light doesn't work...")
                     self.securityOffice()
                     return None
             #Help
             if self.usrinput in ["help", "what do i do?", "?"]:
-                print "-----"
-                print "Hi! Welcome to pyDLASYIAS (pyDon't let animatronics stuff you in a suit)"
-                print "It looks like you're asking for help."
-                print "I'll help you!"
-                print "Here's a command list:"
-                print "'door left' 'door right' 'light left' 'light right' 'help' 'cam' 'clear' 'state'"
-                print "There's a few more commands (Similar words that do the same as the words above)"
-                print "Oh and about the 'camera mode'"
-                print "It's very easy to use. You type the camera name and you see if something or someone is there!"
-                print "You can also use some commands there, like 'exit'"
-                print "And that's all. Except for how to play, but you should know how to play already, so..."
-                print "Good night!"
-                print "-----"
+                print("-----")
+                print("Hi! Welcome to pyDLASYIAS (pyDon't let animatronics stuff you in a suit)")
+                print("It looks like you're asking for help.")
+                print("I'll help you!")
+                print("Here's a command list:")
+                print("'door left' 'door right' 'light left' 'light right' 'help' 'cam' 'clear' 'state'")
+                print("There's a few more commands (Similar words that do the same as the words above)")
+                print("Oh and about the 'camera mode'")
+                print("It's very easy to use. You type the camera name and you see if something or someone is there!")
+                print("You can also use some commands there, like 'exit'")
+                print("And that's all. Except for how to play, but you should know how to play already, so...")
+                print("Good night!")
+                print("-----")
                 self.securityOffice()
                 return None
 
             if self.usrinput in ["state", "doors", "lights", "door state", "light state"]:
                 if self.leftdoor == True:
-                    print "Left door is closed."
+                    print("Left door is closed.")
                 else:
-                    print "Left door is open."
+                    print("Left door is open.")
 
                 if self.rightdoor == True:
-                    print "Right door is closed."
+                    print("Right door is closed.")
                 else:
-                    print "Right door is open."
+                    print("Right door is open.")
 
                 if self.leftlight == True:
-                    print "Left light is on."
+                    print("Left light is on.")
                 else:
-                    print "Left light is off."
+                    print("Left light is off.")
 
                 if self.rightlight == True:
-                    print "Right light is on."
+                    print("Right light is on.")
                 else:
-                    print "Right light is off."
+                    print("Right light is off.")
 
                 self.securityOffice()
                 return None
@@ -351,12 +352,12 @@ class main(object):
             #Unknown command.
             else:
                 if self.killed == False:
-                    print "What was that? Try again, please!"
+                    print("What was that? Try again, please!")
                     self.securityOffice()
                     return None
                 else:
-                    print "You're dead. You can close the game now."
-                    print "...but you can't escape"
+                    print("You're dead. You can close the game now.")
+                    print("...but you can't escape")
                     self.shutdown()
 
     def cam(self): #Camera mode. You can watch the animatronics from here.
@@ -374,22 +375,22 @@ class main(object):
             for animatronic in Globals.animatronics:
                 if animatronic.kind == "bear":
                     animatronic.bseen = True
-            print "Cam list:"
-            print " -- ".join(sorted(list(Globals.camdic))) #Wow. Just don't change it, it's magical...
-            self.usrinput = raw_input("> ").lower()  #User input
+            print("Cam list:")
+            print(" -- ".join(sorted(list(Globals.camdic)))) #Wow. Just don't change it, it's magical...
+            self.usrinput = input("> ").lower()  #User input
 
             #Looks at a certain camera to see if something or someone is there.
-            if self.usrinput in Globals.camdic.keys():
-                print "----- %s %s power left. After %s seconds, 1 %s power is lost." % (self.power, "%", self.usage, "%")
-                print Globals.camdic[self.usrinput] + " [Camera Mode]"
+            if self.usrinput in list(Globals.camdic.keys()):
+                print("----- %s %s power left. After %s seconds, 1 %s power is lost." % (self.power, "%", self.usage, "%"))
+                print(Globals.camdic[self.usrinput] + " [Camera Mode]")
                 if self.gmode == "survival":
-                    print "----- SURVIVAL MODE"
+                    print("----- SURVIVAL MODE")
 
                 if self.gmode != "survival" and self.time == 0:
-                    print "----- 12 PM" #I hate this time format
+                    print("----- 12 PM") #I hate this time format
 
                 if self.gmode != "survival" and self.time != 0:
-                    print "----- %s AM" % (self.time)
+                    print("----- %s AM" % (self.time))
 
                 self.checkAnimCam(self.usrinput)
                 self.cam()
@@ -420,12 +421,12 @@ class main(object):
 
             else:
                 if self.killed == False:
-                    print "Unknown cam"
+                    print("Unknown cam")
                     self.cam()
                     return None
                 else:
-                    print "You're dead. You can close the game"
-                    print "...but the animatronics will wait for you"
+                    print("You're dead. You can close the game")
+                    print("...but the animatronics will wait for you")
                     self.shutdown()
 
 
@@ -433,25 +434,25 @@ class main(object):
         if animatronic.kind == "rabbit" or animatronic.kind == "chicken":
             self.killed = True
             cls.cls(1)
-            print "%s jumps at your face as a loud screech comes from the animatronic." % (animatronic.name)
-            print "%s got you..." % (animatronic.name)
-            print "Game over."
+            print("%s jumps at your face as a loud screech comes from the animatronic." % (animatronic.name))
+            print("%s got you..." % (animatronic.name))
+            print("Game over.")
             self.shutdown()
 
         if animatronic.kind == "bear":
             self.killed = True
             cls.cls(1)
-            print "%s grabs you and jumps at your face. A really loud screech can be heard." % (animatronic.name)
-            print "%s got you..." % (animatronic.name)
-            print "Game over..."
+            print("%s grabs you and jumps at your face. A really loud screech can be heard." % (animatronic.name))
+            print("%s got you..." % (animatronic.name))
+            print("Game over...")
             self.shutdown()
 
         if animatronic.kind == "fox":
             self.killed = True
             cls.cls(1)
-            print "%s enters the room as a loud screech can be heard." % (animatronic.name)
-            print "%s got you..." % (animatronic.name)
-            print "Game over..."
+            print("%s enters the room as a loud screech can be heard." % (animatronic.name))
+            print("%s got you..." % (animatronic.name))
+            print("Game over...")
             self.shutdown()
 
 
@@ -460,9 +461,9 @@ class main(object):
         if kind == "camkind":
             self.randhall = random.randint(0, 80)
             if self.randhall in range(0, self.ailvl):
-                print "IT'S ME   "
+                print("IT'S ME   ")
                 if random.randint(0, 2) == 1:
-                    print "            IT'S        ME"
+                    print("            IT'S        ME")
 
     def someoneThere(self, cam):
         for animatronic in Globals.animatronics:
@@ -477,60 +478,60 @@ class main(object):
                 if animatronic.kind == "fox" and animatronic.foxstatus >= 4:
                     animatronic.foxstatus = 5
                     animatronic.think()
-                    print "You see %s sprinting down the hall." % (animatronic.name)
+                    print("You see %s sprinting down the hall." % (animatronic.name))
                     time.sleep(1)
                     self.securityOffice()
                     return None
                 if animatronic.location == cam and animatronic.kind != "fox":
                     self.hallucination("camkind")
-                    print "%s is here." % (animatronic.name)
+                    print("%s is here." % (animatronic.name))
 
         if cam == "cam1c":
             for animatronic in Globals.animatronics:
                 if animatronic.location == cam and animatronic.kind == "fox":
                     animatronic.foxtseen += 1
                     if animatronic.foxstatus <= 0:
-                        print "%s is hiding behind the curtain." % (animatronic.name)
+                        print("%s is hiding behind the curtain." % (animatronic.name))
 
                     if animatronic.foxstatus == 1:
-                        print "%s is peeking through the curtain." % (animatronic.name)
+                        print("%s is peeking through the curtain." % (animatronic.name))
 
                     if animatronic.foxstatus == 2:
-                        print "%s is looking through the curtain." % (animatronic.name)
+                        print("%s is looking through the curtain." % (animatronic.name))
 
                     if animatronic.foxstatus == 3:
-                        print "%s is out." % (animatronic.name)
+                        print("%s is out." % (animatronic.name))
 
                     if animatronic.foxstatus == 4:
-                        print "%s is gone." % (animatronic.name)
+                        print("%s is gone." % (animatronic.name))
 
         if cam == "cam1a":
             for animatronic in Globals.animatronics:
                 if animatronic.location == cam:
                     if random.randint(0, 1) == 1:
-                        print "%s is here." % (animatronic.name)
+                        print("%s is here." % (animatronic.name))
                     else:
-                        print "%s is looking directly to the camera." % (animatronic.name)
+                        print("%s is looking directly to the camera." % (animatronic.name))
 
         if cam == "cam4b":
             for animatronic in Globals.animatronics:
                 if animatronic.location == cam and animatronic.kind != "bear":
-                    print "%s is here." % (animatronic.name)
+                    print("%s is here." % (animatronic.name))
 
                 if animatronic.location == cam and animatronic.kind == "bear":
-                    print "%s is looking directly to the camera." % (animatronic.name)
+                    print("%s is looking directly to the camera." % (animatronic.name))
 
         if cam == "cam6":
             for animatronic in Globals.animatronics:
                 if animatronic.location == cam:
                     if animatronic.kind == "bear":
-                        print "A music box can be heard."
+                        print("A music box can be heard.")
                     else:
-                        print "Noise can be heard."
+                        print("Noise can be heard.")
 
         elif cam not in ["cam1c", "cam1a", "cam4b", "cam6", "cam2a"]:
             for animatronic in Globals.animatronics:
                 if animatronic.location == cam and animatronic.kind != "bear":
-                    print "%s is here." % (animatronic.name)
+                    print("%s is here." % (animatronic.name))
                 if animatronic.location == cam and animatronic.kind == "bear":
-                    print "%s" % (random.choice(["...huh?", "W-What's that?", "..."]))
+                    print("%s" % (random.choice(["...huh?", "W-What's that?", "..."])))

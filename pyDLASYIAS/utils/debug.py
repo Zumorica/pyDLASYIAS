@@ -1,5 +1,5 @@
 import time
-from .. import Globals
+import pyDLASYIAS.Globals as Globals
 
 log = open("log.txt", "a")
 log.write(time.strftime("\n %d/%m/%Y - %H:%M:%S \n"))
@@ -13,8 +13,8 @@ def debugprint(text, animatronic=None, writetolog=True):
 
     if Globals.debug == True:
         if animatronic == None:
-            print "%s %s \n" % (text, time.strftime("%H:%M:%S"))
+            print("%s %s \n" % (text, time.strftime("%H:%M:%S")))
         else:
-            print "%s -%s BEHAVIOR- -AI LVL: %s- -%s- %s \n" % (text, animatronic.kind.upper(), animatronic.ailvl, animatronic.location.upper(), time.strftime("%H:%M:%S"))
+            print("%s -%s BEHAVIOR- -AI LVL: %s- -%s- %s \n" % (text, animatronic.kind.upper(), animatronic.ailvl, animatronic.location.upper(), time.strftime("%H:%M:%S")))
 
     return None

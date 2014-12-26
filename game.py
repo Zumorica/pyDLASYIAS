@@ -1,20 +1,19 @@
-import sys, os, time, random, thread, threading
-
-from pyDLASYIAS import animatronics
-from pyDLASYIAS import main
-from pyDLASYIAS import Globals
+import sys, os, time, random, _thread, threading
+import pyDLASYIAS.Globals as Globals
+import pyDLASYIAS.animatronics as animatronics
+import pyDLASYIAS.main as main
 
 def launcher():
-    print "pyDon't let animatronics stuff you in a suit -pyDLASYIAS-"
-    print "1 - Custom night"
-    print "2 - 20/20/20/20 mode"
-    print "3 - Test option please ignore"
-    inp = raw_input("> ")
+    print("pyDon't let animatronics stuff you in a suit -pyDLASYIAS-")
+    print("1 - Custom night")
+    print("2 - 20/20/20/20 mode")
+    print("3 - Test option please ignore")
+    inp = input("> ")
     if inp == "1":
-        belvl = raw_input("Input Bear's AI LVL: ")
-        ralvl = raw_input("Input Rabbit's AI LVL: ")
-        chilvl = raw_input("Input Chicken's AI LVL: ")
-        folvl = raw_input("Input Fox's AI LVL: ")
+        belvl = input("Input Bear's AI LVL: ")
+        ralvl = input("Input Rabbit's AI LVL: ")
+        chilvl = input("Input Chicken's AI LVL: ")
+        folvl = input("Input Fox's AI LVL: ")
         rabbit = animatronics.animatronic("Rabbit", "rabbit", int(ralvl))
         chicken = animatronics.animatronic("Chicken", "chicken", int(chilvl))
         fox = animatronics.animatronic("Fox", "fox", int(folvl), "cam1c")
@@ -29,7 +28,7 @@ def launcher():
         m = main.main("custom", 100, 0)
 
     if inp == "3":
-        inp = raw_input("Input test mode code: ")
+        inp = input("Input test mode code: ")
         if inp == "1": #Death debugging.
             rabbit = animatronics.animatronic("Rabbit", "rabbit", 20, "inside")
             m = main.main("custom", 10, 0)
@@ -43,7 +42,7 @@ def launcher():
             m = main.main("survival", 100, 0)
 
         else:
-            print "Code invalid. Going back to the menu..."
+            print("Code invalid. Going back to the menu...")
             launcher()
 
     else:

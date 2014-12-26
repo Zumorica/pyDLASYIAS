@@ -1,3 +1,3 @@
-import Globals
+import pyDLASYIAS.Globals
 
-Globals.init() #Inits all global variables. 
+Globals.init() #Inits all global variables.
