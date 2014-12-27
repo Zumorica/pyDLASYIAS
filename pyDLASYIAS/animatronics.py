@@ -10,6 +10,7 @@ class animatronic(object): #Animatronics' class.
         self.ailvl = ailvl       #AI LVL. 1 - 20. ("0 AI LVL" is impossible to achieve, because you can't divide by zero.)
         self.location = location #This location determines where the animatronics are.
         self.slocation = location #Starting location.
+        self.agressiveness = 0 #0: Low / 1: Mid-agressive / 2: Agressive / 3: OH MY GOD WHY ARE YOU DOING THIS TO ME PLS STAHP DSADSDJASMDONSAINGA *ded*
         Globals.animatronics.append(self) #Appends itself to animatronics' list.
         if self.kind == "fox":   #Foxkind variables.
             self.foxstatus = 0 #0 = Hiding. 1 = Peeking. 2 = Looking thro. 3 = Out 4 = About to sprint 5 = Sprinting
@@ -72,22 +73,70 @@ class animatronic(object): #Animatronics' class.
             if self.kind == "chicken":
                 debug.debugprint("%s is thinking..." % (self.name), self)
                 time.sleep(random.randint(20, 25) / self.ailvl)
-                if self.location == "cam1a":
-                    self.rmove(["cam1b"])
-                if self.location == "cam1b":
-                    self.rmove(["cam1a", "cam7", "cam6", "cam4a"])
-                if self.location == "cam7":
-                    self.rmove(["cam1b"])
-                if self.location == "cam6":
-                    self.rmove(["cam1b"])
-                if self.location == "cam4a":
-                    self.rmove(["cam1b", "rightdoor", "cam4b", "cam4b"])
-                if self.location == "cam4b":
-                    self.rmove(["cam4a", "rightdoor", "cam1a"])
-                if self.location == "rightdoor":
-                    pass
-                if self.location == "inside":
-                    pass
+                if self.agressiveness == 0:
+                    if self.location == "cam1a":
+                        self.rmove(["cam1b", "cam6", "cam7"])
+                    if self.location == "cam1b":
+                        self.rmove(["cam7", "cam6"])
+                    if self.location == "cam7":
+                        self.rmove(["cam1b", "cam6"])
+                    if self.location == "cam6":
+                        self.rmove(["cam1b", "cam7"])
+
+                if self.agressiveness == 1:
+                    if self.location == "cam1a":
+                        self.rmove(["cam1b"])
+                    if self.location == "cam1b":
+                        self.rmove(["cam7", "cam6", "cam4a"])
+                    if self.location == "cam7":
+                        self.rmove(["cam1b"])
+                    if self.location == "cam6":
+                        self.rmove(["cam1b"])
+                    if self.location == "cam4a":
+                        self.rmove(["cam1b", "rightdoor", "cam4b"])
+                    if self.location == "cam4b":
+                        self.rmove(["cam4a", "rightdoor", "cam1a"])
+                    if self.location == "rightdoor":
+                        pass
+                    if self.location == "inside":
+                        pass
+
+                if self.agressiveness == 2:
+                    if self.location == "cam1a":
+                        self.rmove(["cam1b"])
+                    if self.location == "cam1b":
+                        self.rmove(["cam7", "cam6", "cam4a"])
+                    if self.location == "cam7":
+                        self.rmove(["cam1b", "cam4a"])
+                    if self.location == "cam6":
+                        self.rmove(["cam1b", "cam4a"])
+                    if self.location == "cam4a":
+                        self.rmove(["cam1b", "rightdoor", "cam4b", "cam4b", "cam4b"])
+                    if self.location == "cam4b":
+                        self.rmove(["cam4a", "rightdoor", "rightdoor", "rightdoor"])
+                    if self.location == "rightdoor":
+                        pass
+                    if self.location == "inside":
+                        pass
+
+                if self.agressiveness == 3:
+                    if self.location == "cam1a":
+                        self.rmove(["cam1b"])
+                    if self.location == "cam1b":
+                        self.rmove(["cam4a"])
+                    if self.location == "cam6":
+                        self.rmove(["cam4a"])
+                    if self.location == "cam7":
+                        self.rmove(["cam4a"])
+                    if self.location == "cam4a":
+                        self.rmove(["cam4b"])
+                    if self.location == "cam4b":
+                        self.rmove(["rightdoor"])
+                    if self.location == "rightdoor":
+                        pass
+                    if self.location == "inside":
+                        pass
+
                 time.sleep(random.randint(20, 25) / self.ailvl)
                 self.think()
                 return None
@@ -98,22 +147,64 @@ class animatronic(object): #Animatronics' class.
             if self.kind == "rabbit":
                 debug.debugprint("%s is thinking..." % (self.name), self)
                 time.sleep(random.randint(20, 25) / self.ailvl)
-                if self.location == "cam1a":
-                    self.rmove(["cam1b"])
-                if self.location == "cam1b":
-                    self.rmove(["cam1a", "cam5", "cam2a", "cam2a"]) #Do not edit cam2a, it's doubled for a reason.
-                if self.location == "cam5":
-                    self.rmove, (["cam1b"])
-                if self.location == "cam2a":
-                    self.rmove(["cam3", "leftdoor", "cam2b", "cam2b"])
-                if self.location == "cam3":
-                    self.rmove(["cam2a", "leftdoor", "cam2b"])
-                if self.location == "cam2b":
-                    self.rmove(["cam2a", "leftdoor", "cam1a"])
-                if self.location == "leftdoor":
-                    self.think()
-                if self.location == "inside":
-                    pass
+                if self.agressiveness == 0:
+                    if self.location == "cam1a":
+                        self.rmove(["cam1b", "cam5"])
+                    if self.location == "cam1b":
+                        self.rmove(["cam5", "cam2a"])
+                    if self.location == "cam5":
+                        self.rmove(["cam1b", "cam2a"])
+                    if self.location == "cam2a":
+                        self.rmove(["cam1b", "cam3"])
+
+                if self.agressiveness == 1:
+                    if self.location "cam1a":
+                        self.rmove(["cam1b", "cam5", "cam5", "cam2a"])
+                    if self.location == "cam1b":
+                        self.rmove(["cam5", "cam2a"])
+                    if self.location == "cam5":
+                        self.rmove(["cam1b", "cam2a"])
+                    if self.location == "cam2a":
+                        self.rmove(["cam3", "cam1b", "cam2b"])
+                    if self.location == "cam3":
+                        self.rmove(["cam2a", "cam2b", "cam1b"])
+                    if self.location == "cam2b":
+                        self.rmove(["leftdoor", "cam2a", "cam3", "cam1b"])
+                    if self.location == "leftdoor":
+                        pass
+
+                if self.agressiveness == 2:
+                    if self.location == "cam1a":
+                        self.rmove(["cam1b", "cam5", "cam2a"])
+                    if self.location == "cam1b":
+                        self.rmove(["cam5", "cam2a", "cam2a"])
+                    if self.location == "cam5":
+                        self.rmove(["cam1b", "cam2a"])
+                    if self.location == "cam2a":
+                        self.rmove(["cam3", "cam2b"])
+                    if self.location == "cam3":
+                        self.rmove(["cam2a", "cam2b"])
+                    if self.location == "cam2b":
+                        self.rmove(["leftdoor", "cam2a", "cam3", "cam1b", "leftdoor"])
+                    if self.location == "leftdoor":
+                        pass
+
+                if self.agressiveness == 3:
+                    if self.location == "cam1a":
+                        self.rmove(["cam1b"])
+                    if self.location == "cam1b":
+                        self.rmove(["cam2a"])
+                    if self.location == "cam5":
+                        self.rmove(["cam1b"])
+                    if self.location == "cam2a":
+                        self.rmove(["cam2b", "leftdoor"])
+                    if self.location == "cam3":
+                        self.rmove(["cam2b", "leftdoor"])
+                    if self.location == "cam2b":
+                        self.rmove(["leftdoor"])
+                    if self.location == "leftdoor":
+                        pass
+
                 time.sleep(random.randint(20, 25) / self.ailvl)
                 self.think()
                 return None
