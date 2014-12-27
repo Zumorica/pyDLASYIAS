@@ -52,15 +52,13 @@ class animatronic(object): #Animatronics' class.
 
     def rmove(self, room): #Random move. Moves an animatronic (or not) to a location or locations. CAUTION: ROOM MUST BE A LIST.
         self.choice = random.choice(list(room))
-        debug.debugprint("%s's choice was %s" % (self.name, self.choice), self)
-        if random.randint(0, self.ailvl) in range(0, self.ailvl):
+        debug.debugprint("%s chose %s" % (self.name, self.choice), self)
+        if random.randint(0, int(self.ailvl)) in range(int(self.ailvl)):
             self.location = self.choice
-            debug.debugprint("%s moved to %s" % (self.name, self.choice), self)
-            return None
-
+            debug.debugprint("%s has been moved to %s" % (self.name, self.location), self)
         else:
-            debug.debugprint("%s didn't move at all" % (self.name), self)
-            return None
+            debug.debugprint("%s didn't move from its location" % (self.name), self)
+        return None
 
     def think(self):
         if self.location == "off": #Shuts down the AI
