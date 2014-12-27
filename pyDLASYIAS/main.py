@@ -63,6 +63,13 @@ class main(object):
             if self.power <= 0 - 1:
                 self.blackout()
             else:
+                if self.power < 30:
+                    for animatronic in animatronics:
+                        if animatronic.agressiveness != 3:
+                            animatronic.agressiveness = 2
+                if self.power < 15:
+                    for animatronic in animatronics:
+                        animatronic.agressiveness = 3
                 self.usedpow = random.randint(1, 2) #Since I can't change the usage when a timer has been set, it randomly takes more power.
                 self.power -= self.usedpow
                 debug.debugprint("Power goes down by %s" % (self.usedpow))
@@ -93,6 +100,19 @@ class main(object):
             return None
         else:
             self.time += 1
+            if self.time == 1:
+                for animatronic in animatronics:
+                    if animatronic.agressiveness < 2:
+                        animatronic.agressiveness = 1
+
+            if self.time == 3:
+                for animatronic in animatronics:
+                    if animatronic.agressiveness < 3:
+                        animatronic.agressiveness = 2
+
+            if self.time == 5:
+                for animatronic in animatronics:
+                    animatronic.agressiveness = 3
             threading.Timer(self.sectohour, self.hourTimer).start()
             return None
 

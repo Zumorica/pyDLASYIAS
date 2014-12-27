@@ -54,7 +54,7 @@ class animatronic(object): #Animatronics' class.
     def rmove(self, room): #Random move. Moves an animatronic (or not) to a location or locations. CAUTION: ROOM MUST BE A LIST.
         self.choice = random.choice(list(room))
         debug.debugprint("%s chose %s" % (self.name, self.choice), self)
-        if random.randint(0, int(self.ailvl)) in range(int(self.ailvl)):
+        if random.randint(0, int(self.ailvl)) in range(int(self.ailvl / 2)):
             self.location = self.choice
             debug.debugprint("%s has been moved to %s" % (self.name, self.location), self)
         else:
@@ -82,6 +82,8 @@ class animatronic(object): #Animatronics' class.
                         self.rmove(["cam1b", "cam6"])
                     if self.location == "cam6":
                         self.rmove(["cam1b", "cam7"])
+                    if random.randint(0, int(self.ailvl)) in range(0, int(self.ailvl / 2)):
+                        self.agressiveness = 1
 
                 if self.agressiveness == 1:
                     if self.location == "cam1a":
@@ -100,6 +102,8 @@ class animatronic(object): #Animatronics' class.
                         pass
                     if self.location == "inside":
                         pass
+                    if random.randint(0, int(self.ailvl)) in range(0, int(self.ailvl / 3)):
+                        self.agressiveness = 2
 
                 if self.agressiveness == 2:
                     if self.location == "cam1a":
@@ -118,6 +122,8 @@ class animatronic(object): #Animatronics' class.
                         pass
                     if self.location == "inside":
                         pass
+                    if random.randint(0, int(self.ailvl)) in range(0, int(self.ailvl / 4)):
+                        self.agressiveness = 3
 
                 if self.agressiveness == 3:
                     if self.location == "cam1a":
@@ -156,9 +162,11 @@ class animatronic(object): #Animatronics' class.
                         self.rmove(["cam1b", "cam2a"])
                     if self.location == "cam2a":
                         self.rmove(["cam1b", "cam3"])
+                    if random.randint(0, int(self.ailvl)) in range(0, int(self.ailvl / 2)):
+                        self.agressiveness = 1
 
                 if self.agressiveness == 1:
-                    if self.location "cam1a":
+                    if self.location == "cam1a":
                         self.rmove(["cam1b", "cam5", "cam5", "cam2a"])
                     if self.location == "cam1b":
                         self.rmove(["cam5", "cam2a"])
@@ -172,6 +180,8 @@ class animatronic(object): #Animatronics' class.
                         self.rmove(["leftdoor", "cam2a", "cam3", "cam1b"])
                     if self.location == "leftdoor":
                         pass
+                    if random.randint(0, int(self.ailvl)) in range(0, int(self.ailvl / 3)):
+                        self.agressiveness = 2
 
                 if self.agressiveness == 2:
                     if self.location == "cam1a":
@@ -188,6 +198,8 @@ class animatronic(object): #Animatronics' class.
                         self.rmove(["leftdoor", "cam2a", "cam3", "cam1b", "leftdoor"])
                     if self.location == "leftdoor":
                         pass
+                    if random.randint(0, int(self.ailvl)) in range(0, int(self.ailvl / 4)):
+                        self.agressiveness = 3
 
                 if self.agressiveness == 3:
                     if self.location == "cam1a":
