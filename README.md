@@ -3,7 +3,7 @@ pyDLASYIAS (pyDon't let animatronics stuff you in a suit)
 
 pyDLASYIAS is a text-clone of the horror game Five nights at Freddy's.
 This "text-clone" aims to recreate the gameplay from the original game and make it fully customizable.
-The game needs python 2.7 to run. It will also always be free and open-sourced.
+The game needs python 3+ to run. It will also always be free and open-sourced.
 
 =======================================================
 
