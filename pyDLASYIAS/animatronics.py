@@ -8,9 +8,9 @@ class animatronic(object): #Animatronics' class.
         self.name = name         #Name will be used for printing things.
         self.kind = kind         #Kinds: Chicken / Rabbit / Bear (WIP) / Fox
         self.ailvl = ailvl       #AI LVL. 1 - 20. ("0 AI LVL" is impossible to achieve, because you can't divide by zero.)
-        self.location = location #This location determines where the animatronics are.
+        self.location = location #This determines where the animatronics are.
         self.slocation = location #Starting location.
-        self.agressiveness = 0 #0: Low / 1: Mid-agressive / 2: Agressive / 3: OH MY GOD WHY ARE YOU DOING THIS TO ME PLS STAHP DSADSDJASMDONSAINGA *ded*
+        self.agressiveness = 0 #0: Low / 1: Mid-agressive / 2: Agressive / 3: Very agressive
         Globals.animatronics.append(self) #Appends itself to animatronics' list.
         if self.kind == "fox":   #Foxkind variables.
             self.foxstatus = 0 #0 = Hiding. 1 = Peeking. 2 = Looking thro. 3 = Out 4 = About to sprint 5 = Sprinting
@@ -26,6 +26,7 @@ class animatronic(object): #Animatronics' class.
             debug.debugprint("%s's AI started." % (self.name.upper()), self)
             if self.kind == "bear":
                 if self.ailvl > 5:
+                    self.agressiveness = 3
                     debug.debugprint("%s's AI IS NOW ACTIVE!" % (self.name.upper()), self)
                     self.dmove("cam1a")
                 else:
@@ -226,11 +227,13 @@ class animatronic(object): #Animatronics' class.
                 debug.debugprint("%s is thinking..." % (self.name), self)
                 time.sleep(random.randint(20, 25) / self.ailvl)
                 if self.foxstatus == 4:
+                    self.agressiveness = 2
                     time.sleep(100 / self.ailvl)
                     self.foxstatus = 5
 
 
                 if self.foxstatus >= 5:
+                    self.agressiveness = 3
                     debug.debugprint("%s is sprinting towards the Security Office." % (self.name), self)
                     time.sleep(20 / self.ailvl)
                     self.location = "cam2a"
@@ -239,6 +242,7 @@ class animatronic(object): #Animatronics' class.
 
                 if self.foxtseen >= 1:
                     debug.debugprint("%s status remains at %s." % (self.name, self.foxstatus), self)
+                    self.agressiveness = 1
                     self.foxsleep += self.foxtseen
                     self.basesleep = random.randint(150, 200) / self.ailvl
                     self.foxtseen = 0
