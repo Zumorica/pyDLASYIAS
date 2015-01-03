@@ -1,5 +1,7 @@
 def init():
-    global animatronics, camdic, adjcam, debug
+    global animatronics, camdic, adjcam, debug, m, version
+
+    version = "v0.5-alpha"
 
     debug = False #Debug variable. If set to true, prints debug info into the console.
 
