@@ -19,6 +19,7 @@ def launcher():
         fox = animatronics.animatronic("Fox", "fox", int(folvl), "cam1c")
         bear = animatronics.animatronic("Bear", "bear", int(belvl))
         m = main.main("custom", 100, 0)
+        return None
 
     if inp == "2":
         rabbit = animatronics.animatronic("Rabbit", "rabbit", 20)
@@ -26,24 +27,29 @@ def launcher():
         fox = animatronics.animatronic("Fox", "fox", 20, "cam1c")
         bear = animatronics.animatronic("Bear", "bear", 20)
         m = main.main("custom", 100, 0)
+        return None
 
     if inp == "3":
         inp = input("Input test mode code: ")
         if inp == "1": #Death debugging.
             rabbit = animatronics.animatronic("Rabbit", "rabbit", 20, "inside")
             m = main.main("custom", 10, 0)
+            return None
 
         if inp == "2": #Bear behavior debugging.
             bear = animatronics.animatronic("Bear", "bear", 20, "cam1a")
             m = main.main("survival", 100, 0)
+            return None
 
-        if inp == "3":
+        if inp == "3": #Chicken debugging.
             chicken = animatronics.animatronic("Chicken", "chicken", 20, "cam1a")
             m = main.main("survival", 100, 0)
+            return None
 
         else:
             print("Code invalid. Going back to the menu...")
             launcher()
+            return None
 
     else:
         launcher()
