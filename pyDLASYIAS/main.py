@@ -5,6 +5,7 @@ import pyDLASYIAS.utils.cls as cls
 
 class main(object):
     def __init__(self, gmode="custom", power=100, time=0, sectohour=86, usage=9.6):
+        debug.debugprint("pyDLASYIAS %s started. Setting up game variables..." % (Globals.version))
         sys.setrecursionlimit(5000) #Magic.
         threading.stack_size(128*4096) #Magic.
         self.animlvlsum = 0
@@ -23,12 +24,15 @@ class main(object):
         self.sectohour = sectohour #Seconds needed for a IN-GAME hour
         self.usage = usage #Int variable. Amount of seconds required to lose one porcent of power.
         self.camon = False #False = Not viewing cams / True = Viewing cams.
+        debug.debugprint("Variables set. Initializing the timers and the security Office...")
         if self.gmode != "survival": #Initializes the hour timer if the gamemode isn't survival.
             self.hourTimer()
         self.powerTimer() #Power timer.
         _thread.start_new_thread(self.checkDoorTimer, ()) #These two threads checks if there's animatronics at the left or right doors and moves them into your office.
         _thread.start_new_thread(self.foxkindDoorCheck, ())
         self.securityOffice() #The main gameplay aspect
+        debug.debugprint("The game has now finished.")
+
 
     def shutdown(self): #Shuts down the whole game.
         debug.debugprint("Shutting down...")
@@ -426,7 +430,8 @@ class main(object):
             if self.usrinput in ["exit", "close", "x", "e", "c"]:
                 time.sleep(1)
                 for animatronic in Globals.animatronics: #Checks if there's "someone" inside...
-                    if animatronic.location == "inside" and animatronic.kind != "bear":
+                    if animatronic.location.lower() == "inside":
+                        debug.debugprint("%s was inside!" % (animatronic.name), animatronic)
                         self.die(animatronic)
 
                     else:
@@ -451,7 +456,15 @@ class main(object):
 
 
     def die(self, animatronic):
-        if animatronic.kind == "rabbit" or animatronic.kind == "chicken":
+        if animatronic.kind == "chicken":
+            self.killed = True
+            cls.cls(1)
+            print("%s jumps at your face as a loud screech comes from the animatronic." % (animatronic.name))
+            print("%s got you..." % (animatronic.name))
+            print("Game over.")
+            self.shutdown()
+
+        if animatronic.kind == "rabbit":
             self.killed = True
             cls.cls(1)
             print("%s jumps at your face as a loud screech comes from the animatronic." % (animatronic.name))
