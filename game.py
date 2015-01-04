@@ -3,6 +3,7 @@ import pyDLASYIAS.Globals as Globals
 import pyDLASYIAS.animatronics as animatronics
 import pyDLASYIAS.main as main
 
+
 def launcher():
     print("pyDon't let animatronics stuff you in a suit -pyDLASYIAS-")
     print("1 - Custom night")
@@ -54,5 +55,8 @@ def launcher():
     else:
         launcher()
 
-if __name__ == '__main__':
-    launcher()
+try:
+    if __name__ == '__main__':
+        launcher()
+except:
+    Globals.log.write("\n Unexpected error: %s %s \n" % (sys.exc_info()[0], time.strftime("%H:%M:%S")))
