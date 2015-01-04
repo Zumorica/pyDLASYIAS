@@ -25,11 +25,7 @@ class animatronic(object): #Animatronics' class.
                 self.ailvl = 0.5
             debug.debugprint("%s's AI started." % (self.name.upper()), self)
             if self.kind == "bear":
-                if self.ailvl > 5:
-                    debug.debugprint("%s's AI IS NOW ACTIVE!" % (self.name.upper()), self)
-                    self.dmove("cam1a")
-                else:
-                    self.dmove("off")
+                self.dmove("cam1a")
 
             _thread.start_new_thread(self.think, ()) #Multithreading. This makes the game possible
 
@@ -275,7 +271,7 @@ class animatronic(object): #Animatronics' class.
                                 self.rmove(["cam1b"])
                                 print("")
                                 print("A deep laugh can be heard.")
-                                print("> ")
+                                sys.stdout.write("> ")
                                 self.think()
                         else:
                             self.think()
@@ -285,7 +281,7 @@ class animatronic(object): #Animatronics' class.
                         if self.bseen == False:
                                 print("")
                                 print("A deep laugh can be heard.")
-                                print("> ")
+                                sys.stdout.write("> ")
                                 self.rmove(["cam7"])
                         else:
                             self.think()
@@ -294,7 +290,7 @@ class animatronic(object): #Animatronics' class.
                         if self.bseen == False:
                                 print("")
                                 print("A deep laugh can be heard.")
-                                print("> ")
+                                sys.stdout.write("> ")
                                 self.rmove(["cam6"])
                         else:
                             self.think()
@@ -303,7 +299,7 @@ class animatronic(object): #Animatronics' class.
                         if self.bseen == False:
                                 print("")
                                 print("A deep laugh can be heard.")
-                                print("> ")
+                                sys.stdout.write("> ")
                                 self.rmove(["cam4b"])
 
                     if self.location == "cam4b":
