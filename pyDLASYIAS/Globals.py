@@ -1,5 +1,5 @@
 def init():
-    global animatronics, camdic, adjcam, debug, m, version
+    global animatronics, camdic, adjcam, debug, m, version, log
 
     version = "v0.5-alpha"
 
