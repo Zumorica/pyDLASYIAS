@@ -22,7 +22,7 @@ class main(object):
         self.usrinput = "" #User input. Used in self.securityOffice() and self.cam()
         self.time = time - 1 #The "-1" is there because the timer automatically sums 1 to the variable.
         self.sectohour = sectohour #Seconds needed for a IN-GAME hour
-        self.usage = usage #Int variable. Amount of seconds required to lose one porcent of power.
+        self.usage = 1 #1 Usage: 9.6 / 2 Usage: 4.8 / 3 Usage: 2.8 - 2.9 - 3.9 / 4 Usage: 1.9 - 2.9
         self.camon = False #False = Not viewing cams / True = Viewing cams.
         debug.debugprint("Variables set. Initializing the timers and the security Office...")
         if self.gmode != "survival": #Initializes the hour timer if the gamemode isn't survival.
@@ -74,11 +74,17 @@ class main(object):
                 if self.power < 15:
                     for animatronic in Globals.animatronics:
                         animatronic.agressiveness = 3
-                self.usedpow = random.randint(1, 2) #Since I can't change the usage when a timer has been set, it randomly takes more power.
-                self.power -= self.usedpow
-                debug.debugprint("Power goes down by %s" % (self.usedpow))
-                threading.Timer(int(self.usage), self.powerTimer).start()
-            return None
+                self.power -= 1
+                #threading.Timer(int(self.usage), self.powerTimer).start()
+                if self.usage == 1:
+                    threading.Timer(9.6, self.powerTimer).start()
+                elif self.usage == 2:
+                    threading.Timer(4.8, self.powerTimer).start()
+                elif self.usage == 3:
+                    threading.Timer(random.choice([2.8, 2.9, 3.9]), self.powerTimer).start()
+                elif self.usage >= 4:
+                    threading.Timer(random.choice([1.9, 2.9]), self.powerTimer).start()
+        return None
 
     def hourTimer(self): #Timer for the IN-GAME time.
         if self.time >= 6 and self.killed != True: #This is what happens after 6AM. Yay!
@@ -101,7 +107,6 @@ class main(object):
                 print("(See you next week!)")
                 print("You get 120$")
             self.shutdown()
-            return None
         else:
             self.time += 1
             if self.time == 1:
@@ -118,7 +123,7 @@ class main(object):
                 for animatronic in Globals.animatronics:
                     animatronic.agressiveness = 3
             threading.Timer(self.sectohour, self.hourTimer).start()
-            return None
+        return None
 
     def checkDoorTimer(self): #"Timer" that checks if there are animatronics at the doors
         for animatronic in Globals.animatronics: #Checks for animatronics
@@ -186,7 +191,7 @@ class main(object):
         if self.power < 0 or self.time >= 6 or self.killed == True: #Checks if there's a blackout/You survived/You're dead
             pass
         else: #Prints power, time...
-            print("----- %s %s power left. After %s seconds, 1 %s power is lost." % (self.power, "%", self.usage, "%"))
+            print("----- %s %s power left. Usage: %s" % (self.power, "%", self.usage))
             print("Security Office")
             if self.gmode == "survival":
                 print("----- SURVIVAL MODE")
@@ -209,7 +214,6 @@ class main(object):
                     Globals.debug = False
                 else:
                     Globals.debug = True
-                debug.debugprint("If you see this, debug mode is now enabled!")
                 self.securityOffice()
                 return None
             #Power
@@ -220,8 +224,14 @@ class main(object):
 
             #Cameras
             if self.usrinput in ["cam", "sec cam", "security cam", "camera", "cams", "cm", "cameras"]:
+                if self.leftlight == True:
+                    self.usage -= 1
+                    self.leftlight = False
+                if self.rightlight == True:
+                    self.usage -= 1
+                    self.rightlight = False
                 cls.cls(0.5, 0.5)
-                self.usage -= 2.4
+                self.usage += 1
                 self.camon = True
                 self.cam()
                 return None
@@ -237,14 +247,14 @@ class main(object):
                 if self.leftdoor == False:
                     print("Closed left door.")
                     self.leftdoor = True
-                    self.usage -= 3 #2.4 / 2,4
+                    self.usage += 1
                     self.securityOffice()
                     return None
 
                 if self.leftdoor == True:
                     print("Opened left door.")
                     self.leftdoor = False
-                    self.usage += 3
+                    self.usage -= 1
                     self.securityOffice()
                     return None
 
@@ -259,14 +269,14 @@ class main(object):
                 if self.rightdoor == False:
                     print("Closed right door.")
                     self.rightdoor = True
-                    self.usage -= 3
+                    self.usage += 1
                     self.securityOffice()
                     return None
 
                 if self.rightdoor == True:
                     print("Opened right door.")
                     self.rightdoor = False
-                    self.usage += 3
+                    self.usage -= 1
                     self.securityOffice()
                     return None
 
@@ -280,7 +290,7 @@ class main(object):
                 if self.leftlight == True:
                     print("Left light is now OFF.")
                     self.leftlight = False
-                    self.usage += 1.2
+                    self.usage -= 1
                     self.securityOffice()
                     return None
 
@@ -289,8 +299,8 @@ class main(object):
                     if self.rightlight == True:
                         print("Right light is now OFF.")
                         self.rightlight = False
-                        self.usage += 1.2
-                    self.usage -= 1.2
+                        self.usage -= 1
+                    self.usage += 1
                     print("Left light is now ON.")
                     self.foxkindDoorCheck()
                     for animatronic in Globals.animatronics:
@@ -309,7 +319,7 @@ class main(object):
                 if self.rightlight == True:
                     print("Right light is now OFF.")
                     self.rightlight = False
-                    self.usage += 1.2
+                    self.usage -= 1
                     self.securityOffice()
                     return None
 
@@ -318,8 +328,8 @@ class main(object):
                     if self.leftlight == True:
                         print("Left light is now OFF.")
                         self.leftlight = False
-                        self.usage += 1.2
-                    self.usage -= 1.2
+                        self.usage -= 1
+                    self.usage += 1
                     print("Right light is now ON.")
                     for animatronic in Globals.animatronics:
                         if animatronic.location == "rightdoor":
@@ -385,14 +395,6 @@ class main(object):
                     self.shutdown()
 
     def cam(self): #Camera mode. You can watch the animatronics from here.
-        if self.leftlight == True:
-            self.usage += 1.2
-            self.leftlight = False
-
-        if self.rightlight == True:
-            self.usage += 1.2
-            self.rightlight = False
-
         if self.killed == True or self.time >= 6 or self.power == 0 - 1:
             pass
         else:
@@ -405,7 +407,7 @@ class main(object):
 
             #Looks at a certain camera to see if something or someone is there.
             if self.usrinput in list(Globals.camdic.keys()):
-                print("----- %s %s power left. After %s seconds, 1 %s power is lost." % (self.power, "%", self.usage, "%"))
+                print("----- %s %s power left. Usage: %s" % (self.power, "%", self.usage))
                 print(Globals.camdic[self.usrinput] + " [Camera Mode]")
                 if self.gmode == "survival":
                     print("----- SURVIVAL MODE")
@@ -428,19 +430,20 @@ class main(object):
 
             #Closes camera mode. Also handles certains game overs.
             if self.usrinput in ["exit", "close", "x", "e", "c"]:
-                time.sleep(1)
+                cls.cls(0.5, 0.5)
                 for animatronic in Globals.animatronics: #Checks if there's "someone" inside...
                     if animatronic.location.lower() == "inside":
                         debug.debugprint("%s was inside!" % (animatronic.name), animatronic)
                         self.die(animatronic)
-
-                    else:
-                        self.usage += 2.4
-                        self.securityOffice()
                         return None
-                        for animatronic in Globals.animatronics:
-                            if animatronic.kind == "bear":
-                                animatronic.bseen = False
+
+                for animatronic in Globals.animatronics:
+                    if animatronic.kind == "bear":
+                        animatronic.bseen = False
+                    self.usage -= 1
+                    self.securityOffice()
+                    return None
+
 
 
 
@@ -458,7 +461,7 @@ class main(object):
     def die(self, animatronic):
         if animatronic.kind == "chicken":
             self.killed = True
-            cls.cls(1)
+            cls.cls(0.5, 0.5)
             print("%s jumps at your face as a loud screech comes from the animatronic." % (animatronic.name))
             print("%s got you..." % (animatronic.name))
             print("Game over.")
@@ -466,7 +469,7 @@ class main(object):
 
         if animatronic.kind == "rabbit":
             self.killed = True
-            cls.cls(1)
+            cls.cls(0.5, 0.5)
             print("%s jumps at your face as a loud screech comes from the animatronic." % (animatronic.name))
             print("%s got you..." % (animatronic.name))
             print("Game over.")
@@ -474,7 +477,7 @@ class main(object):
 
         if animatronic.kind == "bear":
             self.killed = True
-            cls.cls(1)
+            cls.cls(0.5, 0.5)
             print("%s grabs you and jumps at your face. A really loud screech can be heard." % (animatronic.name))
             print("%s got you..." % (animatronic.name))
             print("Game over...")
@@ -482,7 +485,7 @@ class main(object):
 
         if animatronic.kind == "fox":
             self.killed = True
-            cls.cls(1)
+            cls.cls(0.5, 0.5)
             print("%s enters the room as a loud screech can be heard." % (animatronic.name))
             print("%s got you..." % (animatronic.name))
             print("Game over...")
@@ -512,7 +515,7 @@ class main(object):
                     animatronic.foxstatus = 5
                     animatronic.think()
                     print("You see %s sprinting down the hall." % (animatronic.name))
-                    time.sleep(1)
+                    self.usage -= 1
                     self.securityOffice()
                     return None
                 if animatronic.location == cam and animatronic.kind != "fox":
