@@ -4,8 +4,9 @@ import pyDLASYIAS.utils.debug as debug
 import pyDLASYIAS.utils.cls as cls
 
 class main(object):
-    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, usage=9.6):
+    def __init__(self, gmode="custom", power=100, time=0, sectohour=86):
         debug.debugprint("pyDLASYIAS %s started. Setting up game variables..." % (Globals.version))
+        Globals.m = self
         sys.setrecursionlimit(5000) #Magic.
         threading.stack_size(128*4096) #Magic.
         self.animlvlsum = 0
@@ -94,6 +95,7 @@ class main(object):
             cls.cls(4.5, 0.5)
             if self.gmode == "custom":
                 print("NOTICE OF TERMINATION:")
+                print("(You're fired)")
                 print("Reason: Tampering with the animatronics.")
                 print("General unproffesionalism. Odor.")
                 print("")
