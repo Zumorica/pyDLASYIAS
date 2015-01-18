@@ -14,6 +14,7 @@ class main(object):
         for animatronic in Globals.animatronics:
             self.animlvlsum += animatronic.ailvl
             self.ailvl = self.animlvlsum / len(Globals.animatronics) #This is the lvl of the night.
+        del self.animlvlsum
         self.leftdoor = False #False = Open / True = Closed
         self.rightdoor = False #Same ^^^^^^^^^^^^^^
         self.leftlight = False #False = Off / True = On
@@ -109,6 +110,7 @@ class main(object):
                 print("(See you next week!)")
                 print("You get 120$")
             self.shutdown()
+            
         else:
             self.time += 1
             if self.time == 1:
@@ -131,10 +133,10 @@ class main(object):
         for animatronic in Globals.animatronics: #Checks for animatronics
             if animatronic.location == "leftdoor": #If animatronic is at left door
                 time.sleep(20 / animatronic.ailvl)
-                if self.leftdoor == True: #If leftdoor is closed
+                if self.leftdoor: #If leftdoor is closed
                     animatronic.rmove(["cam1b"]) #Go back to cam1b or not
 
-                else: #Else if leftdoor is open
+                if not self.leftdoor: #Else if leftdoor is open
                     time.sleep(20 / animatronic.ailvl)
                     animatronic.rmove(["inside"]) #Random move the animatronic inside or not.
                     if self.ailvl > 12 and animatronic.location == "inside": #If AILVL is over 12 and the animatronic is inside...
