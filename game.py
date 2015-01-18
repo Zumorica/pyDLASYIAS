@@ -9,7 +9,8 @@ def launcher():
     print("pyDon't let animatronics stuff you in a suit -pyDLASYIAS-")
     print("1 - Custom night")
     print("2 - 20/20/20/20 mode")
-    print("3 - Test option please ignore")
+    print("3 - Random night. W.I.P -BUGGY/EXPERIMENTAL-")
+    print("4 - Test option please ignore")
     inp = input("> ")
     if inp == "1":
         belvl = input("Input Bear's AI LVL: ")
@@ -32,6 +33,18 @@ def launcher():
         return None
 
     if inp == "3":
+        rabbit = animatronics.animatronic("Rabbit", "rabbit", random.randint(1, 20))
+        print("Rabbit's AILVL is %s" % (rabbit.ailvl))
+        chicken = animatronics.animatronic("Chicken", "chicken", random.randint(1, 20))
+        print("Chicken's AILVL is %s" % (chicken.ailvl))
+        fox = animatronics.animatronic("Fox", "fox", random.randint(1, 20), "cam1c")
+        print("Fox's AILVL is %s" % (fox.ailvl))
+        bear = animatronics.animatronic("Bear", "bear", random.randint(1, 20))
+        print("Bear's AILVL is %s" % (bear.ailvl))
+        main.main("custom", random.randint(50, 100), random.randint(0, 6))
+        return None
+
+    if inp == "4":
         inp = input("Input test mode code: ")
         if inp == "1": #Death debugging.
             rabbit = animatronics.animatronic("Rabbit", "rabbit", 20, "inside")
