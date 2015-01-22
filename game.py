@@ -10,7 +10,8 @@ def launcher():
     print("1 - Custom night")
     print("2 - 20/20/20/20 mode")
     print("3 - Random night. W.I.P -BUGGY/EXPERIMENTAL-")
-    print("4 - Test option please ignore")
+    print("4 - Real-time mode! (With limited power)")
+    print("5 - Test option please ignore")
     inp = input("> ")
     if inp == "1":
         belvl = input("Input Bear's AI LVL: ")
@@ -45,6 +46,17 @@ def launcher():
         return None
 
     if inp == "4":
+        belvl = input("Input Bear's AI LVL: ")
+        ralvl = input("Input Rabbit's AI LVL: ")
+        chilvl = input("Input Chicken's AI LVL: ")
+        folvl = input("Input Fox's AI LVL: ")
+        rabbit = animatronics.animatronic("Rabbit", "rabbit", int(ralvl))
+        chicken = animatronics.animatronic("Chicken", "chicken", int(chilvl))
+        fox = animatronics.animatronic("Fox", "fox", int(folvl), "cam1c")
+        bear = animatronics.animatronic("Bear", "bear", int(belvl))
+        main.main("custom", 100, 0, sectohour=3600)
+
+    if inp == "5":
         inp = input("Input test mode code: ")
         if inp == "1": #Death debugging.
             rabbit = animatronics.animatronic("Rabbit", "rabbit", 20, "inside")
