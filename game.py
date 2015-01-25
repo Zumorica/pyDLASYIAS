@@ -7,7 +7,9 @@ import _thread
 import threading
 import pyDLASYIAS.Globals as Globals
 import pyDLASYIAS.animatronics as animatronics
+import pyDLASYIAS.sprite as sprite
 import pyDLASYIAS.main as main
+
 
 
 def launcher():
@@ -91,3 +93,4 @@ try:
         launcher()
 except:
     Globals.log.write("\n Unexpected error: %s %s \n" % (sys.exc_info()[0], time.strftime("%H:%M:%S")))
+    raise

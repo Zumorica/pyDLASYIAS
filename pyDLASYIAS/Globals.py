@@ -1,7 +1,7 @@
 def init():
-    global animatronics, camdic, adjcam, debug, m, version, log
+    global animatronics, camdic, adjcam, debug, m, version, log, BLACK, RED, GREEN, BLUE, WHITE
 
-    version = "v0.5-alpha"
+    version = "v0.5-alpha (GUI)"
 
     debug = False #Debug variable. If set to true, prints debug info into the console.
 
@@ -29,6 +29,13 @@ def init():
               "cam2b" : ["inside", "cam2a"],
               "cam4a" : ["cam1b", "cam4b"],
               "cam4b" : ["cam4a", "inside"]}
+
+    BLACK = (0, 0, 0)
+    RED = (255, 0, 0)
+    GREEN = (0, 255, 0)
+    BLUE = (0, 0, 255)
+    WHITE = (255, 255, 255)
+
 
 if __name__ == "__main__":
     try:
