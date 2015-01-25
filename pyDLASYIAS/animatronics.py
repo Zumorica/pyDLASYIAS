@@ -271,7 +271,7 @@ class animatronic(object): #Animatronics' class.
                                 self.rmove(["cam1b"])
                                 print("")
                                 print("A deep laugh can be heard.")
-                                sys.stdout.write("> ")
+                                print("> ", end="")
                                 self.think()
                         else:
                             self.think()
@@ -281,7 +281,7 @@ class animatronic(object): #Animatronics' class.
                         if self.bseen == False:
                                 print("")
                                 print("A deep laugh can be heard.")
-                                sys.stdout.write("> ")
+                                print("> ", end="")
                                 self.rmove(["cam7"])
                         else:
                             self.think()
@@ -290,7 +290,7 @@ class animatronic(object): #Animatronics' class.
                         if self.bseen == False:
                                 print("")
                                 print("A deep laugh can be heard.")
-                                sys.stdout.write("> ")
+                                print("> ", end="")
                                 self.rmove(["cam6"])
                         else:
                             self.think()
@@ -299,7 +299,7 @@ class animatronic(object): #Animatronics' class.
                         if self.bseen == False:
                                 print("")
                                 print("A deep laugh can be heard.")
-                                sys.stdout.write("> ")
+                                print("> ", end="")
                                 self.rmove(["cam4b"])
 
                     if self.location == "cam4b":
@@ -307,7 +307,7 @@ class animatronic(object): #Animatronics' class.
                         if self.bseen == False:
                             print("")
                             print("A deep laugh can be heard.")
-                            print("> ")
+                            print("> ", end="")
                             self.rmove(["inside", "cam4a", "cam4a"])
 
                     if self.location == "rightdoor":
@@ -325,3 +325,9 @@ class animatronic(object): #Animatronics' class.
             elif animatronic.location == cam:
                 return True
         return False
+
+if __name__ == "__main__":
+    try:
+        raise Warning
+    except Warning:
+        print("You must execute game.py")

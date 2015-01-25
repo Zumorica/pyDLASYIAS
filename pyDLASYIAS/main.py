@@ -1,4 +1,10 @@
-import sys, os, time, random, _thread, threading
+#!/usr/bin/env python
+import sys
+import os
+import time
+import random
+import _thread
+import threading
 import pyDLASYIAS.Globals as Globals
 import pyDLASYIAS.utils.debug as debug
 import pyDLASYIAS.utils.cls as cls
@@ -110,7 +116,7 @@ class main(object):
                 print("(See you next week!)")
                 print("You get 120$")
             self.shutdown()
-            
+
         else:
             self.time += 1
             if self.time == 1:
@@ -575,3 +581,9 @@ class main(object):
                     print("%s is here." % (animatronic.name))
                 if animatronic.location == cam and animatronic.kind == "bear":
                     print("%s" % (random.choice(["...huh?", "W-What's that?", "..."])))
+
+if __name__ == "__main__":
+    try:
+        raise Warning
+    except Warning:
+        print("You must execute game.py")

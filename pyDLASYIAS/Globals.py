@@ -29,3 +29,9 @@ def init():
               "cam2b" : ["inside", "cam2a"],
               "cam4a" : ["cam1b", "cam4b"],
               "cam4b" : ["cam4a", "inside"]}
+
+if __name__ == "__main__":
+    try:
+        raise Warning
+    except Warning:
+        print("You must execute game.py")

@@ -18,3 +18,9 @@ def debugprint(text, animatronic=None, writetolog=True):
             print("%s -%s BEHAVIOR- -AI LVL: %s- -AGRE.: %s- -%s- %s \n" % (text, animatronic.kind.upper(), animatronic.ailvl, animatronic.agressiveness, animatronic.location.upper(), time.strftime("%H:%M:%S")))
 
     return None
+
+if __name__ == "__main__":
+    try:
+        raise Warning
+    except Warning:
+        print("You must execute game.py")

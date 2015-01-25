@@ -1,5 +1,10 @@
 #!/usr/bin/env python
-import sys, os, time, random, _thread, threading
+import sys
+import os
+import time
+import random
+import _thread
+import threading
 import pyDLASYIAS.Globals as Globals
 import pyDLASYIAS.animatronics as animatronics
 import pyDLASYIAS.main as main
