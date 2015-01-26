@@ -19,7 +19,7 @@ class Sprite(pygame.sprite.Sprite):
         #self.rect = self.rect.fit(Globals.m.screen.get_rect())
 
     def changeImg(self, image):
-        self.image = pygame.image.load(image)
+        self.image = pygame.image.load(os.path.join("images", str(image)) + ".png")
 
         self.image = self.image.convert_alpha()
 

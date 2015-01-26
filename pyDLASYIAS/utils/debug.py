@@ -13,7 +13,7 @@ def debugprint(text, animatronic=None, writetolog=True):
 
     if Globals.debug == True:
         if animatronic == None:
-            print("%s -%s USAGE- -%s POWER- -%s TIME IN-GAME- -%s- \n" % (text, time.strftime("%H:%M:%S")))
+            print("%s -%s- \n" % (text, time.strftime("%H:%M:%S")))
         else:
             print("%s -%s BEHAVIOR- -AI LVL: %s- -AGRE.: %s- -%s- %s \n" % (text, animatronic.kind.upper(), animatronic.ailvl, animatronic.agressiveness, animatronic.location.upper(), time.strftime("%H:%M:%S")))
 

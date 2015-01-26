@@ -16,8 +16,6 @@ class main(object):
     def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1600, height=720, fps=30):
         debug.debugprint("pyDLASYIAS %s started. Setting up game variables..." % (Globals.version))
 
-        Globals.m = self
-
         sys.setrecursionlimit(5000) #Magic.
         threading.stack_size(128*4096) #Magic.
 
@@ -39,7 +37,8 @@ class main(object):
         self.time = time - 1 #The "-1" is there because the timer automatically sums 1 to the variable.
         self.sectohour = sectohour #Seconds needed for a IN-GAME hour
         self.usage = 1 #1 Usage: 9.6 / 2 Usage: 4.8 / 3 Usage: 2.8 - 2.9 - 3.9 / 4 Usage: 1.9 - 2.9
-        self.camon = False #False = Not viewing cams / True = Viewing cams.
+        self.scene = "office" #Scene. Used for knowing what sprites needs to be printed. SCENES: "office", "cam"
+        self.lastcam = "cam1a"
 
         if self.gmode != "survival": #Initializes the hour timer if the gamemode isn't survival.
             threading.Timer(0.1, self.hourTimer).start()
@@ -64,6 +63,7 @@ class main(object):
 
         self.allgroup = pygame.sprite.Group()
         self.officegroup = pygame.sprite.Group()
+        self.camgroup = pygame.sprite.Group()
 
         self.leftButton = sprite.Sprite(startpos=(1, 180), image="lb")
         self.leftButton.groups = self.allgroup, self.officegroup
@@ -71,22 +71,19 @@ class main(object):
         self.rightButton = sprite.Sprite(startpos=(1500, 180), image="rb")
         self.rightButton.groups = self.allgroup, self.officegroup
 
-        self.camButton = sprite.Sprite(startpos=(500, 40), image="cambutton")
-        self.camButton.groups = self.allgroup, self.officegroup
+        self.camButton = sprite.Sprite(startpos=(530, 578), image="cambutton")
+        self.camButton.groups = self.allgroup, self.officegroup, self.camgroup
+
+        self.map = sprite.Sprite(startpos=(1200, 350), image="map")
+        self.map.groups = self.allgroup, self.camgroup
 
         self.bg = sprite.Sprite("office", (0,0))
-        self.bg.groups = self.allgroup, self.officegroup
 
         self.mousex = 0
         self.mousey = 0
         self.mouseClick = False
 
-        self.allgroup.add(self.leftButton)
-        self.allgroup.add(self.rightButton)
-        self.allgroup.add(self.camButton)
-        self.allgroup.add(self.bg)
-
-        while 1:
+        while self.running:
 
             self.mouseClick = False
 
@@ -105,28 +102,127 @@ class main(object):
                     self.mousex, self.mousey = event.pos
                     self.mouseClick = True
 
-            if self.mouseClick:
-                if self.mousex in range(32, 70) and self.mousey in range(332, 374):
-                    print("TBC WITH PYDLASYIAS' LEFT DOOR FUNCT. (%s, %s)" %(self.mousex,self.mousey))
+            if self.scene == "office":
 
-                if self.mousex in range(31, 69) and self.mousey in range(246, 294):
-                    print("TBC WITH PYDLASYIAS' LEFT LIGHT FUNCT. (%s, %s)" %(self.mousex,self.mousey))
+                self.allgroup.add(self.leftButton)
+                self.allgroup.add(self.rightButton)
+                self.allgroup.add(self.camButton)
 
-                if self.mousex in range(1498, 1534) and self.mousey in range(324, 374):
-                    print("TBC WITH PYDLASYIAS' RIGHT DOOR FUNCT. (%s, %s)" %(self.mousex,self.mousey))
+                self.officegroup.add(self.leftButton)
+                self.officegroup.add(self.rightButton)
+                self.officegroup.add(self.camButton)
 
-                if self.mousex in range(1499, 1536) and self.mousey in range(243, 295):
-                    print("TBC WITH PYDLASYIAS' RIGHT LIGHT FUNCT. (%s, %s)" %(self.mousex,self.mousey))
+                if self.mouseClick:
+                    if self.mousex in range(32,69) and self.mousey in range(314,362):
+                        print("TBC WITH PYDLASYIAS' LEFT LIGHT FUNCT. (%s, %s)" %(self.mousex,self.mousey))
+                        self.leftLight()
 
-                if self.mousex in range(675, 682) and self.mousey in range(480, 485):
-                    print("Honk! (%s, %s)" % (self.mousex,self.mousey))
+                    if self.mousex in range(34,69) and self.mousey in range(232,285):
+                        print("TBC WITH PYDLASYIAS' LEFT DOOR FUNCT. (%s, %s)" %(self.mousex,self.mousey))
+                        self.leftDoor()
 
-            if self.mousex in range(504, 1100) and self.mousey in range(50, 90):
-                print("TBC WITH CAMERA!!! (%s, %s)" %(self.mousex,self.mousey))
+                    if self.mousex in range(1525,1559) and self.mousey in range(313,364):
+                        print("TBC WITH PYDLASYIAS' RIGHT LIGHT FUNCT. (%s, %s)" %(self.mousex,self.mousey))
+                        self.rightLight()
 
-            #self.allgroup.draw(self.screen)
-            #self.allgroup.update()
-            self.screen.blit(self.bg.image, self.bg.rect)
+                    if self.mousex in range(1524,1559) and self.mousey in range(236,283):
+                        print("TBC WITH PYDLASYIAS' RIGHT DOOR FUNCT. (%s, %s)" %(self.mousex,self.mousey))
+                        self.rightDoor()
+
+                    if self.mousex in range(674,683) and self.mousey in range(236,240):
+                        print("Honk! (%s, %s)" % (self.mousex,self.mousey))
+
+                if self.mousex in range(532,1127) and self.mousey in range(588,630):
+                    print("TBC WITH CAMERA!!! (%s, %s)" %(self.mousex,self.mousey))
+                    self.openCamera()
+
+                if not self.leftlight and not self.rightlight:
+                    self.bg.changeImg("office")
+                    self.screen.blit(self.bg.image, self.bg.rect)
+
+                elif self.leftlight and not self.rightlight or self.rightlight == "broken":
+                    if self.somebodyThere("leftdoor") == True:
+                        self.bg.changeImg("officela")
+                        self.screen.blit(self.bg.image, self.bg.rect)
+                    else:
+                        self.bg.changeImg("officel")
+                        self.screen.blit(self.bg.image, self.bg.rect)
+
+                elif not self.leftlight and self.rightlight or self.leftlight == "broken":
+                    if self.somebodyThere("rightdoor"):
+                        self.bg.changeImg("officera")
+                        self.screen.blit(self.bg.image, self.bg.rect)
+                    elif not self.somebodyThere("rightdoor"):
+                        self.bg.changeImg("officer")
+                        self.screen.blit(self.bg.image, self.bg.rect)
+
+
+
+
+                self.officegroup.draw(self.screen)
+                self.officegroup.update()
+
+                if self.leftdoor == "broken" or self.leftlight == "broken":
+                    self.leftButton.changeImg("lb")
+                    self.bg.changeImg("office")
+                    self.screen.blit(self.bg.image, self.bg.rect)
+                    self.officegroup.draw(self.screen)
+                elif self.leftdoor and self.leftlight:
+                    self.leftButton.changeImg("lbb")
+                elif self.leftdoor and not self.leftlight:
+                    self.leftButton.changeImg("lbdc")
+                elif self.leftlight and not self.leftdoor:
+                    self.leftButton.changeImg("lbl")
+                elif not self.leftdoor and not self.leftlight:
+                    self.leftButton.changeImg("lb")
+
+                if self.rightdoor == "broken" or self.rightlight == "broken":
+                    self.rightButton.changeImg("rb")
+                    self.bg.changeImg("office")
+                    self.screen.blit(self.bg.image, self.bg.rect)
+                    self.officegroup.draw(self.screen)
+                elif self.rightdoor and self.rightlight:
+                    self.rightButton.changeImg("rbb")
+                elif self.rightdoor and not self.rightlight:
+                    self.rightButton.changeImg("rbdc")
+                elif self.rightlight and not self.rightdoor:
+                    self.rightButton.changeImg("rbl")
+                elif not self.rightdoor and not self.rightlight:
+                    self.rightButton.changeImg("rb")
+
+
+            elif self.scene == "cam":
+                self.camgroup.add(self.camButton)
+                self.camgroup.add(self.map)
+
+                self.camgroup.draw(self.screen)
+                self.camgroup.update()
+
+                if self.lastcam == "cam1a":
+                    if Globals.animatronics[0].location == "cam1a" and Globals.animatronics[1].location == "cam1a" and Globals.animatronics[3].location == "cam1a":
+                        self.bg.changeImg("cam1aA-1")
+                        self.screen.blit(self.bg.image, self.bg.rect)
+                        pygame.display.flip()
+
+                    if Globals.animatronics[0].location != "cam1a" and Globals.animatronics[1].location == "cam1a" and Globals.animatronics[3].location == "cam1a":
+                        self.bg.changeImg("cam1aBC")
+                        self.screen.blit(self.bg.image, self.bg.rect)
+                        pygame.display.flip()
+
+                    if Globals.animatronics[0].location == "cam1a" and Globals.animatronics[1].location != "cam1a" and Globals.animatronics[3].location == "cam1a":
+                        self.bg.changeImg("cam1aBR")
+                        self.screen.blit(self.bg.image, self.bg.rect)
+                        pygame.display.flip()
+
+                    if Globals.animatronics[0].location != "cam1a" and Globals.animatronics[1].location != "cam1a" and Globals.animatronics[3].location == "cam1a":
+                        self.bg.changeImg("cam1aB-1")
+                        self.screen.blit(self.bg.image, self.bg.rect)
+                        pygame.display.flip()
+
+                if self.mousex in range(532,1127) and self.mousey in range(588,630):
+                    print("TBC WITH CAMERA!!! (%s, %s)" %(self.mousex,self.mousey))
+                    self.securityOffice()
+
             pygame.display.update()
             pygame.display.flip()
             self.FPSCLOCK.tick(self.fps)
@@ -283,9 +379,127 @@ class main(object):
 
             threading.Timer(3.0, self.foxkindDoorCheck).start()
 
+    def leftDoor(self):
+        if self.leftdoor == False:
+            print("Closed left door.")
+            self.leftdoor = True
+            self.usage += 1
+            self.securityOffice()
+            return None
+            #
+        if self.leftdoor == True:
+            print("Opened left door.")
+            self.leftdoor = False
+            self.usage -= 1
+            self.securityOffice()
+            return None
+            #
+        if self.leftdoor == "broken":
+            print("Left door doesn't work...")
+            self.securityOffice()
+            return None
 
-        #GAMEPLAY#
-#Basically the security office and the cameras.
+    def leftLight(self):
+        if self.leftlight == True:
+            print("Left light is now OFF.")
+            self.leftlight = False
+            self.usage -= 1
+            self.securityOffice()
+            return None
+
+        if self.leftlight == False:
+            self.leftlight = True
+            if self.rightlight == True:
+                print("Right light is now OFF.")
+                self.rightlight = False
+                self.usage -= 1
+            self.usage += 1
+            print("Left light is now ON.")
+            self.foxkindDoorCheck()
+            for animatronic in Globals.animatronics:
+                if animatronic.location == "leftdoor":
+                    print("%s is at the left door, looking at you." % (animatronic.name))
+            self.securityOffice()
+            return None
+
+        if self.leftlight == "broken":
+            print("Left light doesn't work...")
+            self.securityOffice()
+            return None
+
+    def rightDoor(self):
+        if self.rightdoor == False:
+            print("Closed right door.")
+            self.rightdoor = True
+            self.usage += 1
+            self.securityOffice()
+            return None
+
+        if self.rightdoor == True:
+            print("Opened right door.")
+            self.rightdoor = False
+            self.usage -= 1
+            self.securityOffice()
+            return None
+
+        if self.rightdoor == "broken":
+            print("Right door doesn't work...")
+            self.securityOffice()
+            return None
+
+    def rightLight(self):
+        if self.rightlight == True:
+            print("Right light is now OFF.")
+            self.rightlight = False
+            self.usage -= 1
+            self.securityOffice()
+            return None
+
+        if self.rightlight == False:
+            self.rightlight = True
+            if self.leftlight == True:
+                print("Left light is now OFF.")
+                self.leftlight = False
+                self.usage -= 1
+            self.usage += 1
+            print("Right light is now ON.")
+            for animatronic in Globals.animatronics:
+                if animatronic.location == "rightdoor":
+                    print("%s is at the right door, looking at you." % (animatronic.name))
+            self.securityOffice()
+            return None
+
+        if self.rightlight == "broken":
+            print("Right light doesn't work...")
+            self.securityOffice()
+            return None
+
+    def openCamera(self):
+        debug.debugprint("Open camera")
+        if self.leftlight:
+            self.usage -= 1
+            self.leftlight = False
+        if self.rightlight:
+            self.usage -= 1
+            self.rightlight = False
+        self.usage += 1
+        self.scene = "cam"
+        debug.debugprint("Camera opened")
+        return None
+
+    def somebodyThere(self, camera):
+        for animatronic in Globals.animatronics:
+            if animatronic.location == str(camera):
+                return True
+        return False
+
+    def securityOffice(self):
+        debug.debugprint("Go back into office")
+        self.usage -= 1
+        self.scene = "office"
+        debug.debugprint("Back into office")
+        return None
+
 
     # def securityOffice(self): #-Almost- the most important thing in main. From here you can do EVERYTHING.
     #     if self.power < 0 or self.time >= 6 or self.killed == True: #Checks if there's a blackout/You survived/You're dead
