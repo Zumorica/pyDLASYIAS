@@ -13,7 +13,7 @@ import pyDLASYIAS.utils.cls as cls
 from pygame.locals import *
 
 class main(object):
-    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1600, height=720, fps=30):
+    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1600, height=720, fps=60):
         debug.debugprint("pyDLASYIAS %s started. Setting up game variables..." % (Globals.version))
 
         sys.setrecursionlimit(5000) #Magic.
@@ -64,6 +64,7 @@ class main(object):
         self.allgroup = pygame.sprite.Group()
         self.officegroup = pygame.sprite.LayeredUpdates()
         self.camgroup = pygame.sprite.LayeredUpdates()
+        self.scaregroup = pygame.sprite.LayeredUpdates()
 
         self.leftButton = sprite.Sprite(startpos=(1, 180), image="office\\button\\left\\0")
         self.leftButton.groups = self.allgroup, self.officegroup
@@ -83,7 +84,7 @@ class main(object):
         self.camButtonOneB = sprite.Sprite(startpos=(1300,510), image="ui\\button\\cam1b")
         self.camButtonOneB.groups = self.allgroup, self.camgroup
 
-        self.camButtonOneC = sprite.Sprite(startpos=(1264,395), image="ui\\button\\cam1c")
+        self.camButtonOneC = sprite.Sprite(startpos=(1250,524), image="ui\\button\\cam1c")
         self.camButtonOneC.groups = self.allgroup, self.camgroup
 
         self.camButtonTwoA = sprite.Sprite(startpos=(1307,598), image="ui\\button\\cam2a")
@@ -110,8 +111,50 @@ class main(object):
         self.camButtonSeven = sprite.Sprite(startpos=(1523,457), image="ui\\button\\cam7")
         self.camButtonSeven.groups = self.allgroup, self.camgroup
 
+        self.chickenScarejump = sprite.Animated(startpos=(0,0), images=["office\\scarejump\\chicken\\0.png", "office\\scarejump\\chicken\\1.png",
+                                                                        "office\\scarejump\\chicken\\2.png", "office\\scarejump\\chicken\\3.png",
+                                                                        "office\\scarejump\\chicken\\4.png", "office\\scarejump\\chicken\\5.png",
+                                                                        "office\\scarejump\\chicken\\6.png", "office\\scarejump\\chicken\\7.png",
+                                                                        "office\\scarejump\\chicken\\8.png", "office\\scarejump\\chicken\\9.png",
+                                                                        "office\\scarejump\\chicken\\10.png", "office\\scarejump\\chicken\\11.png",
+                                                                        "office\\scarejump\\chicken\\12.png"])
+
+        self.rabbitScarejump = sprite.Animated(startpos=(0,0), images=["office\\scarejump\\rabbit\\0.png", "office\\scarejump\\rabbit\\1.png",
+                                                                       "office\\scarejump\\rabbit\\2.png", "office\\scarejump\\rabbit\\3.png",
+                                                                       "office\\scarejump\\rabbit\\4.png", "office\\scarejump\\rabbit\\5.png",
+                                                                       "office\\scarejump\\rabbit\\6.png", "office\\scarejump\\rabbit\\7.png",
+                                                                       "office\\scarejump\\rabbit\\8.png", "office\\scarejump\\rabbit\\9.png",
+                                                                       "office\\scarejump\\rabbit\\10.png"])
+
+        self.foxScarejump = sprite.Animated(startpos=(0,0), images=["office\\scarejump\\fox\\0.png", "office\\scarejump\\fox\\1.png",
+                                                                    "office\\scarejump\\fox\\2.png", "office\\scarejump\\fox\\3.png",
+                                                                    "office\\scarejump\\fox\\4.png", "office\\scarejump\\fox\\5.png",
+                                                                    "office\\scarejump\\fox\\6.png", "office\\scarejump\\fox\\7.png",
+                                                                    "office\\scarejump\\fox\\8.png", "office\\scarejump\\fox\\9.png",
+                                                                    "office\\scarejump\\fox\\10.png", "office\\scarejump\\fox\\11.png",
+                                                                    "office\\scarejump\\fox\\12.png", "office\\scarejump\\fox\\13.png",
+                                                                    "office\\scarejump\\fox\\14.png", "office\\scarejump\\fox\\15.png",
+                                                                    "office\\scarejump\\fox\\16.png", "office\\scarejump\\fox\\17.png",
+                                                                    "office\\scarejump\\fox\\18.png"])
+
+        self.bearNormalScarejump = sprite.Animated(startpos=(0,0), images=["office\\scarejump\\bear\\normal\\0.png", "office\\scarejump\\bear\\normal\\1.png",
+                                                                           "office\\scarejump\\bear\\normal\\2.png", "office\\scarejump\\bear\\normal\\3.png",
+                                                                           "office\\scarejump\\bear\\normal\\4.png", "office\\scarejump\\bear\\normal\\5.png",
+                                                                           "office\\scarejump\\bear\\normal\\6.png", "office\\scarejump\\bear\\normal\\7.png",
+                                                                           "office\\scarejump\\bear\\normal\\8.png", "office\\scarejump\\bear\\normal\\9.png",
+                                                                           "office\\scarejump\\bear\\normal\\10.png", "office\\scarejump\\bear\\normal\\11.png",
+                                                                           "office\\scarejump\\bear\\normal\\12.png", "office\\scarejump\\bear\\normal\\13.png",
+                                                                           "office\\scarejump\\bear\\normal\\14.png", "office\\scarejump\\bear\\normal\\15.png",
+                                                                           "office\\scarejump\\bear\\normal\\16.png", "office\\scarejump\\bear\\normal\\17.png",
+                                                                           "office\\scarejump\\bear\\normal\\18.png", "office\\scarejump\\bear\\normal\\19.png",
+                                                                           "office\\scarejump\\bear\\normal\\20.png", "office\\scarejump\\bear\\normal\\21.png",
+                                                                           "office\\scarejump\\bear\\normal\\22.png", "office\\scarejump\\bear\\normal\\23.png",
+                                                                           "office\\scarejump\\bear\\normal\\24.png", "office\\scarejump\\bear\\normal\\25.png",
+                                                                           "office\\scarejump\\bear\\normal\\26.png", "office\\scarejump\\bear\\normal\\27.png",
+                                                                           "office\\scarejump\\bear\\normal\\28.png", "office\\scarejump\\bear\\normal\\29.png"])
+
         self.bg = sprite.Sprite("office\\0", (0,0))
-        self.bg.groups = self.allgroup, self.officegroup, self.camgroup
+        self.bg.groups = self.allgroup, self.officegroup, self.camgroup, self.scaregroup
 
         self.mousex = 0
         self.mousey = 0
@@ -130,7 +173,7 @@ class main(object):
 
             for event in pygame.event.get():
 
-                #print(event)
+                print(event)
 
                 if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
                     pygame.quit()
@@ -217,8 +260,8 @@ class main(object):
                 elif not self.leftlight and self.leftdoor:
                     self.leftButton.changeImg("office\\button\\left\\d")
 
-                elif self.leftlight == "broken" or self.leftdoor == "broken":
-                    self.leftButton.changeImg("office\\button\\left\\0")
+                #elif self.leftlight == "broken" or self.leftdoor == "broken":
+                #    self.leftButton.changeImg("office\\button\\left\\0")
 
                 #RIGHT BUTTON
 
@@ -234,8 +277,8 @@ class main(object):
                 elif not self.rightlight and self.rightdoor:
                     self.rightButton.changeImg("office\\button\\right\\d")
 
-                elif self.rightlight == "broken" or self.rightdoor == "broken":
-                    self.rightButton.changeImg("office\\button\\right\\0")
+                #elif self.rightlight == "broken" or self.rightdoor == "broken":
+                #    self.rightButton.changeImg("office\\button\\right\\0")
 
                 self.officegroup.draw(self.screen)
                 self.officegroup.update()
@@ -272,44 +315,65 @@ class main(object):
                 self.camgroup.change_layer(self.camButtonSeven, 2)
                 self.camgroup.change_layer(self.camButton, 3)
 
-                if self.camButtonOneA.is_Clicked:
+                if self.camButtonOneA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.lastcam = "cam1a"
+                    print("%s CLICKED" %(self.lastcam.upper()))
 
-                if self.camButtonOneB.is_Clicked:
+                if self.camButtonOneB.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.lastcam = "cam1b"
+                    print("%s CLICKED" %(self.lastcam.upper()))
 
-                if self.camButtonOneC.is_Clicked:
+                if self.camButtonOneC.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.lastcam = "cam1c"
+                    print("%s CLICKED" %(self.lastcam.upper()))
 
-                if self.camButtonTwoA.is_Clicked:
+                if self.camButtonTwoA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.lastcam = "cam2a"
+                    print("%s CLICKED" %(self.lastcam.upper()))
 
-                if self.camButtonTwoB.is_Clicked:
+                if self.camButtonTwoB.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.lastcam = "cam2b"
+                    print("%s CLICKED" %(self.lastcam.upper()))
 
-                if self.camButtonThree.is_Clicked:
+                if self.camButtonThree.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.lastcam = "cam3"
+                    print("%s CLICKED" %(self.lastcam.upper()))
 
-                if self.camButtonFourA.is_Clicked:
+                if self.camButtonFourA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.lastcam = "cam4a"
+                    print("%s CLICKED" %(self.lastcam.upper()))
 
-                if self.camButtonFourB.is_Clicked:
+                if self.camButtonFourB.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.lastcam = "cam4b"
+                    print("%s CLICKED" %(self.lastcam.upper()))
 
-                if self.camButtonFive.is_Clicked:
+                if self.camButtonFive.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.lastcam = "cam5"
+                    print("%s CLICKED" %(self.lastcam.upper()))
 
-                if self.camButtonSix.is_Clicked:
+                if self.camButtonSix.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.lastcam = "cam6"
+                    print("%s CLICKED" %(self.lastcam.upper()))
 
-                if self.camButtonSeven.is_Clicked:
+                if self.camButtonSeven.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.lastcam = "cam7"
+                    print("%s CLICKED" %(self.lastcam.upper()))
 
                 #------#
 
                 if self.lastcam == "cam1a":
 
                     self.camButtonOneA.changeImg("ui\\button\\scam1a")
+                    self.camButtonOneB.changeImg("ui\\button\\cam1b")
+                    self.camButtonOneC.changeImg("ui\\button\\cam1c")
+                    self.camButtonTwoA.changeImg("ui\\button\\cam2a")
+                    self.camButtonTwoB.changeImg("ui\\button\\cam2b")
+                    self.camButtonThree.changeImg("ui\\button\\cam3")
+                    self.camButtonFourA.changeImg("ui\\button\\cam4a")
+                    self.camButtonFourB.changeImg("ui\\button\\cam4b")
+                    self.camButtonFive.changeImg("ui\\button\\cam5")
+                    self.camButtonSix.changeImg("ui\\button\\cam6")
+                    self.camButtonSeven.changeImg("ui\\button\\cam7")
 
                     if Globals.animatronics[0].location == "cam1a" and Globals.animatronics[1].location == "cam1a" and Globals.animatronics[3].location == "cam1a":
                         self.bg.changeImg("cameras\\cam1a\\brc")
@@ -327,8 +391,21 @@ class main(object):
                         self.bg.changeImg("cameras\\cam1a\\0")
 
                 elif self.lastcam == "cam1b":
+
+                    self.camButtonOneA.changeImg("ui\\button\\cam1a")
+                    self.camButtonOneB.changeImg("ui\\button\\scam1b")
+                    self.camButtonOneC.changeImg("ui\\button\\cam1c")
+                    self.camButtonTwoA.changeImg("ui\\button\\cam2a")
+                    self.camButtonTwoB.changeImg("ui\\button\\cam2b")
+                    self.camButtonThree.changeImg("ui\\button\\cam3")
+                    self.camButtonFourA.changeImg("ui\\button\\cam4a")
+                    self.camButtonFourB.changeImg("ui\\button\\cam4b")
+                    self.camButtonFive.changeImg("ui\\button\\cam5")
+                    self.camButtonSix.changeImg("ui\\button\\cam6")
+                    self.camButtonSeven.changeImg("ui\\button\\cam7")
+
                     if Globals.animatronics[0].location == "cam1b" and Globals.animatronics[1].location == "cam1b":
-                        self.bg.changeImg(random.choice(["cameras\\cam1b\\r", "cameras\\cam1b\\c"]))
+                        self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",  "cameras\\misc\\static\\2", "cameras\\misc\\static\\3", "cameras\\misc\\static\\4", "cameras\\misc\\static\\5", "cameras\\misc\\static\\6"]))
 
                     if Globals.animatronics[0].location == "cam1b" and Globals.animatronics[1].location != "cam1b":
                         self.bg.changeImg("cameras\\cam1b\\r")
@@ -342,6 +419,207 @@ class main(object):
                     if Globals.animatronics[0].location != "cam1b" and Globals.animatronics[1].location != "cam1b" and Globals.animatronics[3].location != "cam1b":
                         self.bg.changeImg("cameras\\cam1b\\0")
 
+                elif self.lastcam == "cam1c":
+
+                    self.camButtonOneA.changeImg("ui\\button\\cam1a")
+                    self.camButtonOneB.changeImg("ui\\button\\cam1b")
+                    self.camButtonOneC.changeImg("ui\\button\\scam1c")
+                    self.camButtonTwoA.changeImg("ui\\button\\cam2a")
+                    self.camButtonTwoB.changeImg("ui\\button\\cam2b")
+                    self.camButtonThree.changeImg("ui\\button\\cam3")
+                    self.camButtonFourA.changeImg("ui\\button\\cam4a")
+                    self.camButtonFourB.changeImg("ui\\button\\cam4b")
+                    self.camButtonFive.changeImg("ui\\button\\cam5")
+                    self.camButtonSix.changeImg("ui\\button\\cam6")
+                    self.camButtonSeven.changeImg("ui\\button\\cam7")
+
+                    if Globals.animatronics[2].foxstatus == 0:
+                        self.bg.changeImg("cameras\\cam1c\\0")
+
+                    if Globals.animatronics[2].foxstatus == 1:
+                        self.bg.changeImg("cameras\\cam1c\\1")
+
+                    if Globals.animatronics[2].foxstatus == 2:
+                        self.bg.changeImg("cameras\\cam1c\\2")
+
+                    if Globals.animatronics[2].foxstatus == 3:
+                        self.bg.changeImg("cameras\\cam1c\\3")
+
+                    if Globals.animatronics[2].foxstatus == 4:
+                        self.bg.changeImg("cameras\\cam1c\\4")
+
+                elif self.lastcam == "cam2a":
+
+                    self.camButtonOneA.changeImg("ui\\button\\cam1a")
+                    self.camButtonOneB.changeImg("ui\\button\\cam1b")
+                    self.camButtonOneC.changeImg("ui\\button\\cam1c")
+                    self.camButtonTwoA.changeImg("ui\\button\\scam2a")
+                    self.camButtonTwoB.changeImg("ui\\button\\cam2b")
+                    self.camButtonThree.changeImg("ui\\button\\cam3")
+                    self.camButtonFourA.changeImg("ui\\button\\cam4a")
+                    self.camButtonFourB.changeImg("ui\\button\\cam4b")
+                    self.camButtonFive.changeImg("ui\\button\\cam5")
+                    self.camButtonSix.changeImg("ui\\button\\cam6")
+                    self.camButtonSeven.changeImg("ui\\button\\cam7")
+
+                    if Globals.animatronics[0].location == "cam2a":
+                        self.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\r"]))
+
+                    else:
+                        self.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\1"]))
+
+
+
+                elif self.lastcam == "cam2b":
+
+                    self.camButtonOneA.changeImg("ui\\button\\cam1a")
+                    self.camButtonOneB.changeImg("ui\\button\\cam1b")
+                    self.camButtonOneC.changeImg("ui\\button\\cam1c")
+                    self.camButtonTwoA.changeImg("ui\\button\\cam2a")
+                    self.camButtonTwoB.changeImg("ui\\button\\scam2b")
+                    self.camButtonThree.changeImg("ui\\button\\cam3")
+                    self.camButtonFourA.changeImg("ui\\button\\cam4a")
+                    self.camButtonFourB.changeImg("ui\\button\\cam4b")
+                    self.camButtonFive.changeImg("ui\\button\\cam5")
+                    self.camButtonSix.changeImg("ui\\button\\cam6")
+                    self.camButtonSeven.changeImg("ui\\button\\cam7")
+
+                    if Globals.animatronics[0].location == "cam2b":
+                        self.bg.changeImg(random.choice(["cameras\\cam2b\\r", "cameras\\cam2b\\r-1"]))
+
+                    else:
+                        self.bg.changeImg("cameras\\cam2b\\0")
+
+                elif self.lastcam == "cam3":
+
+                    self.camButtonOneA.changeImg("ui\\button\\cam1a")
+                    self.camButtonOneB.changeImg("ui\\button\\cam1b")
+                    self.camButtonOneC.changeImg("ui\\button\\cam1c")
+                    self.camButtonTwoA.changeImg("ui\\button\\cam2a")
+                    self.camButtonTwoB.changeImg("ui\\button\\cam2b")
+                    self.camButtonThree.changeImg("ui\\button\\scam3")
+                    self.camButtonFourA.changeImg("ui\\button\\cam4a")
+                    self.camButtonFourB.changeImg("ui\\button\\cam4b")
+                    self.camButtonFive.changeImg("ui\\button\\cam5")
+                    self.camButtonSix.changeImg("ui\\button\\cam6")
+                    self.camButtonSeven.changeImg("ui\\button\\cam7")
+
+                    if Globals.animatronics[0].location == "cam3":
+                        self.bg.changeImg("cameras\\cam3\\r")
+
+                    else:
+                        self.bg.changeImg("cameras\\cam3\\0")
+
+
+                elif self.lastcam == "cam4a":
+
+                    self.camButtonOneA.changeImg("ui\\button\\cam1a")
+                    self.camButtonOneB.changeImg("ui\\button\\cam1b")
+                    self.camButtonOneC.changeImg("ui\\button\\cam1c")
+                    self.camButtonTwoA.changeImg("ui\\button\\cam2a")
+                    self.camButtonTwoB.changeImg("ui\\button\\cam2b")
+                    self.camButtonThree.changeImg("ui\\button\\cam3")
+                    self.camButtonFourA.changeImg("ui\\button\\scam4a")
+                    self.camButtonFourB.changeImg("ui\\button\\cam4b")
+                    self.camButtonFive.changeImg("ui\\button\\cam5")
+                    self.camButtonSix.changeImg("ui\\button\\cam6")
+                    self.camButtonSeven.changeImg("ui\\button\\cam7")
+
+                    if Globals.animatronics[1].location == "cam4a":
+                        self.bg.changeImg("cameras\\cam4a\\c")
+
+                    elif Globals.animatronics[1].location != "cam4a" and Globals.animatronics[3].location == "cam4a":
+                        self.bg.changeImg("cameras\\cam4a\\b")
+
+                    elif Globals.animatronics[1].location != "cam4a" and Globals.animatronics[3].location != "cam4a":
+                        self.bg.changeImg("cameras\\cam4a\\0")
+
+
+                elif self.lastcam == "cam4b":
+
+                    self.camButtonOneA.changeImg("ui\\button\\cam1a")
+                    self.camButtonOneB.changeImg("ui\\button\\cam1b")
+                    self.camButtonOneC.changeImg("ui\\button\\cam1c")
+                    self.camButtonTwoA.changeImg("ui\\button\\cam2a")
+                    self.camButtonTwoB.changeImg("ui\\button\\cam2b")
+                    self.camButtonThree.changeImg("ui\\button\\cam3")
+                    self.camButtonFourA.changeImg("ui\\button\\cam4a")
+                    self.camButtonFourB.changeImg("ui\\button\\scam4b")
+                    self.camButtonFive.changeImg("ui\\button\\cam5")
+                    self.camButtonSix.changeImg("ui\\button\\cam6")
+                    self.camButtonSeven.changeImg("ui\\button\\cam7")
+
+                    if Globals.animatronics[1].location == "cam4b":
+                        self.bg.changeImg("cameras\\cam4b\\c")
+
+                    elif Globals.animatronics[1].location != "cam4b" and Globals.animatronics[3].location == "cam4b":
+                        self.bg.changeImg("cameras\\cam4b\\b")
+
+                    elif Globals.animatronics[1].location != "cam4b" and Globals.animatronics[3].location != "cam4b":
+                        self.bg.changeImg("cameras\\cam4b\\0")
+
+
+                elif self.lastcam == "cam5":
+
+                    self.camButtonOneA.changeImg("ui\\button\\cam1a")
+                    self.camButtonOneB.changeImg("ui\\button\\cam1b")
+                    self.camButtonOneC.changeImg("ui\\button\\cam1c")
+                    self.camButtonTwoA.changeImg("ui\\button\\cam2a")
+                    self.camButtonTwoB.changeImg("ui\\button\\cam2b")
+                    self.camButtonThree.changeImg("ui\\button\\cam3")
+                    self.camButtonFourA.changeImg("ui\\button\\cam4a")
+                    self.camButtonFourB.changeImg("ui\\button\\cam4b")
+                    self.camButtonFive.changeImg("ui\\button\\scam5")
+                    self.camButtonSix.changeImg("ui\\button\\cam6")
+                    self.camButtonSeven.changeImg("ui\\button\\cam7")
+
+                    if Globals.animatronics[0].location == "cam5":
+                        self.bg.changeImg("cameras\\cam5\\r")
+
+                    else:
+                        self.bg.changeImg("cameras\\cam5\\0")
+
+
+                elif self.lastcam == "cam6":
+
+                    self.camButtonOneA.changeImg("ui\\button\\cam1a")
+                    self.camButtonOneB.changeImg("ui\\button\\cam1b")
+                    self.camButtonOneC.changeImg("ui\\button\\cam1c")
+                    self.camButtonTwoA.changeImg("ui\\button\\cam2a")
+                    self.camButtonTwoB.changeImg("ui\\button\\cam2b")
+                    self.camButtonThree.changeImg("ui\\button\\cam3")
+                    self.camButtonFourA.changeImg("ui\\button\\cam4a")
+                    self.camButtonFourB.changeImg("ui\\button\\cam4b")
+                    self.camButtonFive.changeImg("ui\\button\\cam5")
+                    self.camButtonSix.changeImg("ui\\button\\scam6")
+                    self.camButtonSeven.changeImg("ui\\button\\cam7")
+
+                    self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",  "cameras\\misc\\static\\2", "cameras\\misc\\static\\3", "cameras\\misc\\static\\4", "cameras\\misc\\static\\5", "cameras\\misc\\static\\6"]))
+
+                elif self.lastcam == "cam7":
+
+                    self.camButtonOneA.changeImg("ui\\button\\cam1a")
+                    self.camButtonOneB.changeImg("ui\\button\\cam1b")
+                    self.camButtonOneC.changeImg("ui\\button\\cam1c")
+                    self.camButtonTwoA.changeImg("ui\\button\\cam2a")
+                    self.camButtonTwoB.changeImg("ui\\button\\cam2b")
+                    self.camButtonThree.changeImg("ui\\button\\cam3")
+                    self.camButtonFourA.changeImg("ui\\button\\cam4a")
+                    self.camButtonFourB.changeImg("ui\\button\\cam4b")
+                    self.camButtonFive.changeImg("ui\\button\\cam5")
+                    self.camButtonSix.changeImg("ui\\button\\cam6")
+                    self.camButtonSeven.changeImg("ui\\button\\scam7")
+
+                    if Globals.animatronics[1].location == "cam7":
+                        self.bg.changeImg("cameras\\cam7\\c")
+
+                    elif Globals.animatronics[1].location != "cam7" and Globals.animatronics[2].location == "cam7":
+                        self.bg.changeImg("cameras\\cam7\\b")
+
+                    else:
+                        self.bg.changeImg("cameras\\cam7\\0")
+
+
 
 
                 if self.mousex in range(532,1127) and self.mousey in range(588,630) and Globals.mouseClick:
@@ -351,17 +629,56 @@ class main(object):
                 self.camgroup.draw(self.screen)
                 self.camgroup.update()
 
+            elif self.scene == "scarejump":
+
+                self.scaregroup.add(self.bg)
+                self.killed = True
+
+                for animatronic in Globals.animatronics:
+                    if animatronic.location == "inside":
+                        if animatronic.kind == "chicken":
+                            self.scaregroup.add(self.chickenScarejump)
+                            self.scaregroup.update()
+                            self.scaregroup.draw(self.screen)
+                            if self.chickenScarejump.has_Finished():
+                                self.shutdown()
+
+
+                        if animatronic.kind == "rabbit":
+                            self.scaregroup.add(self.rabbitScarejump)
+                            self.scaregroup.update()
+                            self.scaregroup.draw(self.screen)
+                            if self.rabbitScarejump.has_Finished():
+                                self.shutdown()
+
+
+                        if animatronic.kind == "bear":
+                            self.scaregroup.add(self.bearNormalScarejump)
+                            self.scaregroup.update()
+                            self.scaregroup.draw(self.screen)
+                            if self.bearNormalScarejump.has_Finished():
+                                self.shutdown()
+
+
+                        if animatronic.kind == "fox":
+                            self.scaregroup.add(self.foxScarejump)
+                            self.scaregroup.update()
+                            self.scaregroup.draw(self.screen)
+                            if self.foxScarejump.has_Finished():
+                                self.shutdown()
+
+
             pygame.display.update()
             pygame.display.flip()
             self.FPSCLOCK.tick(self.fps)
 
     def shutdown(self): #Shuts down the whole game.
         debug.debugprint("Shutting down...")
+        pygame.quit()
         for animatronic in Globals.animatronics:
             animatronic.dmove("off")
         sys.exit(0)
         os._exit(0)
-        pygame.quit()
         os.system("exit")
 
     def blackout(self): #Blackout event. yay
@@ -460,8 +777,9 @@ class main(object):
                     time.sleep(random.randint(20, 30) / animatronic.ailvl)
                     animatronic.rmove(["inside"]) #Random move the animatronic inside or not.
                     if self.ailvl > 12 and animatronic.location == "inside": #If AILVL is over 12 and the animatronic is inside...
-                        self.leftlight = "broken" #Break the light and door
-                        self.leftdoor = "broken"
+                        #self.leftlight = "broken" #Break the light and door
+                        #self.leftdoor = "broken"
+                        pass
 
             if animatronic.location == "rightdoor":
                 time.sleep(random.randint(20, 30) / animatronic.ailvl)
@@ -473,8 +791,9 @@ class main(object):
                     time.sleep(random.randint(20, 30) / animatronic.ailvl)
                     animatronic.rmove(["inside"])
                     if self.ailvl > 12 and animatronic.location == "inside":
-                        self.rightlight = "broken"
-                        self.rightdoor = "broken"
+                        #self.rightlight = "broken"
+                        #self.rightdoor = "broken"
+                        pass
 
         if self.time >= 6 or self.power <= 0:
             pass
@@ -607,315 +926,13 @@ class main(object):
         self.usage -= 1
         pygame.time.delay(1000)
         self.scene = "office"
+        for animatronic in Globals.animatronics:
+            if animatronic.location.lower() == "inside":
+                debug.debugprint("%s was inside!" % (animatronic.name), animatronic)
+                self.scene = "scarejump"
+
         debug.debugprint("Back into office")
         return None
-
-
-    # def securityOffice(self): #-Almost- the most important thing in main. From here you can do EVERYTHING.
-    #     if self.power < 0 or self.time >= 6 or self.killed == True: #Checks if there's a blackout/You survived/You're dead
-    #         pass
-    #     else: #Prints power, time...
-    #         print("----- %s %s power left. Usage: %s" % (self.power, "%", self.usage))
-    #         print("Security Office")
-    #         if self.gmode == "survival":
-    #             print("----- SURVIVAL MODE")
-    #
-    #         else:
-    #             if self.time == 0:
-    #                 print("----- 12 PM") #I hate this time format
-    #
-    #             else:
-    #                 print("----- %s AM" % (self.time))
-    #
-    #         for animatronic in Globals.animatronics: #This for loop sets bearkind's bseen variable on false.
-    #             if animatronic.kind == "bear":
-    #                 animatronic.bseen = False
-    #
-    #         self.usrinput = input("> ").lower()
-    #
-    #         if self.usrinput in ["debug", "debugmode"]:
-    #             if Globals.debug == True:
-    #                 Globals.debug = False
-    #             else:
-    #                 Globals.debug = True
-    #             self.securityOffice()
-    #             return None
-    #         #Power
-    #         if self.usrinput in ["power", "electricity", "energy"]:
-    #             print("Power left: %s %s" % (self.power, "%"))
-    #             self.securityOffice()
-    #             return None #"Closes" the current security office.
-    #
-    #         #Cameras
-    #         if self.usrinput in ["cam", "sec cam", "security cam", "camera", "cams", "cm", "cameras"]:
-    #             if self.leftlight == True:
-    #                 self.usage -= 1
-    #                 self.leftlight = False
-    #             if self.rightlight == True:
-    #                 self.usage -= 1
-    #                 self.rightlight = False
-    #             cls.cls(0.5, 0.5)
-    #             self.usage += 1
-    #             self.camon = True
-    #             self.cam()
-    #             return None
-    #
-    #         #Clears the window.
-    #         if self.usrinput in ["clear", "cls"]:
-    #             cls.cls()
-    #             self.securityOffice()
-    #             return None
-    #
-    #         #Left door
-    #         if self.usrinput in ["doorl", "left door", "ldoor", "door left", "doortleft", "leftdoor", "dl", "d l"]:
-    #             if self.leftdoor == False:
-    #                 print("Closed left door.")
-    #                 self.leftdoor = True
-    #                 self.usage += 1
-    #                 self.securityOffice()
-    #                 return None
-    #
-    #             if self.leftdoor == True:
-    #                 print("Opened left door.")
-    #                 self.leftdoor = False
-    #                 self.usage -= 1
-    #                 self.securityOffice()
-    #                 return None
-    #
-    #             if self.leftdoor == "broken":
-    #                 print("Left door doesn't work...")
-    #                 self.securityOffice()
-    #                 return None
-    #
-    #
-    #         #Right door
-    #         if self.usrinput in ["doorr", "right door", "rdoor", "door right", "doortright", "rightdoor", "d r", "dr"]:
-    #             if self.rightdoor == False:
-    #                 print("Closed right door.")
-    #                 self.rightdoor = True
-    #                 self.usage += 1
-    #                 self.securityOffice()
-    #                 return None
-    #
-    #             if self.rightdoor == True:
-    #                 print("Opened right door.")
-    #                 self.rightdoor = False
-    #                 self.usage -= 1
-    #                 self.securityOffice()
-    #                 return None
-    #
-    #             if self.rightdoor == "broken":
-    #                 print("Right door doesn't work...")
-    #                 self.securityOffice()
-    #                 return None
-    #
-    #         #Left light
-    #         if self.usrinput in ["lightl", "left light", "llight", "light left", "lightleft", "leftlight", "ll", "l l"]:
-    #             if self.leftlight == True:
-    #                 print("Left light is now OFF.")
-    #                 self.leftlight = False
-    #                 self.usage -= 1
-    #                 self.securityOffice()
-    #                 return None
-    #
-    #             if self.leftlight == False:
-    #                 self.leftlight = True
-    #                 if self.rightlight == True:
-    #                     print("Right light is now OFF.")
-    #                     self.rightlight = False
-    #                     self.usage -= 1
-    #                 self.usage += 1
-    #                 print("Left light is now ON.")
-    #                 self.foxkindDoorCheck()
-    #                 for animatronic in Globals.animatronics:
-    #                     if animatronic.location == "leftdoor":
-    #                         print("%s is at the left door, looking at you." % (animatronic.name))
-    #                 self.securityOffice()
-    #                 return None
-    #
-    #             if self.leftlight == "broken":
-    #                 print("Left light doesn't work...")
-    #                 self.securityOffice()
-    #                 return None
-    #
-    #         #Right light
-    #         if self.usrinput in ["lightr", "right light", "rlight", "light right", "lightright", "rightlight", "lr", "l r"]:
-    #             if self.rightlight == True:
-    #                 print("Right light is now OFF.")
-    #                 self.rightlight = False
-    #                 self.usage -= 1
-    #                 self.securityOffice()
-    #                 return None
-    #
-    #             if self.rightlight == False:
-    #                 self.rightlight = True
-    #                 if self.leftlight == True:
-    #                     print("Left light is now OFF.")
-    #                     self.leftlight = False
-    #                     self.usage -= 1
-    #                 self.usage += 1
-    #                 print("Right light is now ON.")
-    #                 for animatronic in Globals.animatronics:
-    #                     if animatronic.location == "rightdoor":
-    #                         print("%s is at the right door, looking at you." % (animatronic.name))
-    #                 self.securityOffice()
-    #                 return None
-    #
-    #             if self.rightlight == "broken":
-    #                 print("Right light doesn't work...")
-    #                 self.securityOffice()
-    #                 return None
-    #         #Help
-    #         if self.usrinput in ["help", "what do i do?", "?"]:
-    #             print("-----")
-    #             print("Hi! Welcome to pyDLASYIAS (pyDon't let animatronics stuff you in a suit)")
-    #             print("It looks like you're asking for help.")
-    #             print("I'll help you!")
-    #             print("Here's a command list:")
-    #             print("'door left' 'door right' 'light left' 'light right' 'help' 'cam' 'clear' 'state'")
-    #             print("There's a few more commands (Similar words that do the same as the words above)")
-    #             print("Oh and about the 'camera mode'")
-    #             print("It's very easy to use. You type the camera name and you see if something or someone is there!")
-    #             print("You can also use some commands there, like 'exit'")
-    #             print("And that's all. Except for how to play, but you should know how to play already, so...")
-    #             print("Good night!")
-    #             print("-----")
-    #             self.securityOffice()
-    #             return None
-    #
-    #         if self.usrinput in ["state", "doors", "lights", "door state", "light state"]:
-    #             if self.leftdoor == True:
-    #                 print("Left door is closed.")
-    #             else:
-    #                 print("Left door is open.")
-    #
-    #             if self.rightdoor == True:
-    #                 print("Right door is closed.")
-    #             else:
-    #                 print("Right door is open.")
-    #
-    #             if self.leftlight == True:
-    #                 print("Left light is on.")
-    #             else:
-    #                 print("Left light is off.")
-    #
-    #             if self.rightlight == True:
-    #                 print("Right light is on.")
-    #             else:
-    #                 print("Right light is off.")
-    #
-    #             self.securityOffice()
-    #             return None
-    #
-    #         #Unknown command.
-    #         else:
-    #             if self.killed == False:
-    #                 print("What was that? Try again, please!")
-    #                 self.securityOffice()
-    #                 return None
-    #             else:
-    #                 print("You're dead. You can close the game now.")
-    #                 print("...but you can't escape")
-    #                 self.shutdown()
-    #
-    # def cam(self): #Camera mode. You can watch the animatronics from here.
-    #     if self.killed == True or self.time >= 6 or self.power == 0 - 1:
-    #         pass
-    #     else:
-    #         for animatronic in Globals.animatronics:
-    #             if animatronic.kind == "bear":
-    #                 animatronic.bseen = True
-    #         print("Cam list:")
-    #         print(" -- ".join(sorted(list(Globals.camdic)))) #Wow. Just don't change it, it's magical...
-    #         self.usrinput = input("> ").lower()  #User input
-    #
-    #         #Looks at a certain camera to see if something or someone is there.
-    #         if self.usrinput in list(Globals.camdic.keys()):
-    #             print("----- %s %s power left. Usage: %s" % (self.power, "%", self.usage))
-    #             print(Globals.camdic[self.usrinput] + " [Camera Mode]")
-    #             if self.gmode == "survival":
-    #                 print("----- SURVIVAL MODE")
-    #
-    #             if self.gmode != "survival" and self.time == 0:
-    #                 print("----- 12 PM") #I hate this time format
-    #
-    #             if self.gmode != "survival" and self.time != 0:
-    #                 print("----- %s AM" % (self.time))
-    #
-    #             self.checkAnimCam(self.usrinput)
-    #             self.cam()
-    #             return None
-    #
-    #         #Clears the window.
-    #         if self.usrinput in ["clear", "cls"]:
-    #             cls.cls()
-    #             self.cam()
-    #             return None
-    #
-    #         #Closes camera mode. Also handles certains game overs.
-    #         if self.usrinput in ["exit", "close", "x", "e", "c"]:
-    #             cls.cls(0.5, 0.5)
-    #             for animatronic in Globals.animatronics: #Checks if there's "someone" inside...
-    #                 if animatronic.location.lower() == "inside":
-    #                     debug.debugprint("%s was inside!" % (animatronic.name), animatronic)
-    #                     self.die(animatronic)
-    #                     return None
-    #
-    #             for animatronic in Globals.animatronics:
-    #                 if animatronic.kind == "bear":
-    #                     animatronic.bseen = False
-    #                 self.usage -= 1
-    #                 self.securityOffice()
-    #                 return None
-    #
-    #
-    #
-    #
-    #         else:
-    #             if self.killed == False:
-    #                 print("Unknown cam")
-    #                 self.cam()
-    #                 return None
-    #             else:
-    #                 print("You're dead. You can close the game")
-    #                 print("...but the animatronics will wait for you")
-    #                 self.shutdown()
-
-
-    def die(self, animatronic):
-        if animatronic.kind == "chicken":
-            self.killed = True
-            cls.cls(0.5, 0.5)
-            print("%s jumps at your face as a loud screech comes from the animatronic." % (animatronic.name))
-            print("%s got you..." % (animatronic.name))
-            print("Game over.")
-            self.shutdown()
-
-        if animatronic.kind == "rabbit":
-            self.killed = True
-            cls.cls(0.5, 0.5)
-            print("%s jumps at your face as a loud screech comes from the animatronic." % (animatronic.name))
-            print("%s got you..." % (animatronic.name))
-            print("Game over.")
-            self.shutdown()
-
-        if animatronic.kind == "bear":
-            self.killed = True
-            cls.cls(0.5, 0.5)
-            print("%s grabs you and jumps at your face. A really loud screech can be heard." % (animatronic.name))
-            print("%s got you..." % (animatronic.name))
-            print("Game over...")
-            self.shutdown()
-
-        if animatronic.kind == "fox":
-            self.killed = True
-            cls.cls(0.5, 0.5)
-            print("%s enters the room as a loud screech can be heard." % (animatronic.name))
-            print("%s got you..." % (animatronic.name))
-            print("Game over...")
-            self.shutdown()
-
-
 
     def hallucination(self, kind):
         if kind == "camkind":
