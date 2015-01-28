@@ -1,13 +1,18 @@
 pyDLASYIAS (pyDon't let animatronics stuff you in a suit)
 ========================================================
 
-pyDLASYIAS is a text-clone of the horror game Five nights at Freddy's.
-This "text-clone" aims to recreate the gameplay from the original game and make it fully customizable.
+pyDLASYIAS is a clone of the horror game Five nights at Freddy's.
+This "clone" aims to recreate the gameplay from the original game and make it fully customizable.
 The game needs python 3+ to run. It will also always be free and open-sourced.
 
 =======================================================
 
-How to play: Well, playing is easy. You'll probably have some text with the power/time written in it.
+How to play: 
+GUI MODE: The gameplay is the same as in the original game.
+
+
+CLI MODE:
+Well, playing is easy. You'll probably have some text with the power/time written in it.
 You type commands like: "left door" "left light" "cam"
 Now, to close or open the doors you simply write "left door" or "right door" and it will close or open the door.
 You can do the same with the lights. You write "left light" or "right light". If there's something or someone in there, it will
