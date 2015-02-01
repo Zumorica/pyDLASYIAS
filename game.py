@@ -66,9 +66,11 @@ def launcher():
     if inp == "5":
         inp = input("Input test mode code: ")
         if inp == "1": #Death debugging.
-            rabbit = animatronics.animatronic("Rabbit", "rabbit", 20, "inside")
-            main.main("custom", 10, 0)
-            return None
+            rabbit = animatronics.animatronic("Rabbit", "rabbit", 20)
+            chicken = animatronics.animatronic("Chicken", "chicken", 20)
+            fox = animatronics.animatronic("Fox", "fox", 20, "cam1c")
+            bear = animatronics.animatronic("Bear", "bear", 20)
+            main.main("custom", 5, 0)
 
         if inp == "2": #Bear behavior debugging.
             bear = animatronics.animatronic("Bear", "bear", 20, "cam1a")

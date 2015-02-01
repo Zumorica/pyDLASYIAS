@@ -7,7 +7,7 @@ def init():
 
     version = "v0.5-alpha (GUI)"
 
-    debug = True #Debug variable. If set to true, prints debug info into the console.
+    debug = False #Debug variable. If set to true, prints debug info into the console.
 
     animatronics = [] #A list for all the animatronics. They auto-append themselves to this list.
 

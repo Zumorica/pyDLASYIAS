@@ -98,3 +98,4 @@ target/
 
 # pyDLASYIAS
 __FUTURE__/
+venv/

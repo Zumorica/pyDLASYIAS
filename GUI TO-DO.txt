@@ -1,0 +1,19 @@
+-Replace all images from the original game with other images
+
+-Add usage
+
+-Add time
+
+-Add power out
+
+-(ANIMATRONICS): Fix Bear, make him work for once and all
+
+-Add different resolutions
+
+-Change images resolutions
+
+-Change buttons and how they work
+
+-Add camera "static" effect
+
+-When a camera img is changed, a static should appear for some seconds

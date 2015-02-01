@@ -93,11 +93,7 @@ class animatronic(object): #Animatronics' class.
                     if self.location == "cam4a":
                         self.rmove(["cam1b", "rightdoor", "cam4b"])
                     if self.location == "cam4b":
-                        self.rmove(["cam4a", "rightdoor", "cam1a"])
-                    if self.location == "rightdoor":
-                        pass
-                    if self.location == "inside":
-                        pass
+                        self.rmove(["cam4a", "cam1a"])
                     if random.randint(0, int(self.ailvl)) in range(0, int(self.ailvl / 3)):
                         self.agressiveness = 2
 

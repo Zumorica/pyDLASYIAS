@@ -13,7 +13,7 @@ import pyDLASYIAS.utils.cls as cls
 from pygame.locals import *
 
 class main(object):
-    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1600, height=720, fps=60):
+    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1600, height=720, fps=120):
         debug.debugprint("pyDLASYIAS %s started. Setting up game variables..." % (Globals.version))
 
         sys.setrecursionlimit(5000) #Magic.
@@ -61,12 +61,14 @@ class main(object):
         pygame.init()
         self.FPSCLOCK = pygame.time.Clock()
 
+        self.font = pygame.font.Font(None, 30)
+
         self.allgroup = pygame.sprite.Group()
         self.officegroup = pygame.sprite.LayeredUpdates()
         self.camgroup = pygame.sprite.LayeredUpdates()
         self.scaregroup = pygame.sprite.LayeredUpdates()
 
-        self.leftButton = sprite.Sprite(startpos=(1, 180), image="office\\button\\left\\0")
+        self.leftButton = sprite.Sprite(startpos=(0, 180), image="office\\button\\left\\0")
         self.leftButton.groups = self.allgroup, self.officegroup
 
         self.rightButton = sprite.Sprite(startpos=(1500, 180), image="office\\button\\right\\0")
@@ -153,11 +155,11 @@ class main(object):
                                                                            "office\\scarejump\\bear\\normal\\26.png", "office\\scarejump\\bear\\normal\\27.png",
                                                                            "office\\scarejump\\bear\\normal\\28.png", "office\\scarejump\\bear\\normal\\29.png"])
 
+        self.staticTransparent = sprite.Sprite(startpos=(0,0), image="cameras\\misc\\static\\transparent\\0")
+        self.staticTransparent.groups = self.allgroup, self.officegroup, self.camgroup, self.scaregroup
+
         self.bg = sprite.Sprite("office\\0", (0,0))
         self.bg.groups = self.allgroup, self.officegroup, self.camgroup, self.scaregroup
-
-        self.mousex = 0
-        self.mousey = 0
 
         self.allgroup.add(self.leftButton)
         self.allgroup.add(self.rightButton)
@@ -165,6 +167,76 @@ class main(object):
         self.allgroup.add(self.map)
         self.allgroup.add(self.bg)
         self.allgroup.add(self.camButtonOneA)
+        self.allgroup.add(self.bearNormalScarejump)
+        self.allgroup.add(self.foxScarejump)
+        self.allgroup.add(self.rabbitScarejump)
+        self.allgroup.add(self.chickenScarejump)
+        self.allgroup.add(self.camButtonOneA)
+        self.allgroup.add(self.camButtonOneB)
+        self.allgroup.add(self.camButtonOneC)
+        self.allgroup.add(self.camButtonTwoA)
+        self.allgroup.add(self.camButtonTwoB)
+        self.allgroup.add(self.camButtonThree)
+        self.allgroup.add(self.camButtonFourA)
+        self.allgroup.add(self.camButtonFourB)
+        self.allgroup.add(self.camButtonFive)
+        self.allgroup.add(self.camButtonSix)
+        self.allgroup.add(self.camButtonSeven)
+        self.allgroup.add(self.staticTransparent)
+
+        self.xscream = pygame.mixer.Sound("sounds\\scary\\XSCREAM.wav")
+        self.xscreamTwo = pygame.mixer.Sound("sounds\\scary\\XSCREAM2.wav")
+
+        self.giggle = pygame.mixer.Sound("sounds\\scary\\giggle.wav")
+        self.freddygiggle = pygame.mixer.Sound("sounds\\scary\\freddygiggle.wav")
+        self.freddygiggleTwo = pygame.mixer.Sound("sounds\\scary\\freddygiggle2.wav")
+        self.freddygiggleThree = pygame.mixer.Sound("sounds\\scary\\freddygiggle3.wav")
+
+        self.windowscare = pygame.mixer.Sound("sounds\\scary\\windowscare.wav")
+
+        self.breathing = pygame.mixer.Sound("sounds\\scary\\breathing.wav")
+        self.breathingTwo = pygame.mixer.Sound("sounds\\scary\\breathing2.wav")
+        self.breathingThree = pygame.mixer.Sound("sounds\\scary\\breathing3.wav")
+        self.breathingFour = pygame.mixer.Sound("sounds\\scary\\breathing4.wav")
+
+        self.chimes = pygame.mixer.Sound("sounds\\misc\\6AM.wav")
+        self.children = pygame.mixer.Sound("sounds\\misc\\children.wav")
+
+        self.doorSound = pygame.mixer.Sound("sounds\\misc\\door.wav")
+        self.doorknocking = pygame.mixer.Sound("sounds\\misc\\doorknocking.wav")
+        self.doorpundering = pygame.mixer.Sound("sounds\\misc\\doorpounding.wav")
+
+        self.freddysNose = pygame.mixer.Sound("sounds\\misc\\honk.wav")
+        self.musicbox = pygame.mixer.Sound("sounds\\misc\\musicbox.wav")
+        self.powerdown = pygame.mixer.Sound("sounds\\misc\\powerdown.wav")
+
+        self.lighthum = pygame.mixer.Sound("sounds\\misc\\lighthum.wav")
+        self.buttonError = pygame.mixer.Sound("sounds\\misc\\error.wav")
+
+        self.blip = pygame.mixer.Sound("sounds\\camera\\blip.wav")
+        self.cameraSound = pygame.mixer.Sound("sounds\\camera\\camerasound.wav")
+        self.cameraSoundTwo = pygame.mixer.Sound("sounds\\camera\\camerasound2.wav")
+
+        self.computernoise = pygame.mixer.Sound("sounds\\camera\\computernoise.wav")
+        self.garble = pygame.mixer.Sound("sounds\\camera\\garble.wav")
+        self.garbleTwo = pygame.mixer.Sound("sounds\\camera\\garble2.wav")
+        self.garbleThree = pygame.mixer.Sound("sounds\\camera\\garble3.wav")
+
+        self.putdown = pygame.mixer.Sound("sounds\\camera\\putdown.wav")
+
+        self.pots = pygame.mixer.Sound("sounds\\camera\\pots.wav")
+        self.potsTwo = pygame.mixer.Sound("sounds\\camera\\pots2.wav")
+        self.potsThree = pygame.mixer.Sound("sounds\\camera\\pots3.wav")
+        self.potsFour = pygame.mixer.Sound("sounds\\camera\\pots4.wav")
+
+        self.static = pygame.mixer.Sound("sounds\\camera\\static2.wav")
+
+        self.fanSound = pygame.mixer.Sound("sounds\\ambience\\fan.wav")
+
+        self.mousex = 0
+        self.mousey = 0
+
+        self.runonce = 0
 
         while self.running:
 
@@ -188,6 +260,14 @@ class main(object):
 
             if self.scene == "office":
 
+                if self.power < 0:
+                    self.runonce = 0
+                    self.scene = "powerdown"
+
+                if self.runonce == 0:
+                    self.fanSound.play(-1)
+                    self.runonce = 1
+
                 self.officegroup.add(self.leftButton)
                 self.officegroup.add(self.rightButton)
                 self.officegroup.add(self.camButton)
@@ -197,7 +277,6 @@ class main(object):
                 self.officegroup.change_layer(self.leftButton, 1)
                 self.officegroup.change_layer(self.rightButton, 1)
                 self.officegroup.change_layer(self.camButton, 2)
-
 
                 if Globals.mouseClick:
                     if self.mousex in range(32,69) and self.mousey in range(314,362):
@@ -218,6 +297,7 @@ class main(object):
 
                     if self.mousex in range(674,683) and self.mousey in range(236,240):
                         print("Honk! (%s, %s)" % (self.mousex,self.mousey))
+                        self.freddysNose.play(0)
 
                     if self.mousex in range(532,1127) and self.mousey in range(588,630):
                         print("TBC WITH CAMERA!!! (%s, %s)" %(self.mousex,self.mousey))
@@ -227,7 +307,7 @@ class main(object):
 
                 if self.leftlight and not self.rightlight:
                     for animatronic in Globals.animatronics:
-                        if animatronic.location == "leftdoor":
+                        if animatronic.location == "leftdoor" and animatronic.kind == "rabbit":
                             self.bg.changeImg("office\\r")
                             break
                     else:
@@ -235,7 +315,7 @@ class main(object):
 
                 elif not self.leftlight and self.rightlight:
                     for animatronic in Globals.animatronics:
-                        if animatronic.location == "rightlight":
+                        if animatronic.location == "rightlight" and animatronic.kind == "chicken":
                             self.bg.changeImg("office\\c")
                             break
                     else:
@@ -283,7 +363,29 @@ class main(object):
                 self.officegroup.draw(self.screen)
                 self.officegroup.update()
 
+                if self.time == 0:
+                    self.timeLabel = self.font.render("12 PM", True, (255,255,255))
+                    self.screen.blit(self.timeLabel, (1400,50))
+                else:
+                    self.timeLabel = self.font.render("%s AM" % (self.time), True, (255,255,255))
+                    self.screen.blit(self.timeLabel, (1400,50))
+
+                self.powerLabel = self.font.render("Power left: %s" %(self.power), True, (255,255,255))
+                self.usageLabel = self.font.render("Usage: %s" %(self.usage), True, (255,255,255))
+
+                self.screen.blit(self.powerLabel, (50,520))
+                self.screen.blit(self.usageLabel, (50,550))
+
             elif self.scene == "cam":
+
+                if self.power < 0:
+                    self.securityOffice()
+
+                if self.runonce == 0:
+                    self.changeCamera(self.lastcam)
+                    self.cameraSound.play(-1)
+                    self.cameraSoundTwo.play(-1)
+                    self.runonce = 1
 
                 self.camgroup.add(self.camButton)
                 self.camgroup.add(self.map)
@@ -299,64 +401,83 @@ class main(object):
                 self.camgroup.add(self.camButtonSix)
                 self.camgroup.add(self.camButtonSeven)
                 self.camgroup.add(self.bg)
+                self.camgroup.add(self.staticTransparent)
 
                 self.camgroup.change_layer(self.bg, 0)
-                self.camgroup.change_layer(self.map, 1)
-                self.camgroup.change_layer(self.camButtonOneA, 2)
-                self.camgroup.change_layer(self.camButtonOneB, 2)
-                self.camgroup.change_layer(self.camButtonOneC, 2)
-                self.camgroup.change_layer(self.camButtonTwoA, 2)
-                self.camgroup.change_layer(self.camButtonTwoB, 2)
-                self.camgroup.change_layer(self.camButtonThree, 2)
-                self.camgroup.change_layer(self.camButtonFourA, 2)
-                self.camgroup.change_layer(self.camButtonFourB, 2)
-                self.camgroup.change_layer(self.camButtonFive, 2)
-                self.camgroup.change_layer(self.camButtonSix, 2)
-                self.camgroup.change_layer(self.camButtonSeven, 2)
-                self.camgroup.change_layer(self.camButton, 3)
+                self.camgroup.change_layer(self.map, 8)
+                self.camgroup.change_layer(self.camButtonOneA, 10)
+                self.camgroup.change_layer(self.camButtonOneB, 10)
+                self.camgroup.change_layer(self.camButtonOneC, 10)
+                self.camgroup.change_layer(self.camButtonTwoA, 10)
+                self.camgroup.change_layer(self.camButtonTwoB, 10)
+                self.camgroup.change_layer(self.camButtonThree, 10)
+                self.camgroup.change_layer(self.camButtonFourA, 10)
+                self.camgroup.change_layer(self.camButtonFourB, 10)
+                self.camgroup.change_layer(self.camButtonFive, 10)
+                self.camgroup.change_layer(self.camButtonSix, 10)
+                self.camgroup.change_layer(self.camButtonSeven, 10)
+                self.camgroup.change_layer(self.camButton, 10)
+                self.camgroup.change_layer(self.staticTransparent, 2)
+
+                self.staticTransparent.changeImg(random.choice(["cameras\\misc\\static\\transparent\\0", "cameras\\misc\\static\\transparent\\1",
+                                                               "cameras\\misc\\static\\transparent\\2", "cameras\\misc\\static\\transparent\\3",
+                                                               "cameras\\misc\\static\\transparent\\4", "cameras\\misc\\static\\transparent\\5",
+                                                               "cameras\\misc\\static\\transparent\\6", "cameras\\misc\\static\\transparent\\7"]))
 
                 if self.camButtonOneA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.lastcam = "cam1a"
+                    self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                    "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                    "cameras\\misc\\static\\4", "cameras\\misc\\static\\5"]))
+                    self.changeCamera("cam1a")
                     print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonOneB.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.lastcam = "cam1b"
+                    self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                    "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                    "cameras\\misc\\static\\4", "cameras\\misc\\static\\5"]))
+                    self.changeCamera("cam1b")
                     print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonOneC.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.lastcam = "cam1c"
+                    self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                    "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                    "cameras\\misc\\static\\4", "cameras\\misc\\static\\5"]))
+                    self.changeCamera("cam1c")
                     print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonTwoA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.lastcam = "cam2a"
+                    self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                    "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                    "cameras\\misc\\static\\4", "cameras\\misc\\static\\5"]))
+                    self.changeCamera("cam2a")
                     print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonTwoB.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.lastcam = "cam2b"
+                    self.changeCamera("cam2b")
                     print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonThree.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.lastcam = "cam3"
+                    self.changeCamera("cam3")
                     print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonFourA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.lastcam = "cam4a"
+                    self.changeCamera("cam4a")
                     print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonFourB.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.lastcam = "cam4b"
+                    self.changeCamera("cam4b")
                     print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonFive.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.lastcam = "cam5"
+                    self.changeCamera("cam5")
                     print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonSix.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.lastcam = "cam6"
+                    self.changeCamera("cam6")
                     print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonSeven.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.lastcam = "cam7"
+                    self.changeCamera("cam7")
                     print("%s CLICKED" %(self.lastcam.upper()))
 
                 #------#
@@ -594,7 +715,9 @@ class main(object):
                     self.camButtonSix.changeImg("ui\\button\\scam6")
                     self.camButtonSeven.changeImg("ui\\button\\cam7")
 
-                    self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",  "cameras\\misc\\static\\2", "cameras\\misc\\static\\3", "cameras\\misc\\static\\4", "cameras\\misc\\static\\5", "cameras\\misc\\static\\6"]))
+                    self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",  "cameras\\misc\\static\\2",
+                                                     "cameras\\misc\\static\\3", "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
+                                                     "cameras\\misc\\static\\6"]))
 
                 elif self.lastcam == "cam7":
 
@@ -629,6 +752,19 @@ class main(object):
                 self.camgroup.draw(self.screen)
                 self.camgroup.update()
 
+                if self.time == 0:
+                    self.timeLabel = self.font.render("12 PM", True, (255,255,255))
+                    self.screen.blit(self.timeLabel, (1400,50))
+                else:
+                    self.timeLabel = self.font.render("%s AM" % (self.time), True, (255,255,255))
+                    self.screen.blit(self.timeLabel, (1400,50))
+
+                self.powerLabel = self.font.render("Power left: %s" %(self.power), True, (255,255,255))
+                self.usageLabel = self.font.render("Usage: %s" %(self.usage), True, (255,255,255))
+
+                self.screen.blit(self.powerLabel, (50,520))
+                self.screen.blit(self.usageLabel, (50,550))
+
             elif self.scene == "scarejump":
 
                 self.scaregroup.add(self.bg)
@@ -636,6 +772,9 @@ class main(object):
 
                 for animatronic in Globals.animatronics:
                     if animatronic.location == "inside":
+                        if self.runonce == 0:
+                            self.xscream.play(0)
+                            self.runonce = 1
                         if animatronic.kind == "chicken":
                             self.scaregroup.add(self.chickenScarejump)
                             self.scaregroup.update()
@@ -667,6 +806,36 @@ class main(object):
                             if self.foxScarejump.has_Finished():
                                 self.shutdown()
 
+                self.scaregroup.draw(self.screen)
+                self.scaregroup.update()
+
+            elif self.scene == "powerdown":
+                self.scaregroup.add(self.bg)
+
+                if self.runonce == 0:
+                    pygame.mixer.stop()
+                    self.bg.changeImg("office\\powerdown\\0")
+                    self.scaregroup.draw()
+                    self.powerdown.play(0)
+                    self.runonce = 1
+
+                self.freddyHere = 0
+
+                if random.randint(0, 100) == 87 and self.freddyHere == 0:
+                    self.musicbox.play(0)
+                    self.freddyHere = 1
+                    self.bg.changeImg(random.choice(["office\\powerdown\\0", "office\\powerdown\\0", "office\\powerdown\\0", "office\\powerdown\\1"]))
+                    while 1:
+                        if random.randint(0, 100) == 87 and self.freddyHere == 1:
+                            pygame.mixer.stop()
+                            self.bg.changeImg("office\\powerdown\\3")
+
+
+                self.scaregroup.draw(self.screen)
+                self.scaregroup.update()
+
+
+
 
             pygame.display.update()
             pygame.display.flip()
@@ -681,30 +850,22 @@ class main(object):
         os._exit(0)
         os.system("exit")
 
-    def blackout(self): #Blackout event. yay
-        for animatronic in Globals.animatronics:
-            if animatronic.kind == "bear":
-                print("")
-                print("Power went out...")
-                cls.cls(random.randint(2, 7), random.randint(0, 2))
-                print("%s is at the left door." % (animatronic.name))
-                print("A music box starts playing.")
-                cls.cls(random.randint(2, 10))
-                print("You see nothing at all.")
-                print("You hear steps.")
-                cls.cls(random.randint(3, 8))
-                if self.time != 6:
-                    self.die(animatronic)
-                    break
-                else:
-                    pass
+    def changeCamera(self, camera):
+        self.blip.play(0)
+        self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",  "cameras\\misc\\static\\2",
+                                             "cameras\\misc\\static\\3", "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
+                                             "cameras\\misc\\static\\6"]))
+        self.camgroup.draw(self.screen)
+        self.camgroup.update()
+        self.lastcam = camera
+
 
     def powerTimer(self): #Timer for the power.
         if self.killed == True or self.time >= 6 or self.power == 0 - 1: #Checks if the game has finished
             pass
         else:
             if self.power <= 0 - 1:
-                self.blackout()
+                pass
             else:
                 if self.power < 30:
                     for animatronic in Globals.animatronics:
@@ -916,7 +1077,10 @@ class main(object):
             self.usage -= 1
             self.rightlight = False
         self.usage += 1
+        self.putdown.play(0)
         pygame.time.delay(1000)
+        pygame.mixer.stop()
+        self.runonce = 0
         self.scene = "cam"
         debug.debugprint("Camera opened")
         return None
@@ -924,7 +1088,10 @@ class main(object):
     def securityOffice(self):
         debug.debugprint("Go back into office")
         self.usage -= 1
+        self.putdown.play(0)
         pygame.time.delay(1000)
+        pygame.mixer.stop()
+        self.runonce = 0
         self.scene = "office"
         for animatronic in Globals.animatronics:
             if animatronic.location.lower() == "inside":
@@ -933,85 +1100,6 @@ class main(object):
 
         debug.debugprint("Back into office")
         return None
-
-    def hallucination(self, kind):
-        if kind == "camkind":
-            self.randhall = random.randint(0, 80)
-            if self.randhall in range(0, self.ailvl):
-                print("IT'S ME   ")
-                if random.randint(0, 2) == 1:
-                    print("            IT'S        ME")
-
-    def someoneThere(self, cam):
-        for animatronic in Globals.animatronics:
-            if animatronic.location == cam:
-                return True
-        return False
-
-
-    def checkAnimCam(self, cam):
-        if cam == "cam2a":
-            for animatronic in Globals.animatronics:
-                if animatronic.kind == "fox" and animatronic.foxstatus >= 4:
-                    animatronic.foxstatus = 5
-                    animatronic.think()
-                    print("You see %s sprinting down the hall." % (animatronic.name))
-                    self.usage -= 1
-                    self.securityOffice()
-                    return None
-                if animatronic.location == cam and animatronic.kind != "fox":
-                    self.hallucination("camkind")
-                    print("%s is here." % (animatronic.name))
-
-        if cam == "cam1c":
-            for animatronic in Globals.animatronics:
-                if animatronic.location == cam and animatronic.kind == "fox":
-                    animatronic.foxtseen += 1
-                    if animatronic.foxstatus <= 0:
-                        print("%s is hiding behind the curtain." % (animatronic.name))
-
-                    if animatronic.foxstatus == 1:
-                        print("%s is peeking through the curtain." % (animatronic.name))
-
-                    if animatronic.foxstatus == 2:
-                        print("%s is looking through the curtain." % (animatronic.name))
-
-                    if animatronic.foxstatus == 3:
-                        print("%s is out." % (animatronic.name))
-
-                    if animatronic.foxstatus == 4:
-                        print("%s is gone." % (animatronic.name))
-
-        if cam == "cam1a":
-            for animatronic in Globals.animatronics:
-                if animatronic.location == cam:
-                    if random.randint(0, 1) == 1:
-                        print("%s is here." % (animatronic.name))
-                    else:
-                        print("%s is looking directly to the camera." % (animatronic.name))
-
-        if cam == "cam4b":
-            for animatronic in Globals.animatronics:
-                if animatronic.location == cam and animatronic.kind != "bear":
-                    print("%s is here." % (animatronic.name))
-
-                if animatronic.location == cam and animatronic.kind == "bear":
-                    print("%s is looking directly to the camera." % (animatronic.name))
-
-        if cam == "cam6":
-            for animatronic in Globals.animatronics:
-                if animatronic.location == cam:
-                    if animatronic.kind == "bear":
-                        print("A music box can be heard.")
-                    else:
-                        print("Noise can be heard.")
-
-        elif cam not in ["cam1c", "cam1a", "cam4b", "cam6", "cam2a"]:
-            for animatronic in Globals.animatronics:
-                if animatronic.location == cam and animatronic.kind != "bear":
-                    print("%s is here." % (animatronic.name))
-                if animatronic.location == cam and animatronic.kind == "bear":
-                    print("%s" % (random.choice(["...huh?", "W-What's that?", "..."])))
 
 if __name__ == "__main__":
     try:
