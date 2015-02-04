@@ -60,6 +60,7 @@ class animatronic(object): #Animatronics' class.
     def think(self):
         if self.location == "off": #Shuts down the AI
             debug.debugprint("%s's AI is shutting down." % (self.name), self)
+            del self
             os.system("exit")
             sys.exit(0)
             os._exit(0)

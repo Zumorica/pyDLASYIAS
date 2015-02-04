@@ -13,7 +13,7 @@ import pyDLASYIAS.utils.cls as cls
 from pygame.locals import *
 
 class main(object):
-    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1600, height=720, fps=120):
+    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1280, height=720, fps=60):
         debug.debugprint("pyDLASYIAS %s started. Setting up game variables..." % (Globals.version))
 
         sys.setrecursionlimit(5000) #Magic.
@@ -49,7 +49,6 @@ class main(object):
 
         _thread.start_new_thread(self.foxkindDoorCheck, ())
 
-
         self.width = width
         self.height = height
         self.running = True
@@ -74,43 +73,55 @@ class main(object):
         self.rightButton = sprite.Sprite(startpos=(1500, 180), image="office\\button\\right\\0")
         self.rightButton.groups = self.allgroup, self.officegroup
 
-        self.camButton = sprite.Sprite(startpos=(530, 578), image="ui\\button\\camera")
+        self.LeftDoorButton = sprite.Sprite(startpos=(34, 232), image="office\\button\\collision")
+        self.LeftDoorButton.groups = self.allgroup, self.officegroup
+
+        self.LeftLightButton = sprite.Sprite(startpos=(34, 314), image="office\\button\\collision")
+        self.LeftLightButton.groups = self.allgroup, self.officegroup
+
+        self.RightDoorButton = sprite.Sprite(startpos=(1525,232), image="office\\button\\collision")
+        self.RightDoorButton.groups = self.allgroup, self.officegroup
+
+        self.RightLightButton = sprite.Sprite(startpos=(1525,314), image="office\\button\\collision")
+        self.RightLightButton.groups = self.allgroup, self.officegroup
+
+        self.camButton = sprite.Sprite(startpos=(245, 635), image="ui\\button\\camera")
         self.camButton.groups = self.allgroup, self.officegroup, self.camgroup
 
-        self.map = sprite.Sprite(startpos=(1200, 350), image="ui\\map")
+        self.map = sprite.Sprite(startpos=(848, 313), image="ui\\map")
         self.map.groups = self.allgroup, self.camgroup
 
-        self.camButtonOneA = sprite.Sprite(startpos=(1313,370), image="ui\\button\\cam1a")
+        self.camButtonOneA = sprite.Sprite(startpos=(983,353), image="ui\\button\\cam1a")
         self.camButtonOneA.groups = self.allgroup, self.camgroup
 
-        self.camButtonOneB = sprite.Sprite(startpos=(1300,510), image="ui\\button\\cam1b")
+        self.camButtonOneB = sprite.Sprite(startpos=(963,409), image="ui\\button\\cam1b")
         self.camButtonOneB.groups = self.allgroup, self.camgroup
 
-        self.camButtonOneC = sprite.Sprite(startpos=(1250,524), image="ui\\button\\cam1c")
+        self.camButtonOneC = sprite.Sprite(startpos=(931,487), image="ui\\button\\cam1c")
         self.camButtonOneC.groups = self.allgroup, self.camgroup
 
-        self.camButtonTwoA = sprite.Sprite(startpos=(1307,598), image="ui\\button\\cam2a")
+        self.camButtonTwoA = sprite.Sprite(startpos=(954,574), image="ui\\button\\cam2a")
         self.camButtonTwoA.groups = self.allgroup, self.camgroup
 
-        self.camButtonTwoB = sprite.Sprite(startpos=(1307,648), image="ui\\button\\cam2b")
+        self.camButtonTwoB = sprite.Sprite(startpos=(954,626), image="ui\\button\\cam2b")
         self.camButtonTwoB.groups = self.allgroup, self.camgroup
 
-        self.camButtonThree = sprite.Sprite(startpos=(1240,598), image="ui\\button\\cam3")
+        self.camButtonThree = sprite.Sprite(startpos=(877,574), image="ui\\button\\cam3")
         self.camButtonThree.groups = self.allgroup, self.camgroup
 
-        self.camButtonFourA = sprite.Sprite(startpos=(1400,598), image="ui\\button\\cam4a")
+        self.camButtonFourA = sprite.Sprite(startpos=(1060,574), image="ui\\button\\cam4a")
         self.camButtonFourA.groups = self.allgroup, self.camgroup
 
-        self.camButtonFourB = sprite.Sprite(startpos=(1400,648), image="ui\\button\\cam4b")
+        self.camButtonFourB = sprite.Sprite(startpos=(1060,626), image="ui\\button\\cam4b")
         self.camButtonFourB.groups = self.allgroup, self.camgroup
 
-        self.camButtonFive = sprite.Sprite(startpos=(1200, 430), image="ui\\button\\cam5")
+        self.camButtonFive = sprite.Sprite(startpos=(857,436), image="ui\\button\\cam5")
         self.camButtonFive.groups = self.allgroup, self.camgroup
 
-        self.camButtonSix = sprite.Sprite(startpos=(1520,600), image="ui\\button\\cam6")
+        self.camButtonSix = sprite.Sprite(startpos=(1163,556), image="ui\\button\\cam6")
         self.camButtonSix.groups = self.allgroup, self.camgroup
 
-        self.camButtonSeven = sprite.Sprite(startpos=(1523,457), image="ui\\button\\cam7")
+        self.camButtonSeven = sprite.Sprite(startpos=(1172,424), image="ui\\button\\cam7")
         self.camButtonSeven.groups = self.allgroup, self.camgroup
 
         self.chickenScarejump = sprite.Animated(startpos=(0,0), images=["office\\scarejump\\chicken\\0.png", "office\\scarejump\\chicken\\1.png",
@@ -163,6 +174,10 @@ class main(object):
 
         self.allgroup.add(self.leftButton)
         self.allgroup.add(self.rightButton)
+        self.allgroup.add(self.LeftDoorButton)
+        self.allgroup.add(self.LeftLightButton)
+        self.allgroup.add(self.RightDoorButton)
+        self.allgroup.add(self.RightLightButton)
         self.allgroup.add(self.camButton)
         self.allgroup.add(self.map)
         self.allgroup.add(self.bg)
@@ -238,6 +253,11 @@ class main(object):
 
         self.runonce = 0
 
+        self.camMovement = "left"
+        self.lastBgPos = (0,0)
+        self.lastLBPos = (0,0)
+        self.lastRBPos = (0,0)
+
         while self.running:
 
             Globals.mouseClick = False
@@ -245,7 +265,7 @@ class main(object):
 
             for event in pygame.event.get():
 
-                print(event)
+                debug.debugprint(event, writetolog=False)
 
                 if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
                     pygame.quit()
@@ -261,49 +281,138 @@ class main(object):
             if self.scene == "office":
 
                 if self.power < 0:
-                    self.runonce = 0
-                    self.scene = "powerdown"
+                    self.freddyHere = 0
+                    self.powerDown()
+
 
                 if self.runonce == 0:
+                    self.bg.pos = self.lastBgPos
                     self.fanSound.play(-1)
                     self.runonce = 1
 
+
+                self.lastBgPos = self.bg.pos
+                self.lastLBPos = self.leftButton.pos
+                self.LastRBPos = self.rightButton.pos
+
                 self.officegroup.add(self.leftButton)
                 self.officegroup.add(self.rightButton)
+                self.officegroup.add(self.LeftDoorButton)
+                self.officegroup.add(self.LeftLightButton)
+                self.officegroup.add(self.RightDoorButton)
+                self.officegroup.add(self.RightLightButton)
                 self.officegroup.add(self.camButton)
                 self.officegroup.add(self.bg)
 
                 self.officegroup.change_layer(self.bg, 0)
                 self.officegroup.change_layer(self.leftButton, 1)
                 self.officegroup.change_layer(self.rightButton, 1)
+                self.officegroup.change_layer(self.LeftDoorButton, 2)
+                self.officegroup.change_layer(self.LeftLightButton, 2)
+                self.officegroup.change_layer(self.RightDoorButton, 2)
+                self.officegroup.change_layer(self.RightLightButton, 2)
                 self.officegroup.change_layer(self.camButton, 2)
 
-                if Globals.mouseClick:
-                    if self.mousex in range(32,69) and self.mousey in range(314,362):
-                        print("TBC WITH PYDLASYIAS' LEFT LIGHT FUNCT. (%s, %s)" %(self.mousex,self.mousey))
-                        self.leftLight()
+                self.movingleft = False
+                self.movingright = False
 
-                    if self.mousex in range(34,69) and self.mousey in range(232,285):
-                        print("TBC WITH PYDLASYIAS' LEFT DOOR FUNCT. (%s, %s)" %(self.mousex,self.mousey))
-                        self.leftDoor()
 
-                    if self.mousex in range(1525,1559) and self.mousey in range(313,364):
-                        print("TBC WITH PYDLASYIAS' RIGHT LIGHT FUNCT. (%s, %s)" %(self.mousex,self.mousey))
-                        self.rightLight()
+                if self.mousex in range(0, 150) and list(self.bg.rect.topleft)[0] in range(-400, -10) and not self.movingright:
+                    self.bg.pos = (list(self.bg.pos)[0] + 20, list(self.bg.pos)[1])
 
-                    if self.mousex in range(1524,1559) and self.mousey in range(236,283):
-                        print("TBC WITH PYDLASYIAS' RIGHT DOOR FUNCT. (%s, %s)" %(self.mousex,self.mousey))
-                        self.rightDoor()
+                    self.rightButton.pos = (list(self.rightButton.pos)[0] + 20, list(self.rightButton.pos)[1])
+                    self.leftButton.pos = (list(self.leftButton.pos)[0] + 20, list(self.leftButton.pos)[1])
 
-                    if self.mousex in range(674,683) and self.mousey in range(236,240):
-                        print("Honk! (%s, %s)" % (self.mousex,self.mousey))
-                        self.freddysNose.play(0)
+                    self.LeftDoorButton.pos = (list(self.LeftDoorButton.pos)[0] + 20, list(self.LeftDoorButton.pos)[1])
+                    self.LeftLightButton.pos = (list(self.LeftLightButton.pos)[0] + 20, list(self.LeftLightButton.pos)[1])
+                    self.RightDoorButton.pos = (list(self.RightDoorButton.pos)[0] + 20, list(self.RightDoorButton.pos)[1])
+                    self.RightLightButton.pos = (list(self.RightLightButton.pos)[0] + 20, list(self.RightLightButton.pos)[1])
 
-                    if self.mousex in range(532,1127) and self.mousey in range(588,630):
-                        print("TBC WITH CAMERA!!! (%s, %s)" %(self.mousex,self.mousey))
-                        self.openCamera()
+                    self.movingleft = True
 
-                #BG
+                if self.mousex in range(150, 315) and list(self.bg.rect.topleft)[0] in range(-400, -10) and not self.movingright:
+                    self.bg.pos = (list(self.bg.pos)[0] + 10, list(self.bg.pos)[1])
+
+                    self.rightButton.pos = (list(self.rightButton.pos)[0] + 10, list(self.rightButton.pos)[1])
+                    self.leftButton.pos = (list(self.leftButton.pos)[0] + 10, list(self.leftButton.pos)[1])
+
+                    self.LeftDoorButton.pos = (list(self.LeftDoorButton.pos)[0] + 10, list(self.LeftDoorButton.pos)[1])
+                    self.LeftLightButton.pos = (list(self.LeftLightButton.pos)[0] + 10, list(self.LeftLightButton.pos)[1])
+                    self.RightDoorButton.pos = (list(self.RightDoorButton.pos)[0] + 10, list(self.RightDoorButton.pos)[1])
+                    self.RightLightButton.pos = (list(self.RightLightButton.pos)[0] + 10, list(self.RightLightButton.pos)[1])
+
+                    self.movingleft = True
+
+                if self.mousex in range(315, 540) and list(self.bg.rect.topleft)[0] in range(-400, -10) and not self.movingright:
+                    self.bg.pos = (list(self.bg.pos)[0] + 5, list(self.bg.pos)[1])
+
+                    self.rightButton.pos = (list(self.rightButton.pos)[0] + 5, list(self.rightButton.pos)[1])
+                    self.leftButton.pos = (list(self.leftButton.pos)[0] + 5, list(self.leftButton.pos)[1])
+
+                    self.LeftDoorButton.pos = (list(self.LeftDoorButton.pos)[0] + 5, list(self.LeftDoorButton.pos)[1])
+                    self.LeftLightButton.pos = (list(self.LeftLightButton.pos)[0] + 5, list(self.LeftLightButton.pos)[1])
+                    self.RightDoorButton.pos = (list(self.RightDoorButton.pos)[0] + 5, list(self.RightDoorButton.pos)[1])
+                    self.RightLightButton.pos = (list(self.RightLightButton.pos)[0] + 5, list(self.RightLightButton.pos)[1])
+
+                    self.movingleft = True
+
+                if self.mousex in range(1140, 1280) and not list(self.bg.rect.topright)[0] < 1300 and not self.movingleft:
+                    self.bg.pos = (list(self.bg.pos)[0] - 20, list(self.bg.pos)[1])
+
+                    self.rightButton.pos = (list(self.rightButton.pos)[0] - 20, list(self.rightButton.pos)[1])
+                    self.leftButton.pos = (list(self.leftButton.pos)[0] - 20, list(self.leftButton.pos)[1])
+
+                    self.LeftDoorButton.pos = (list(self.LeftDoorButton.pos)[0] - 20, list(self.LeftDoorButton.pos)[1])
+                    self.LeftLightButton.pos = (list(self.LeftLightButton.pos)[0] - 20, list(self.LeftLightButton.pos)[1])
+                    self.RightDoorButton.pos = (list(self.RightDoorButton.pos)[0] - 20, list(self.RightDoorButton.pos)[1])
+                    self.RightLightButton.pos = (list(self.RightLightButton.pos)[0] - 20, list(self.RightLightButton.pos)[1])
+
+                    self.movingright = True
+
+                if self.mousex in range(1000, 1140) and not list(self.bg.rect.topright)[0] < 1300 and not self.movingleft:
+                    self.bg.pos = (list(self.bg.pos)[0] - 10, list(self.bg.pos)[1])
+
+                    self.rightButton.pos = (list(self.rightButton.pos)[0] - 10, list(self.rightButton.pos)[1])
+                    self.leftButton.pos = (list(self.leftButton.pos)[0] - 10, list(self.leftButton.pos)[1])
+
+                    self.LeftDoorButton.pos = (list(self.LeftDoorButton.pos)[0] - 10, list(self.LeftDoorButton.pos)[1])
+                    self.LeftLightButton.pos = (list(self.LeftLightButton.pos)[0] - 10, list(self.LeftLightButton.pos)[1])
+                    self.RightDoorButton.pos = (list(self.RightDoorButton.pos)[0] - 10, list(self.RightDoorButton.pos)[1])
+                    self.RightLightButton.pos = (list(self.RightLightButton.pos)[0] - 10, list(self.RightLightButton.pos)[1])
+
+                    self.movingright = True
+
+                if self.mousex in range(750, 1000) and not list(self.bg.rect.topright)[0] < 1300 and not self.movingleft:
+                    self.bg.pos = (list(self.bg.pos)[0] - 5, list(self.bg.pos)[1])
+
+                    self.rightButton.pos = (list(self.rightButton.pos)[0] - 5, list(self.rightButton.pos)[1])
+                    self.leftButton.pos = (list(self.leftButton.pos)[0] - 5, list(self.leftButton.pos)[1])
+
+                    self.LeftDoorButton.pos = (list(self.LeftDoorButton.pos)[0] - 5, list(self.LeftDoorButton.pos)[1])
+                    self.LeftLightButton.pos = (list(self.LeftLightButton.pos)[0] - 5, list(self.LeftLightButton.pos)[1])
+                    self.RightDoorButton.pos = (list(self.RightDoorButton.pos)[0] - 5, list(self.RightDoorButton.pos)[1])
+                    self.RightLightButton.pos = (list(self.RightLightButton.pos)[0] - 5, list(self.RightLightButton.pos)[1])
+
+                    self.movingright = True
+
+                #print(self.bg.rect.topleft, "top left")
+                #print(self.bg.rect.topright, "top right")
+
+
+                if self.LeftLightButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                    self.leftLight()
+
+                if self.LeftDoorButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                    self.leftDoor()
+
+                if self.RightLightButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                    self.rightLight()
+
+                if self.RightDoorButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                    self.rightDoor()
+
+                if self.camButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                    self.openCamera()
 
                 if self.leftlight and not self.rightlight:
                     for animatronic in Globals.animatronics:
@@ -365,10 +474,10 @@ class main(object):
 
                 if self.time == 0:
                     self.timeLabel = self.font.render("12 PM", True, (255,255,255))
-                    self.screen.blit(self.timeLabel, (1400,50))
+                    self.screen.blit(self.timeLabel, (1040,60))
                 else:
                     self.timeLabel = self.font.render("%s AM" % (self.time), True, (255,255,255))
-                    self.screen.blit(self.timeLabel, (1400,50))
+                    self.screen.blit(self.timeLabel, (1040,60))
 
                 self.powerLabel = self.font.render("Power left: %s" %(self.power), True, (255,255,255))
                 self.usageLabel = self.font.render("Usage: %s" %(self.usage), True, (255,255,255))
@@ -378,10 +487,14 @@ class main(object):
 
             elif self.scene == "cam":
 
+                self.notStatic = True
+
                 if self.power < 0:
                     self.securityOffice()
 
-                if self.runonce == 0:
+                if self.runonce == 0 and self.power > 0:
+                    pygame.mixer.stop()
+                    self.bg.pos = (0,0)
                     self.changeCamera(self.lastcam)
                     self.cameraSound.play(-1)
                     self.cameraSoundTwo.play(-1)
@@ -425,62 +538,37 @@ class main(object):
                                                                "cameras\\misc\\static\\transparent\\6", "cameras\\misc\\static\\transparent\\7"]))
 
                 if self.camButtonOneA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                    "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                    "cameras\\misc\\static\\4", "cameras\\misc\\static\\5"]))
                     self.changeCamera("cam1a")
-                    print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonOneB.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                    "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                    "cameras\\misc\\static\\4", "cameras\\misc\\static\\5"]))
                     self.changeCamera("cam1b")
-                    print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonOneC.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                    "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                    "cameras\\misc\\static\\4", "cameras\\misc\\static\\5"]))
                     self.changeCamera("cam1c")
-                    print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonTwoA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                    "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                    "cameras\\misc\\static\\4", "cameras\\misc\\static\\5"]))
                     self.changeCamera("cam2a")
-                    print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonTwoB.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.changeCamera("cam2b")
-                    print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonThree.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.changeCamera("cam3")
-                    print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonFourA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.changeCamera("cam4a")
-                    print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonFourB.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.changeCamera("cam4b")
-                    print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonFive.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.changeCamera("cam5")
-                    print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonSix.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.changeCamera("cam6")
-                    print("%s CLICKED" %(self.lastcam.upper()))
 
                 if self.camButtonSeven.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.changeCamera("cam7")
-                    print("%s CLICKED" %(self.lastcam.upper()))
-
-                #------#
 
                 if self.lastcam == "cam1a":
 
@@ -499,17 +587,25 @@ class main(object):
                     if Globals.animatronics[0].location == "cam1a" and Globals.animatronics[1].location == "cam1a" and Globals.animatronics[3].location == "cam1a":
                         self.bg.changeImg("cameras\\cam1a\\brc")
 
-                    if Globals.animatronics[0].location != "cam1a" and Globals.animatronics[1].location == "cam1a" and Globals.animatronics[3].location == "cam1a":
+                    elif Globals.animatronics[0].location != "cam1a" and Globals.animatronics[1].location == "cam1a" and Globals.animatronics[3].location == "cam1a":
                         self.bg.changeImg("cameras\\cam1a\\bc")
 
-                    if Globals.animatronics[0].location == "cam1a" and Globals.animatronics[1].location != "cam1a" and Globals.animatronics[3].location == "cam1a":
+                    elif Globals.animatronics[0].location == "cam1a" and Globals.animatronics[1].location != "cam1a" and Globals.animatronics[3].location == "cam1a":
                         self.bg.changeImg("cameras\\cam1a\\br")
 
-                    if Globals.animatronics[0].location != "cam1a" and Globals.animatronics[1].location != "cam1a" and Globals.animatronics[3].location == "cam1a":
+                    elif Globals.animatronics[0].location != "cam1a" and Globals.animatronics[1].location != "cam1a" and Globals.animatronics[3].location == "cam1a":
                         self.bg.changeImg("cameras\\cam1a\\b")
 
-                    if Globals.animatronics[0].location != "cam1a" and Globals.animatronics[1].location != "cam1a" and Globals.animatronics[3].location != "cam1a":
+                    elif Globals.animatronics[0].location != "cam1a" and Globals.animatronics[1].location != "cam1a" and Globals.animatronics[3].location != "cam1a":
                         self.bg.changeImg("cameras\\cam1a\\0")
+
+                    else:
+                        self.notStatic = False
+                        self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
+                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
+
 
                 elif self.lastcam == "cam1b":
 
@@ -528,17 +624,24 @@ class main(object):
                     if Globals.animatronics[0].location == "cam1b" and Globals.animatronics[1].location == "cam1b":
                         self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",  "cameras\\misc\\static\\2", "cameras\\misc\\static\\3", "cameras\\misc\\static\\4", "cameras\\misc\\static\\5", "cameras\\misc\\static\\6"]))
 
-                    if Globals.animatronics[0].location == "cam1b" and Globals.animatronics[1].location != "cam1b":
+                    elif Globals.animatronics[0].location == "cam1b" and Globals.animatronics[1].location != "cam1b":
                         self.bg.changeImg("cameras\\cam1b\\r")
 
-                    if Globals.animatronics[0].location != "cam1b" and Globals.animatronics[1].location == "cam1b":
+                    elif Globals.animatronics[0].location != "cam1b" and Globals.animatronics[1].location == "cam1b":
                         self.bg.changeImg("cameras\\cam1b\\r")
 
-                    if Globals.animatronics[0].location != "cam1b" and Globals.animatronics[1].location != "cam1b" and Globals.animatronics[3].location == "cam1b":
+                    elif Globals.animatronics[0].location != "cam1b" and Globals.animatronics[1].location != "cam1b" and Globals.animatronics[3].location == "cam1b":
                         self.bg.changeImg("cameras\\cam1b\\b")
 
-                    if Globals.animatronics[0].location != "cam1b" and Globals.animatronics[1].location != "cam1b" and Globals.animatronics[3].location != "cam1b":
+                    elif Globals.animatronics[0].location != "cam1b" and Globals.animatronics[1].location != "cam1b" and Globals.animatronics[3].location != "cam1b":
                         self.bg.changeImg("cameras\\cam1b\\0")
+
+                    else:
+                        self.notStatic = False
+                        self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
+                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
 
                 elif self.lastcam == "cam1c":
 
@@ -557,17 +660,24 @@ class main(object):
                     if Globals.animatronics[2].foxstatus == 0:
                         self.bg.changeImg("cameras\\cam1c\\0")
 
-                    if Globals.animatronics[2].foxstatus == 1:
+                    elif Globals.animatronics[2].foxstatus == 1:
                         self.bg.changeImg("cameras\\cam1c\\1")
 
-                    if Globals.animatronics[2].foxstatus == 2:
+                    elif Globals.animatronics[2].foxstatus == 2:
                         self.bg.changeImg("cameras\\cam1c\\2")
 
-                    if Globals.animatronics[2].foxstatus == 3:
+                    elif Globals.animatronics[2].foxstatus == 3:
                         self.bg.changeImg("cameras\\cam1c\\3")
 
-                    if Globals.animatronics[2].foxstatus == 4:
+                    elif Globals.animatronics[2].foxstatus == 4:
                         self.bg.changeImg("cameras\\cam1c\\4")
+
+                    else:
+                        self.notStatic = False
+                        self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
+                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
 
                 elif self.lastcam == "cam2a":
 
@@ -586,10 +696,15 @@ class main(object):
                     if Globals.animatronics[0].location == "cam2a":
                         self.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\r"]))
 
-                    else:
+                    elif Globals.animatronics[0].location != "cam2a":
                         self.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\1"]))
 
-
+                    else:
+                        self.notStatic = False
+                        self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
+                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
 
                 elif self.lastcam == "cam2b":
 
@@ -608,8 +723,15 @@ class main(object):
                     if Globals.animatronics[0].location == "cam2b":
                         self.bg.changeImg(random.choice(["cameras\\cam2b\\r", "cameras\\cam2b\\r-1"]))
 
-                    else:
+                    elif Globals.animatronics[0].location != "cam2b":
                         self.bg.changeImg("cameras\\cam2b\\0")
+
+                    else:
+                        self.notStatic = False
+                        self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
+                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
 
                 elif self.lastcam == "cam3":
 
@@ -628,9 +750,15 @@ class main(object):
                     if Globals.animatronics[0].location == "cam3":
                         self.bg.changeImg("cameras\\cam3\\r")
 
-                    else:
+                    elif Globals.animatronics[0].location != "cam3":
                         self.bg.changeImg("cameras\\cam3\\0")
 
+                    else:
+                        self.notStatic = False
+                        self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
+                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
 
                 elif self.lastcam == "cam4a":
 
@@ -655,6 +783,12 @@ class main(object):
                     elif Globals.animatronics[1].location != "cam4a" and Globals.animatronics[3].location != "cam4a":
                         self.bg.changeImg("cameras\\cam4a\\0")
 
+                    else:
+                        self.notStatic = False
+                        self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
+                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
 
                 elif self.lastcam == "cam4b":
 
@@ -679,6 +813,13 @@ class main(object):
                     elif Globals.animatronics[1].location != "cam4b" and Globals.animatronics[3].location != "cam4b":
                         self.bg.changeImg("cameras\\cam4b\\0")
 
+                    else:
+                        self.notStatic = False
+                        self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
+                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
+
 
                 elif self.lastcam == "cam5":
 
@@ -697,8 +838,15 @@ class main(object):
                     if Globals.animatronics[0].location == "cam5":
                         self.bg.changeImg("cameras\\cam5\\r")
 
-                    else:
+                    elif Globals.animatronics[0].location != "cam5":
                         self.bg.changeImg("cameras\\cam5\\0")
+
+                    else:
+                        self.notStatic = False
+                        self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
+                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
 
 
                 elif self.lastcam == "cam6":
@@ -715,6 +863,7 @@ class main(object):
                     self.camButtonSix.changeImg("ui\\button\\scam6")
                     self.camButtonSeven.changeImg("ui\\button\\cam7")
 
+                    self.notStatic = False
                     self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",  "cameras\\misc\\static\\2",
                                                      "cameras\\misc\\static\\3", "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
                                                      "cameras\\misc\\static\\6"]))
@@ -733,21 +882,40 @@ class main(object):
                     self.camButtonSix.changeImg("ui\\button\\cam6")
                     self.camButtonSeven.changeImg("ui\\button\\scam7")
 
-                    if Globals.animatronics[1].location == "cam7":
+                    if Globals.animatronics[1].location == "cam7" and Globals.animatronics[2].location != "cam7":
                         self.bg.changeImg("cameras\\cam7\\c")
 
                     elif Globals.animatronics[1].location != "cam7" and Globals.animatronics[2].location == "cam7":
                         self.bg.changeImg("cameras\\cam7\\b")
 
-                    else:
+                    elif Globals.animatronics[1].location != "cam7" and Globals.animatronics[2].location != "cam7":
                         self.bg.changeImg("cameras\\cam7\\0")
 
+                    else:
+                        self.notStatic = False
+                        self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
+                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
 
-
-
-                if self.mousex in range(532,1127) and self.mousey in range(588,630) and Globals.mouseClick:
-                    print("TBC WITH CAMERA!!! (%s, %s)" %(self.mousex,self.mousey))
+                if self.camButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.securityOffice()
+
+                if list(self.bg.rect.topright)[0] == 1280 and self.notStatic:
+                    self.camMovement = "right"
+
+                if list(self.bg.rect.topleft)[0] == 0 and self.notStatic:
+                    self.camMovement = "left"
+
+                if self.camMovement == "right" and self.notStatic:
+                    self.bg.pos = (list(self.bg.pos)[0] + 5, list(self.bg.pos)[1])
+
+                if self.camMovement == "left" and self.notStatic:
+                    self.bg.pos = (list(self.bg.pos)[0] - 5, list(self.bg.pos)[1])
+
+                if not self.notStatic:
+                    self.bg.pos = (0,0)
+
 
                 self.camgroup.draw(self.screen)
                 self.camgroup.update()
@@ -810,32 +978,17 @@ class main(object):
                 self.scaregroup.update()
 
             elif self.scene == "powerdown":
+
                 self.scaregroup.add(self.bg)
 
-                if self.runonce == 0:
-                    pygame.mixer.stop()
-                    self.bg.changeImg("office\\powerdown\\0")
-                    self.scaregroup.draw()
+                pygame.mixer.stop()
+                self.bg.changeImg("office\\powerdown\\0")
+                if self.runoncePD == 0:
                     self.powerdown.play(0)
-                    self.runonce = 1
+                    self.runoncePD = 1
 
-                self.freddyHere = 0
-
-                if random.randint(0, 100) == 87 and self.freddyHere == 0:
-                    self.musicbox.play(0)
-                    self.freddyHere = 1
-                    self.bg.changeImg(random.choice(["office\\powerdown\\0", "office\\powerdown\\0", "office\\powerdown\\0", "office\\powerdown\\1"]))
-                    while 1:
-                        if random.randint(0, 100) == 87 and self.freddyHere == 1:
-                            pygame.mixer.stop()
-                            self.bg.changeImg("office\\powerdown\\3")
-
-
-                self.scaregroup.draw(self.screen)
                 self.scaregroup.update()
-
-
-
+                self.scaregroup.draw(self.screen)
 
             pygame.display.update()
             pygame.display.flip()
@@ -846,17 +999,18 @@ class main(object):
         pygame.quit()
         for animatronic in Globals.animatronics:
             animatronic.dmove("off")
+        del self
         sys.exit(0)
         os._exit(0)
         os.system("exit")
 
     def changeCamera(self, camera):
         self.blip.play(0)
-        self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",  "cameras\\misc\\static\\2",
-                                             "cameras\\misc\\static\\3", "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
-                                             "cameras\\misc\\static\\6"]))
         self.camgroup.draw(self.screen)
         self.camgroup.update()
+        if camera == "cam1c":
+            Globals.animatronics[2].foxtseen += 1
+        pygame.time.wait(150)
         self.lastcam = camera
 
 
@@ -864,50 +1018,28 @@ class main(object):
         if self.killed == True or self.time >= 6 or self.power == 0 - 1: #Checks if the game has finished
             pass
         else:
-            if self.power <= 0 - 1:
-                pass
-            else:
-                if self.power < 30:
-                    for animatronic in Globals.animatronics:
-                        if animatronic.agressiveness != 3:
-                            animatronic.agressiveness = 2
-                if self.power < 15:
-                    for animatronic in Globals.animatronics:
-                        animatronic.agressiveness = 3
-                self.power -= 1
+            if self.power < 30:
+                for animatronic in Globals.animatronics:
+                    if animatronic.agressiveness != 3:
+                        animatronic.agressiveness = 2
+            if self.power < 15:
+                for animatronic in Globals.animatronics:
+                    animatronic.agressiveness = 3
+            self.power -= 1
                 #threading.Timer(int(self.usage), self.powerTimer).start()
-                if self.usage == 1:
-                    threading.Timer(9.6, self.powerTimer).start()
-                elif self.usage == 2:
-                    threading.Timer(4.8, self.powerTimer).start()
-                elif self.usage == 3:
-                    threading.Timer(random.choice([2.8, 2.9, 3.9]), self.powerTimer).start()
-                elif self.usage >= 4:
-                    threading.Timer(random.choice([1.9, 2.9]), self.powerTimer).start()
+            if self.usage == 1:
+                threading.Timer(9.6, self.powerTimer).start()
+            elif self.usage == 2:
+                threading.Timer(4.8, self.powerTimer).start()
+            elif self.usage == 3:
+                threading.Timer(random.choice([2.8, 2.9, 3.9]), self.powerTimer).start()
+            elif self.usage >= 4:
+                threading.Timer(random.choice([1.9, 2.9]), self.powerTimer).start()
         return None
 
     def hourTimer(self): #Timer for the IN-GAME time.
         if self.time >= 6 and self.killed != True: #This is what happens after 6AM. Yay!
-            cls.cls(0.5, 0.5)
-            print("5AM --> 6AM")
-            print("You survived!")
-            cls.cls(4.5, 0.5)
-            if self.gmode == "custom":
-                print("NOTICE OF TERMINATION:")
-                print("(You're fired)")
-                print("Reason: Tampering with the animatronics.")
-                print("General unproffesionalism. Odor.")
-                print("")
-                print("Thanks, mngmnt.")
-            elif self.gmode == "overtime":
-                print("Good job, sport!")
-                print("(You've earned some overtime.)")
-                print("You get 120.50$")
-            else:
-                print("Good job, sport!")
-                print("(See you next week!)")
-                print("You get 120$")
-            self.shutdown()
+            pass
 
         else:
             self.time += 1
@@ -973,10 +1105,8 @@ class main(object):
             for animatronic in Globals.animatronics:
                 if animatronic.location == "leftdoor" and animatronic.kind == "fox":
                     if self.leftdoor == True:
-                        print("%s bangs your door" % (animatronic.name))
                         self.powlost = random.randint(1, 15)
                         self.power -= self.powlost
-                        print("You lost %s power" % (self.powlost))
                         animatronic.location = "cam1c"
                         animatronic.foxstatus = 0
                         animatronic.foxtseen = 0
@@ -989,23 +1119,17 @@ class main(object):
 
     def leftDoor(self):
         if self.leftdoor == False:
-            print("Closed left door.")
             self.leftdoor = True
             self.usage += 1
             return None
+
         if self.leftdoor == True:
-            print("Opened left door.")
             self.leftdoor = False
             self.usage -= 1
             return None
 
-        if self.leftdoor == "broken":
-            print("Left door doesn't work...")
-            return None
-
     def leftLight(self):
         if self.leftlight == True:
-            print("Left light is now OFF.")
             self.leftlight = False
             self.usage -= 1
             return None
@@ -1013,40 +1137,24 @@ class main(object):
         if self.leftlight == False:
             self.leftlight = True
             if self.rightlight == True:
-                print("Right light is now OFF.")
                 self.rightlight = False
                 self.usage -= 1
             self.usage += 1
-            print("Left light is now ON.")
-            for animatronic in Globals.animatronics:
-                if animatronic.location == "leftdoor":
-                    print("%s is at the left door, looking at you." % (animatronic.name))
-            return None
-
-        if self.leftlight == "broken":
-            print("Left light doesn't work...")
             return None
 
     def rightDoor(self):
         if self.rightdoor == False:
-            print("Closed right door.")
             self.rightdoor = True
             self.usage += 1
             return None
 
         if self.rightdoor == True:
-            print("Opened right door.")
             self.rightdoor = False
             self.usage -= 1
             return None
 
-        if self.rightdoor == "broken":
-            print("Right door doesn't work...")
-            return None
-
     def rightLight(self):
         if self.rightlight == True:
-            print("Right light is now OFF.")
             self.rightlight = False
             self.usage -= 1
             return None
@@ -1054,18 +1162,9 @@ class main(object):
         if self.rightlight == False:
             self.rightlight = True
             if self.leftlight == True:
-                print("Left light is now OFF.")
                 self.leftlight = False
                 self.usage -= 1
             self.usage += 1
-            print("Right light is now ON.")
-            for animatronic in Globals.animatronics:
-                if animatronic.location == "rightdoor":
-                    print("%s is at the right door, looking at you." % (animatronic.name))
-            return None
-
-        if self.rightlight == "broken":
-            print("Right light doesn't work...")
             return None
 
     def openCamera(self):
@@ -1080,8 +1179,8 @@ class main(object):
         self.putdown.play(0)
         pygame.time.delay(1000)
         pygame.mixer.stop()
-        self.runonce = 0
         self.scene = "cam"
+        self.runonce = 0
         debug.debugprint("Camera opened")
         return None
 
@@ -1091,14 +1190,19 @@ class main(object):
         self.putdown.play(0)
         pygame.time.delay(1000)
         pygame.mixer.stop()
-        self.runonce = 0
         self.scene = "office"
+        self.runonce = 0
         for animatronic in Globals.animatronics:
-            if animatronic.location.lower() == "inside":
+            if animatronic.location == "inside":
                 debug.debugprint("%s was inside!" % (animatronic.name), animatronic)
                 self.scene = "scarejump"
-
         debug.debugprint("Back into office")
+        return None
+
+    def powerDown(self):
+        pygame.mixer.stop()
+        self.scene = "powerdown"
+        self.runoncePD = 0
         return None
 
 if __name__ == "__main__":

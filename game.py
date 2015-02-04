@@ -5,6 +5,8 @@ import time
 import random
 import _thread
 import threading
+import pygame
+from pygame.locals import *
 import pyDLASYIAS.Globals as Globals
 import pyDLASYIAS.animatronics as animatronics
 import pyDLASYIAS.sprite as sprite
@@ -13,82 +15,202 @@ import pyDLASYIAS.main as main
 
 
 def launcher():
-    print("pyDon't let animatronics stuff you in a suit -pyDLASYIAS-")
-    print("1 - Custom night")
-    print("2 - 20/20/20/20 mode")
-    print("3 - Random night. W.I.P -BUGGY/EXPERIMENTAL-")
-    print("4 - Real-time mode! (With limited power)")
-    print("5 - Test option please ignore")
-    inp = input("> ")
-    if inp == "1":
-        belvl = input("Input Bear's AI LVL: ")
-        ralvl = input("Input Rabbit's AI LVL: ")
-        chilvl = input("Input Chicken's AI LVL: ")
-        folvl = input("Input Fox's AI LVL: ")
-        rabbit = animatronics.animatronic("Rabbit", "rabbit", int(ralvl))
-        chicken = animatronics.animatronic("Chicken", "chicken", int(chilvl))
-        fox = animatronics.animatronic("Fox", "fox", int(folvl), "cam1c")
-        bear = animatronics.animatronic("Bear", "bear", int(belvl))
-        main.main("custom", 100, 0)
-        return None
+    running = True
+    screen = pygame.display.set_mode((1280, 720), 0, 32)
+    pygame.display.set_caption("--pyDLASYIAS %s--" %(Globals.version))
+    FPSCLOCK = pygame.time.Clock()
 
-    if inp == "2":
-        rabbit = animatronics.animatronic("Rabbit", "rabbit", 20)
-        chicken = animatronics.animatronic("Chicken", "chicken", 20)
-        fox = animatronics.animatronic("Fox", "fox", 20, "cam1c")
-        bear = animatronics.animatronic("Bear", "bear", 20)
-        main.main("custom", 100, 0)
-        return None
+    pygame.init()
 
-    if inp == "3":
-        rabbit = animatronics.animatronic("Rabbit", "rabbit", random.randint(1, 20))
-        print("Rabbit's AILVL is %s" % (rabbit.ailvl))
-        chicken = animatronics.animatronic("Chicken", "chicken", random.randint(1, 20))
-        print("Chicken's AILVL is %s" % (chicken.ailvl))
-        fox = animatronics.animatronic("Fox", "fox", random.randint(1, 20), "cam1c")
-        print("Fox's AILVL is %s" % (fox.ailvl))
-        bear = animatronics.animatronic("Bear", "bear", random.randint(1, 20))
-        print("Bear's AILVL is %s" % (bear.ailvl))
-        main.main("custom", random.randint(50, 100), random.randint(0, 6))
-        return None
+    font = pygame.font.Font(None, 50)
+    group = pygame.sprite.Group()
 
-    if inp == "4":
-        belvl = input("Input Bear's AI LVL: ")
-        ralvl = input("Input Rabbit's AI LVL: ")
-        chilvl = input("Input Chicken's AI LVL: ")
-        folvl = input("Input Fox's AI LVL: ")
-        rabbit = animatronics.animatronic("Rabbit", "rabbit", int(ralvl))
-        chicken = animatronics.animatronic("Chicken", "chicken", int(chilvl))
-        fox = animatronics.animatronic("Fox", "fox", int(folvl), "cam1c")
-        bear = animatronics.animatronic("Bear", "bear", int(belvl))
-        main.main("custom", 100, 0, sectohour=3600)
+    mousex = 0
+    mousey = 0
 
-    if inp == "5":
-        inp = input("Input test mode code: ")
-        if inp == "1": #Death debugging.
-            rabbit = animatronics.animatronic("Rabbit", "rabbit", 20)
-            chicken = animatronics.animatronic("Chicken", "chicken", 20)
-            fox = animatronics.animatronic("Fox", "fox", 20, "cam1c")
-            bear = animatronics.animatronic("Bear", "bear", 20)
-            main.main("custom", 5, 0)
+    time = 0
+    timeleft = sprite.Sprite(startpos=(122,560), image="launcher\\buttons\\0")
+    timeleft.groups = group
 
-        if inp == "2": #Bear behavior debugging.
-            bear = animatronics.animatronic("Bear", "bear", 20, "cam1a")
-            main.main("survival", 100, 0)
-            return None
+    timeright = sprite.Sprite(startpos=(311,560), image="launcher\\buttons\\1")
+    timeright.groups = group
 
-        if inp == "3": #Chicken debugging.
-            chicken = animatronics.animatronic("Chicken", "chicken", 20, "cam1a")
-            main.main("survival", 100, 0)
-            return None
+    power = 100
+    powerleft = sprite.Sprite(startpos=(406,560), image="launcher\\buttons\\0")
+    powerleft.groups = group
 
-        else:
-            print("Code invalid. Going back to the menu...")
-            launcher()
-            return None
+    powerright = sprite.Sprite(startpos=(593,560), image="launcher\\buttons\\1")
+    powerright.groups = group
 
-    else:
-        launcher()
+    ready = sprite.Sprite(startpos=(1044,603), image="launcher\\buttons\\2")
+    ready.groups = group
+
+    bearspr = sprite.Sprite(startpos=(118,187), image="launcher\\animatronics\\b")
+    bearspr.groups = group
+
+    bearai = 0
+
+    bearleft = sprite.Sprite(startpos=(122,470), image="launcher\\buttons\\0")
+    bearleft.groups = group
+
+    bearright = sprite.Sprite(startpos=(311,470), image="launcher\\buttons\\1")
+    bearright.groups = group
+
+
+    rabbitspr = sprite.Sprite(startpos=(403,187), image="launcher\\animatronics\\r")
+    rabbitspr.groups = group
+
+    rabbitai = 0
+
+    rabbitleft = sprite.Sprite(startpos=(406,470), image="launcher\\buttons\\0")
+    rabbitleft.groups = group
+
+    rabbitright = sprite.Sprite(startpos=(593,470), image="launcher\\buttons\\1")
+    rabbitright.groups = group
+
+
+    chickenspr = sprite.Sprite(startpos=(682,187), image="launcher\\animatronics\\c")
+    chickenspr.groups = group
+
+    chickenai = 0
+
+    chickenleft = sprite.Sprite(startpos=(690,470), image="launcher\\buttons\\0")
+    chickenleft.groups = group
+
+    chickenright = sprite.Sprite(startpos=(876,470), image="launcher\\buttons\\1")
+    chickenright.groups = group
+
+    foxspr = sprite.Sprite(startpos=(957,187), image="launcher\\animatronics\\f")
+    foxspr.groups = group
+
+    foxai = 0
+
+    foxleft = sprite.Sprite(startpos=(969,470), image="launcher\\buttons\\0")
+    foxleft.groups = group
+
+    foxright = sprite.Sprite(startpos=(1154,470), image="launcher\\buttons\\1")
+    foxright.groups = group
+
+    while running:
+
+        pos = (mousex, mousey)
+        mouseClick = False
+
+        group.add(timeleft)
+        group.add(timeright)
+
+        group.add(powerleft)
+        group.add(powerright)
+
+        group.add(ready)
+
+        group.add(bearspr)
+        group.add(bearleft)
+        group.add(bearright)
+
+        group.add(rabbitspr)
+        group.add(rabbitleft)
+        group.add(rabbitright)
+
+        group.add(chickenspr)
+        group.add(chickenleft)
+        group.add(chickenright)
+
+        group.add(foxspr)
+        group.add(foxleft)
+        group.add(foxright)
+
+        for event in pygame.event.get():
+            if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
+                pygame.quit()
+                sys.exit(0)
+            elif event.type == MOUSEMOTION:
+                mousex, mousey = event.pos
+
+            elif event.type == MOUSEBUTTONUP:
+                mousex, mousey = event.pos
+                mouseClick = True
+
+        if bearleft.rect.collidepoint(pos) and mouseClick and bearai != 0:
+            bearai -= 1
+
+        if bearright.rect.collidepoint(pos) and mouseClick and bearai != 20:
+            bearai += 1
+
+
+        if rabbitleft.rect.collidepoint(pos) and mouseClick and rabbitai != 0:
+            rabbitai -= 1
+
+        if rabbitright.rect.collidepoint(pos) and mouseClick and rabbitai != 20:
+            rabbitai += 1
+
+
+        if chickenleft.rect.collidepoint(pos) and mouseClick and chickenai != 0:
+            chickenai -= 1
+
+        if chickenright.rect.collidepoint(pos) and mouseClick and chickenai != 20:
+            chickenai += 1
+
+
+        if foxleft.rect.collidepoint(pos) and mouseClick and foxai != 0:
+            foxai -= 1
+
+        if foxright.rect.collidepoint(pos) and mouseClick and foxai != 20:
+            foxai += 1
+
+
+        if timeleft.rect.collidepoint(pos) and mouseClick and time != 0:
+            time -= 1
+
+        if timeright.rect.collidepoint(pos) and mouseClick and time != 6:
+            time += 1
+
+        if powerleft.rect.collidepoint(pos) and mouseClick:
+            if power == 0:
+                power = 100
+            else:
+                power -= 1
+
+        if powerright.rect.collidepoint(pos) and mouseClick and time != 6:
+            if power == 100:
+                power = 0
+            else:
+                power += 1
+
+        if ready.rect.collidepoint(pos) and mouseClick:
+            rabbit = animatronics.animatronic("Rabbit", "rabbit", rabbitai)
+            chicken = animatronics.animatronic("Chicken", "chicken", chickenai)
+            fox = animatronics.animatronic("Fox", "fox", foxai)
+            bear = animatronics.animatronic("Bear", "bear", bearai)
+            main.main(power=power, time=time)
+
+
+        timeLabel = font.render(str(time), True, (255,255,255))
+        powerLabel = font.render(str(power), True, (255,255,255))
+
+        rabbitaiLabel = font.render(str(rabbitai), True, (255,255,255))
+        chickenaiLabel = font.render(str(chickenai), True, (255,255,255))
+        foxaiLabel = font.render(str(foxai), True, (255,255,255))
+        bearaiLabel = font.render(str(bearai), True, (255,255,255))
+
+        screen.fill((0,0,0))
+
+        screen.blit(timeLabel, (257,560))
+        screen.blit(powerLabel, (533,560))
+
+        screen.blit(font.render("Time", True, (255,255,255)), (257,620))
+        screen.blit(font.render("Power", True, (255,255,255)), (535,620))
+
+        screen.blit(bearaiLabel, (257,480))
+        screen.blit(rabbitaiLabel, (540,480))
+        screen.blit(chickenaiLabel, (822,480))
+        screen.blit(foxaiLabel, (1102,480))
+
+        group.update()
+        group.draw(screen)
+        pygame.display.update()
+        pygame.display.flip()
+        FPSCLOCK.tick(30)
 
 try:
     if __name__ == '__main__':

@@ -17,13 +17,13 @@ class Sprite(pygame.sprite.Sprite):
             self.update()
 
     def update(self):
+        self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = self.pos
 
     def changeImg(self, image):
         self.image = pygame.image.load("images\\" + str(image) + ".png")
         self.image = self.image.convert_alpha()
 
-        self.rect = self.image.get_rect()
         self.update()
 
 class Animated(pygame.sprite.Sprite):
