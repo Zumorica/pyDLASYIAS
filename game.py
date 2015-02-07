@@ -11,8 +11,7 @@ import pyDLASYIAS.Globals as Globals
 import pyDLASYIAS.animatronics as animatronics
 import pyDLASYIAS.sprite as sprite
 import pyDLASYIAS.main as main
-
-
+import pyDLASYIAS.utils.functions as utils
 
 def launcher():
     running = True

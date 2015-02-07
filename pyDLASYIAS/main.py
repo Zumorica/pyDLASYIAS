@@ -8,46 +8,44 @@ import threading
 import pygame
 import pyDLASYIAS.sprite as sprite
 import pyDLASYIAS.Globals as Globals
-import pyDLASYIAS.utils.debug as debug
-import pyDLASYIAS.utils.cls as cls
+import pyDLASYIAS.utils.functions as utils
 from pygame.locals import *
 
 class main(object):
-    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1280, height=720, fps=60):
-        debug.debugprint("pyDLASYIAS %s started. Setting up game variables..." % (Globals.version))
+    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1280, height=720, fps=40):
+        utils.debugprint("pyDLASYIAS %s started. Setting up game variables..." % (Globals.version))
 
-        sys.setrecursionlimit(5000) #Magic.
-        threading.stack_size(128*4096) #Magic.
+        sys.setrecursionlimit(5000)
+        threading.stack_size(128*4096)
 
         self.animlvlsum = 0
-        self.gmode = gmode #Game mode. Normal | Custom (custom animatronics AI) | Survival (No time, no energy) | ???
+        self.gmode = gmode                                                      # Game mode. Normal | Custom (custom animatronics AI) | Survival (No time, no energy) | ???
 
         for animatronic in Globals.animatronics:
             self.animlvlsum += animatronic.ailvl
-            self.ailvl = self.animlvlsum / len(Globals.animatronics) #This is the lvl of the night.
+            self.ailvl = self.animlvlsum / len(Globals.animatronics)            # This is the lvl of the night.
         del self.animlvlsum
 
-        self.leftdoor = False #False = Open / True = Closed
-        self.rightdoor = False #Same ^^^^^^^^^^^^^^
-        self.leftlight = False #False = Off / True = On
-        self.rightlight = False #Same ^^^^^^^^^^^^^
-        self.power = power #Power. Int variable
-        self.killed = False #False = Alive / True = Dead.
-        self.usrinput = "" #User input. Used in self.securityOffice() and self.cam()
-        self.time = time - 1 #The "-1" is there because the timer automatically sums 1 to the variable.
-        self.sectohour = sectohour #Seconds needed for a IN-GAME hour
-        self.usage = 1 #1 Usage: 9.6 / 2 Usage: 4.8 / 3 Usage: 2.8 - 2.9 - 3.9 / 4 Usage: 1.9 - 2.9
-        self.scene = "office" #Scene. Used for knowing what sprites needs to be printed. SCENES: "office", "cam"
+        self.leftdoor = False
+        self.rightdoor = False
+        self.leftlight = False
+        self.rightlight = False
+        self.power = power
+        self.killed = False
+        self.time = time - 1                                                    # The "-1" is there because the timer automatically adds 1 to the variable.
+        self.sectohour = sectohour
+        self.usage = 1                                                          # 1 Usage: 9.6 / 2 Usage: 4.8 / 3 Usage: 2.8 - 2.9 - 3.9 / 4 Usage: 1.9 - 2.9
+        self.scene = "office"                                                   # Scene. Used for knowing what sprites needs to be printed. SCENES: "office", "cam", "powerdown", "scarejump"
         self.lastcam = "cam1a"
 
-        if self.gmode != "survival": #Initializes the hour timer if the gamemode isn't survival.
+        if self.gmode != "survival":                                            # Initializes the hour timer if the gamemode isn't survival.
             threading.Timer(0.1, self.hourTimer).start()
 
-        threading.Timer(0.1, self.powerTimer).start() #Power timer.
+        threading.Timer(0.1, self.powerTimer).start()
 
-        _thread.start_new_thread(self.checkDoorTimer, ()) #These two threads checks if there's animatronics at the left or right doors and moves them into your office.
+        _thread.start_new_thread(self.checkDoorTimer, ())
 
-        _thread.start_new_thread(self.foxkindDoorCheck, ())
+        _thread.start_new_thread(self.foxkindDoorCheck, ())                     # This thread will be soon replaced.
 
         self.width = width
         self.height = height
@@ -73,17 +71,17 @@ class main(object):
         self.rightButton = sprite.Sprite(startpos=(1500, 180), image="office\\button\\right\\0")
         self.rightButton.groups = self.allgroup, self.officegroup
 
-        self.LeftDoorButton = sprite.Sprite(startpos=(34, 232), image="office\\button\\collision")
-        self.LeftDoorButton.groups = self.allgroup, self.officegroup
+        self.leftDoorButton = sprite.Sprite(startpos=(34, 232), image="office\\button\\collision")
+        self.leftDoorButton.groups = self.allgroup, self.officegroup
 
-        self.LeftLightButton = sprite.Sprite(startpos=(34, 314), image="office\\button\\collision")
-        self.LeftLightButton.groups = self.allgroup, self.officegroup
+        self.leftLightButton = sprite.Sprite(startpos=(34, 314), image="office\\button\\collision")
+        self.leftLightButton.groups = self.allgroup, self.officegroup
 
-        self.RightDoorButton = sprite.Sprite(startpos=(1525,232), image="office\\button\\collision")
-        self.RightDoorButton.groups = self.allgroup, self.officegroup
+        self.rightDoorButton = sprite.Sprite(startpos=(1525,232), image="office\\button\\collision")
+        self.rightDoorButton.groups = self.allgroup, self.officegroup
 
-        self.RightLightButton = sprite.Sprite(startpos=(1525,314), image="office\\button\\collision")
-        self.RightLightButton.groups = self.allgroup, self.officegroup
+        self.rightLightButton = sprite.Sprite(startpos=(1525,314), image="office\\button\\collision")
+        self.rightLightButton.groups = self.allgroup, self.officegroup
 
         self.camButton = sprite.Sprite(startpos=(245, 635), image="ui\\button\\camera")
         self.camButton.groups = self.allgroup, self.officegroup, self.camgroup
@@ -123,6 +121,60 @@ class main(object):
 
         self.camButtonSeven = sprite.Sprite(startpos=(1172,424), image="ui\\button\\cam7")
         self.camButtonSeven.groups = self.allgroup, self.camgroup
+
+        self.leftDoorSpr = sprite.Sprite(startpos=(72,-1), image="office\\doors\\left\\0")
+        self.rightDoorSpr = sprite.Sprite(startpos=(1270,-2), image="office\\doors\\right\\0")
+
+        self.foxSprinting = sprite.Animated(startpos=(0,0), images=["cameras\\cam2a\\animation\\0.png","cameras\\cam2a\\animation\\1.png",
+                                                                    "cameras\\cam2a\\animation\\2.png", "cameras\\cam2a\\animation\\3.png",
+                                                                    "cameras\\cam2a\\animation\\4.png", "cameras\\cam2a\\animation\\5.png",
+                                                                    "cameras\\cam2a\\animation\\6.png", "cameras\\cam2a\\animation\\7.png",
+                                                                    "cameras\\cam2a\\animation\\8.png", "cameras\\cam2a\\animation\\9.png",
+                                                                    "cameras\\cam2a\\animation\\10.png", "cameras\\cam2a\\animation\\11.png",
+                                                                    "cameras\\cam2a\\animation\\12.png", "cameras\\cam2a\\animation\\13.png",
+                                                                    "cameras\\cam2a\\animation\\14.png", "cameras\\cam2a\\animation\\15.png",
+                                                                    "cameras\\cam2a\\animation\\16.png", "cameras\\cam2a\\animation\\17.png",
+                                                                    "cameras\\cam2a\\animation\\18.png", "cameras\\cam2a\\animation\\19.png",
+                                                                    "cameras\\cam2a\\animation\\20.png", "cameras\\cam2a\\animation\\21.png",
+                                                                    "cameras\\cam2a\\animation\\22.png", "cameras\\cam2a\\animation\\23.png",
+                                                                    "cameras\\cam2a\\animation\\24.png", "cameras\\cam2a\\animation\\25.png",
+                                                                    "cameras\\cam2a\\animation\\26.png"])
+
+        self.leftDoorOpen = sprite.Animated(startpos=(72,-1), images=["office\\doors\\left\\0.png", "office\\doors\\left\\1.png",
+                                                                       "office\\doors\\left\\2.png", "office\\doors\\left\\3.png",
+                                                                       "office\\doors\\left\\4.png", "office\\doors\\left\\5.png",
+                                                                       "office\\doors\\left\\6.png", "office\\doors\\left\\7.png",
+                                                                       "office\\doors\\left\\8.png", "office\\doors\\left\\9.png",
+                                                                       "office\\doors\\left\\10.png", "office\\doors\\left\\11.png",
+                                                                       "office\\doors\\left\\12.png", "office\\doors\\left\\13.png",
+                                                                       "office\\doors\\left\\14.png", "office\\doors\\left\\15.png"])
+
+        self.leftDoorClose = sprite.Animated(startpos=(72,-1), images=["office\\doors\\left\\15.png", "office\\doors\\left\\14.png",
+                                                                       "office\\doors\\left\\13.png", "office\\doors\\left\\12.png",
+                                                                       "office\\doors\\left\\11.png", "office\\doors\\left\\10.png",
+                                                                       "office\\doors\\left\\9.png", "office\\doors\\left\\8.png",
+                                                                       "office\\doors\\left\\7.png", "office\\doors\\left\\6.png",
+                                                                       "office\\doors\\left\\5.png", "office\\doors\\left\\4.png",
+                                                                       "office\\doors\\left\\3.png", "office\\doors\\left\\2.png",
+                                                                       "office\\doors\\left\\1.png", "office\\doors\\left\\0.png"])
+
+        self.rightDoorOpen = sprite.Animated(startpos=(1270,-2), images=["office\\doors\\right\\0.png", "office\\doors\\right\\1.png",
+                                                                       "office\\doors\\right\\2.png", "office\\doors\\right\\3.png",
+                                                                       "office\\doors\\right\\4.png", "office\\doors\\right\\5.png",
+                                                                       "office\\doors\\right\\6.png", "office\\doors\\right\\7.png",
+                                                                       "office\\doors\\right\\8.png", "office\\doors\\right\\9.png",
+                                                                       "office\\doors\\right\\10.png", "office\\doors\\right\\11.png",
+                                                                       "office\\doors\\right\\12.png", "office\\doors\\right\\13.png",
+                                                                       "office\\doors\\right\\14.png", "office\\doors\\right\\15.png"])
+
+        self.rightDoorClose = sprite.Animated(startpos=(1270,-2), images=["office\\doors\\right\\15.png", "office\\doors\\right\\14.png",
+                                                                       "office\\doors\\right\\13.png", "office\\doors\\right\\12.png",
+                                                                       "office\\doors\\right\\11.png", "office\\doors\\right\\10.png",
+                                                                       "office\\doors\\right\\9.png", "office\\doors\\right\\8.png",
+                                                                       "office\\doors\\right\\7.png", "office\\doors\\right\\6.png",
+                                                                       "office\\doors\\right\\5.png", "office\\doors\\right\\4.png",
+                                                                       "office\\doors\\right\\3.png", "office\\doors\\right\\2.png",
+                                                                       "office\\doors\\right\\1.png", "office\\doors\\right\\0.png"])
 
         self.chickenScarejump = sprite.Animated(startpos=(0,0), images=["office\\scarejump\\chicken\\0.png", "office\\scarejump\\chicken\\1.png",
                                                                         "office\\scarejump\\chicken\\2.png", "office\\scarejump\\chicken\\3.png",
@@ -174,10 +226,10 @@ class main(object):
 
         self.allgroup.add(self.leftButton)
         self.allgroup.add(self.rightButton)
-        self.allgroup.add(self.LeftDoorButton)
-        self.allgroup.add(self.LeftLightButton)
-        self.allgroup.add(self.RightDoorButton)
-        self.allgroup.add(self.RightLightButton)
+        self.allgroup.add(self.leftDoorButton)
+        self.allgroup.add(self.leftLightButton)
+        self.allgroup.add(self.rightDoorButton)
+        self.allgroup.add(self.rightLightButton)
         self.allgroup.add(self.camButton)
         self.allgroup.add(self.map)
         self.allgroup.add(self.bg)
@@ -186,6 +238,10 @@ class main(object):
         self.allgroup.add(self.foxScarejump)
         self.allgroup.add(self.rabbitScarejump)
         self.allgroup.add(self.chickenScarejump)
+        self.allgroup.add(self.leftDoorClose)
+        self.allgroup.add(self.rightDoorOpen)
+        self.allgroup.add(self.leftDoorOpen)
+        self.allgroup.add(self.rightDoorClose)
         self.allgroup.add(self.camButtonOneA)
         self.allgroup.add(self.camButtonOneB)
         self.allgroup.add(self.camButtonOneC)
@@ -198,6 +254,41 @@ class main(object):
         self.allgroup.add(self.camButtonSix)
         self.allgroup.add(self.camButtonSeven)
         self.allgroup.add(self.staticTransparent)
+        self.allgroup.add(self.leftDoorSpr)
+        self.allgroup.add(self.rightDoorSpr)
+
+        pygame.mixer.set_num_channels(31)
+        self.channelZero = pygame.mixer.Channel(0)
+        self.channelOne = pygame.mixer.Channel(1)
+        self.channelTwo = pygame.mixer.Channel(2)
+        self.channelThree = pygame.mixer.Channel(3)
+        self.channelFour = pygame.mixer.Channel(4)
+        self.channelFive = pygame.mixer.Channel(5)
+        self.channelSix = pygame.mixer.Channel(6)
+        self.channelSeven = pygame.mixer.Channel(7)
+        self.channelEight = pygame.mixer.Channel(8)
+        self.channelNine = pygame.mixer.Channel(9)
+        self.channelTen = pygame.mixer.Channel(10)
+        self.channelEleven = pygame.mixer.Channel(11)
+        self.channelTwelve = pygame.mixer.Channel(12)
+        self.channelThirteen = pygame.mixer.Channel(13)
+        self.channelFourteen = pygame.mixer.Channel(14)
+        self.channelFifteen = pygame.mixer.Channel(15)
+        self.channelSixteen = pygame.mixer.Channel(16)
+        self.channelSeventeen = pygame.mixer.Channel(17)
+        self.channelEighteen = pygame.mixer.Channel(18)
+        self.channelNineteen = pygame.mixer.Channel(19)
+        self.channelTwenty = pygame.mixer.Channel(20)
+        self.channelTwentyone = pygame.mixer.Channel(21)
+        self.channelTwentytwo = pygame.mixer.Channel(22)
+        self.channelTwentythree = pygame.mixer.Channel(23)
+        self.channelTwentyfour = pygame.mixer.Channel(24)
+        self.channelTwentyfive = pygame.mixer.Channel(25)
+        self.channelTwentysix = pygame.mixer.Channel(26)
+        self.channelTwentyseven = pygame.mixer.Channel(27)
+        self.channelTwentyeight = pygame.mixer.Channel(28)
+        self.channelTwentynine = pygame.mixer.Channel(29)
+        self.channelThirty = pygame.mixer.Channel(30)
 
         self.xscream = pygame.mixer.Sound("sounds\\scary\\XSCREAM.wav")
         self.xscreamTwo = pygame.mixer.Sound("sounds\\scary\\XSCREAM2.wav")
@@ -208,6 +299,8 @@ class main(object):
         self.freddygiggleThree = pygame.mixer.Sound("sounds\\scary\\freddygiggle3.wav")
 
         self.windowscare = pygame.mixer.Sound("sounds\\scary\\windowscare.wav")
+
+        self.robotvoice = pygame.mixer.Sound("sounds\\scary\\robotvoice.wav")
 
         self.breathing = pygame.mixer.Sound("sounds\\scary\\breathing.wav")
         self.breathingTwo = pygame.mixer.Sound("sounds\\scary\\breathing2.wav")
@@ -232,7 +325,7 @@ class main(object):
         self.cameraSound = pygame.mixer.Sound("sounds\\camera\\camerasound.wav")
         self.cameraSoundTwo = pygame.mixer.Sound("sounds\\camera\\camerasound2.wav")
 
-        self.computernoise = pygame.mixer.Sound("sounds\\camera\\computernoise.wav")
+        self.computerNoise = pygame.mixer.Sound("sounds\\camera\\computernoise.wav")
         self.garble = pygame.mixer.Sound("sounds\\camera\\garble.wav")
         self.garbleTwo = pygame.mixer.Sound("sounds\\camera\\garble2.wav")
         self.garbleThree = pygame.mixer.Sound("sounds\\camera\\garble3.wav")
@@ -246,14 +339,20 @@ class main(object):
 
         self.static = pygame.mixer.Sound("sounds\\camera\\static2.wav")
 
+        self.ambience = pygame.mixer.Sound("sounds\\ambience\\ambience.wav")
+        self.ambienceTwo = pygame.mixer.Sound("sounds\\ambience\\ambience2.wav")
+
         self.fanSound = pygame.mixer.Sound("sounds\\ambience\\fan.wav")
 
         self.mousex = 0
         self.mousey = 0
 
+        self.runAtSceneStart = 0
         self.runonce = 0
 
+        self.oldTime = 0
         self.camMovement = "left"
+        self.powerDownStage = 0
         self.lastBgPos = (0,0)
         self.lastLBPos = (0,0)
         self.lastRBPos = (0,0)
@@ -265,7 +364,7 @@ class main(object):
 
             for event in pygame.event.get():
 
-                debug.debugprint(event, writetolog=False)
+                utils.debugprint(event, writetolog=False)
 
                 if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
                     pygame.quit()
@@ -280,42 +379,61 @@ class main(object):
 
             if self.scene == "office":
 
-                if self.power < 0:
-                    self.freddyHere = 0
-                    self.powerDown()
-
-
                 if self.runonce == 0:
-                    self.bg.pos = self.lastBgPos
-                    self.fanSound.play(-1)
+                    pygame.mixer.stop()
+                    self.channelOne.play(self.fanSound, -1)
+                    self.channelTwo.play(self.ambience, -1)
+                    self.channelThree.play(self.ambienceTwo, -1)
+
+                    self.channelTwo.set_volume(0.5)
+                    self.channelTwenty.set_volume(0.1)
+                    self.channelTwentyone.set_volume(0)
+                    self.channelTwentytwo.set_volume(0.25)
+
+                    self.channelTwentyone.play(self.robotvoice, -1)
+
                     self.runonce = 1
 
+                if self.time >= 6 :
+                    self.scene = "6am"
+                    self.runAtFrameStart = 0
+
+                if self.power < 0:
+                    self.scene = "powerdown"
+                    self.runAtSceneStart = 0
+
+                if self.runAtSceneStart == 0 and not self.power < 0:
+                    self.bg.pos = self.lastBgPos
+                    self.runAtSceneStart = 1
 
                 self.lastBgPos = self.bg.pos
-                self.lastLBPos = self.leftButton.pos
-                self.LastRBPos = self.rightButton.pos
+                #self.lastLBPos = self.leftButton.pos
+                #self.LastRBPos = self.rightButton.pos
 
                 self.officegroup.add(self.leftButton)
                 self.officegroup.add(self.rightButton)
-                self.officegroup.add(self.LeftDoorButton)
-                self.officegroup.add(self.LeftLightButton)
-                self.officegroup.add(self.RightDoorButton)
-                self.officegroup.add(self.RightLightButton)
+                self.officegroup.add(self.leftDoorButton)
+                self.officegroup.add(self.leftLightButton)
+                self.officegroup.add(self.rightDoorButton)
+                self.officegroup.add(self.rightLightButton)
+                #self.officegroup.add(self.rightDoorSpr)
+                #self.officegroup.add(self.leftDoorSpr)
                 self.officegroup.add(self.camButton)
                 self.officegroup.add(self.bg)
 
                 self.officegroup.change_layer(self.bg, 0)
                 self.officegroup.change_layer(self.leftButton, 1)
                 self.officegroup.change_layer(self.rightButton, 1)
-                self.officegroup.change_layer(self.LeftDoorButton, 2)
-                self.officegroup.change_layer(self.LeftLightButton, 2)
-                self.officegroup.change_layer(self.RightDoorButton, 2)
-                self.officegroup.change_layer(self.RightLightButton, 2)
-                self.officegroup.change_layer(self.camButton, 2)
+                self.officegroup.change_layer(self.leftDoorButton, 2)
+                self.officegroup.change_layer(self.leftLightButton, 2)
+                self.officegroup.change_layer(self.rightDoorButton, 2)
+                self.officegroup.change_layer(self.rightLightButton, 2)
+                #self.officegroup.change_layer(self.rightDoorSpr, 3)
+                #self.officegroup.change_layer(self.leftDoorSpr, 3)
+                self.officegroup.change_layer(self.camButton, 5)
 
                 self.movingleft = False
                 self.movingright = False
-
 
                 if self.mousex in range(0, 150) and list(self.bg.rect.topleft)[0] in range(-400, -10) and not self.movingright:
                     self.bg.pos = (list(self.bg.pos)[0] + 20, list(self.bg.pos)[1])
@@ -323,10 +441,18 @@ class main(object):
                     self.rightButton.pos = (list(self.rightButton.pos)[0] + 20, list(self.rightButton.pos)[1])
                     self.leftButton.pos = (list(self.leftButton.pos)[0] + 20, list(self.leftButton.pos)[1])
 
-                    self.LeftDoorButton.pos = (list(self.LeftDoorButton.pos)[0] + 20, list(self.LeftDoorButton.pos)[1])
-                    self.LeftLightButton.pos = (list(self.LeftLightButton.pos)[0] + 20, list(self.LeftLightButton.pos)[1])
-                    self.RightDoorButton.pos = (list(self.RightDoorButton.pos)[0] + 20, list(self.RightDoorButton.pos)[1])
-                    self.RightLightButton.pos = (list(self.RightLightButton.pos)[0] + 20, list(self.RightLightButton.pos)[1])
+                    self.leftDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] + 20, list(self.leftDoorOpen.pos)[1])
+                    self.leftDoorClose.pos = (list(self.leftDoorClose.pos)[0] + 20, list(self.leftDoorClose.pos)[1])
+                    self.leftDoorSpr.pos = (list(self.leftDoorSpr.pos)[0] + 20, list(self.leftDoorSpr.pos)[1])
+
+                    self.rightDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] + 20, list(self.leftDoorOpen.pos)[1])
+                    self.rightDoorClose.pos = (list(self.rightDoorClose.pos)[0] + 20, list(self.rightDoorClose.pos)[1])
+                    self.rightDoorSpr.pos = (list(self.rightDoorSpr.pos)[0] + 20, list(self.rightDoorSpr.pos)[1])
+
+                    self.leftDoorButton.pos = (list(self.leftDoorButton.pos)[0] + 20, list(self.leftDoorButton.pos)[1])
+                    self.leftLightButton.pos = (list(self.leftLightButton.pos)[0] + 20, list(self.leftLightButton.pos)[1])
+                    self.rightDoorButton.pos = (list(self.rightDoorButton.pos)[0] + 20, list(self.rightDoorButton.pos)[1])
+                    self.rightLightButton.pos = (list(self.rightLightButton.pos)[0] + 20, list(self.rightLightButton.pos)[1])
 
                     self.movingleft = True
 
@@ -336,10 +462,18 @@ class main(object):
                     self.rightButton.pos = (list(self.rightButton.pos)[0] + 10, list(self.rightButton.pos)[1])
                     self.leftButton.pos = (list(self.leftButton.pos)[0] + 10, list(self.leftButton.pos)[1])
 
-                    self.LeftDoorButton.pos = (list(self.LeftDoorButton.pos)[0] + 10, list(self.LeftDoorButton.pos)[1])
-                    self.LeftLightButton.pos = (list(self.LeftLightButton.pos)[0] + 10, list(self.LeftLightButton.pos)[1])
-                    self.RightDoorButton.pos = (list(self.RightDoorButton.pos)[0] + 10, list(self.RightDoorButton.pos)[1])
-                    self.RightLightButton.pos = (list(self.RightLightButton.pos)[0] + 10, list(self.RightLightButton.pos)[1])
+                    self.leftDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] + 10, list(self.leftDoorOpen.pos)[1])
+                    self.leftDoorClose.pos = (list(self.leftDoorClose.pos)[0] + 10, list(self.leftDoorClose.pos)[1])
+                    self.leftDoorSpr.pos = (list(self.leftDoorSpr.pos)[0] + 10, list(self.leftDoorSpr.pos)[1])
+
+                    self.rightDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] + 10, list(self.leftDoorOpen.pos)[1])
+                    self.rightDoorClose.pos = (list(self.rightDoorClose.pos)[0] + 10, list(self.rightDoorClose.pos)[1])
+                    self.rightDoorSpr.pos = (list(self.rightDoorSpr.pos)[0] + 10, list(self.rightDoorSpr.pos)[1])
+
+                    self.leftDoorButton.pos = (list(self.leftDoorButton.pos)[0] + 10, list(self.leftDoorButton.pos)[1])
+                    self.leftLightButton.pos = (list(self.leftLightButton.pos)[0] + 10, list(self.leftLightButton.pos)[1])
+                    self.rightDoorButton.pos = (list(self.rightDoorButton.pos)[0] + 10, list(self.rightDoorButton.pos)[1])
+                    self.rightLightButton.pos = (list(self.rightLightButton.pos)[0] + 10, list(self.rightLightButton.pos)[1])
 
                     self.movingleft = True
 
@@ -349,10 +483,18 @@ class main(object):
                     self.rightButton.pos = (list(self.rightButton.pos)[0] + 5, list(self.rightButton.pos)[1])
                     self.leftButton.pos = (list(self.leftButton.pos)[0] + 5, list(self.leftButton.pos)[1])
 
-                    self.LeftDoorButton.pos = (list(self.LeftDoorButton.pos)[0] + 5, list(self.LeftDoorButton.pos)[1])
-                    self.LeftLightButton.pos = (list(self.LeftLightButton.pos)[0] + 5, list(self.LeftLightButton.pos)[1])
-                    self.RightDoorButton.pos = (list(self.RightDoorButton.pos)[0] + 5, list(self.RightDoorButton.pos)[1])
-                    self.RightLightButton.pos = (list(self.RightLightButton.pos)[0] + 5, list(self.RightLightButton.pos)[1])
+                    self.leftDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] + 5, list(self.leftDoorOpen.pos)[1])
+                    self.leftDoorClose.pos = (list(self.leftDoorClose.pos)[0] + 5, list(self.leftDoorClose.pos)[1])
+                    self.leftDoorSpr.pos = (list(self.leftDoorSpr.pos)[0] + 5, list(self.leftDoorSpr.pos)[1])
+
+                    self.rightDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] + 5, list(self.leftDoorOpen.pos)[1])
+                    self.rightDoorClose.pos = (list(self.rightDoorClose.pos)[0] + 5, list(self.rightDoorClose.pos)[1])
+                    self.rightDoorSpr.pos = (list(self.rightDoorSpr.pos)[0] + 5, list(self.rightDoorSpr.pos)[1])
+
+                    self.leftDoorButton.pos = (list(self.leftDoorButton.pos)[0] + 5, list(self.leftDoorButton.pos)[1])
+                    self.leftLightButton.pos = (list(self.leftLightButton.pos)[0] + 5, list(self.leftLightButton.pos)[1])
+                    self.rightDoorButton.pos = (list(self.rightDoorButton.pos)[0] + 5, list(self.rightDoorButton.pos)[1])
+                    self.rightLightButton.pos = (list(self.rightLightButton.pos)[0] + 5, list(self.rightLightButton.pos)[1])
 
                     self.movingleft = True
 
@@ -362,10 +504,18 @@ class main(object):
                     self.rightButton.pos = (list(self.rightButton.pos)[0] - 20, list(self.rightButton.pos)[1])
                     self.leftButton.pos = (list(self.leftButton.pos)[0] - 20, list(self.leftButton.pos)[1])
 
-                    self.LeftDoorButton.pos = (list(self.LeftDoorButton.pos)[0] - 20, list(self.LeftDoorButton.pos)[1])
-                    self.LeftLightButton.pos = (list(self.LeftLightButton.pos)[0] - 20, list(self.LeftLightButton.pos)[1])
-                    self.RightDoorButton.pos = (list(self.RightDoorButton.pos)[0] - 20, list(self.RightDoorButton.pos)[1])
-                    self.RightLightButton.pos = (list(self.RightLightButton.pos)[0] - 20, list(self.RightLightButton.pos)[1])
+                    self.leftDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] - 20, list(self.leftDoorOpen.pos)[1])
+                    self.leftDoorClose.pos = (list(self.leftDoorClose.pos)[0] - 20, list(self.leftDoorClose.pos)[1])
+                    self.leftDoorSpr.pos = (list(self.leftDoorSpr.pos)[0] - 20, list(self.leftDoorSpr.pos)[1])
+
+                    self.rightDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] - 20, list(self.leftDoorOpen.pos)[1])
+                    self.rightDoorClose.pos = (list(self.rightDoorClose.pos)[0] - 20, list(self.rightDoorClose.pos)[1])
+                    self.rightDoorSpr.pos = (list(self.rightDoorSpr.pos)[0] - 20, list(self.rightDoorSpr.pos)[1])
+
+                    self.leftDoorButton.pos = (list(self.leftDoorButton.pos)[0] - 20, list(self.leftDoorButton.pos)[1])
+                    self.leftLightButton.pos = (list(self.leftLightButton.pos)[0] - 20, list(self.leftLightButton.pos)[1])
+                    self.rightDoorButton.pos = (list(self.rightDoorButton.pos)[0] - 20, list(self.rightDoorButton.pos)[1])
+                    self.rightLightButton.pos = (list(self.rightLightButton.pos)[0] - 20, list(self.rightLightButton.pos)[1])
 
                     self.movingright = True
 
@@ -375,10 +525,18 @@ class main(object):
                     self.rightButton.pos = (list(self.rightButton.pos)[0] - 10, list(self.rightButton.pos)[1])
                     self.leftButton.pos = (list(self.leftButton.pos)[0] - 10, list(self.leftButton.pos)[1])
 
-                    self.LeftDoorButton.pos = (list(self.LeftDoorButton.pos)[0] - 10, list(self.LeftDoorButton.pos)[1])
-                    self.LeftLightButton.pos = (list(self.LeftLightButton.pos)[0] - 10, list(self.LeftLightButton.pos)[1])
-                    self.RightDoorButton.pos = (list(self.RightDoorButton.pos)[0] - 10, list(self.RightDoorButton.pos)[1])
-                    self.RightLightButton.pos = (list(self.RightLightButton.pos)[0] - 10, list(self.RightLightButton.pos)[1])
+                    self.leftDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] - 10, list(self.leftDoorOpen.pos)[1])
+                    self.leftDoorClose.pos = (list(self.leftDoorClose.pos)[0] - 10, list(self.leftDoorClose.pos)[1])
+                    self.leftDoorSpr.pos = (list(self.leftDoorSpr.pos)[0] - 10, list(self.leftDoorSpr.pos)[1])
+
+                    self.rightDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] - 10, list(self.leftDoorOpen.pos)[1])
+                    self.rightDoorClose.pos = (list(self.rightDoorClose.pos)[0] - 10, list(self.rightDoorClose.pos)[1])
+                    self.rightDoorSpr.pos = (list(self.rightDoorSpr.pos)[0] - 10, list(self.rightDoorSpr.pos)[1])
+
+                    self.leftDoorButton.pos = (list(self.leftDoorButton.pos)[0] - 10, list(self.leftDoorButton.pos)[1])
+                    self.leftLightButton.pos = (list(self.leftLightButton.pos)[0] - 10, list(self.leftLightButton.pos)[1])
+                    self.rightDoorButton.pos = (list(self.rightDoorButton.pos)[0] - 10, list(self.rightDoorButton.pos)[1])
+                    self.rightLightButton.pos = (list(self.rightLightButton.pos)[0] - 10, list(self.rightLightButton.pos)[1])
 
                     self.movingright = True
 
@@ -388,10 +546,18 @@ class main(object):
                     self.rightButton.pos = (list(self.rightButton.pos)[0] - 5, list(self.rightButton.pos)[1])
                     self.leftButton.pos = (list(self.leftButton.pos)[0] - 5, list(self.leftButton.pos)[1])
 
-                    self.LeftDoorButton.pos = (list(self.LeftDoorButton.pos)[0] - 5, list(self.LeftDoorButton.pos)[1])
-                    self.LeftLightButton.pos = (list(self.LeftLightButton.pos)[0] - 5, list(self.LeftLightButton.pos)[1])
-                    self.RightDoorButton.pos = (list(self.RightDoorButton.pos)[0] - 5, list(self.RightDoorButton.pos)[1])
-                    self.RightLightButton.pos = (list(self.RightLightButton.pos)[0] - 5, list(self.RightLightButton.pos)[1])
+                    self.leftDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] - 5, list(self.leftDoorOpen.pos)[1])
+                    self.leftDoorClose.pos = (list(self.leftDoorClose.pos)[0] - 5, list(self.leftDoorClose.pos)[1])
+                    self.leftDoorSpr.pos = (list(self.leftDoorSpr.pos)[0] - 5, list(self.leftDoorSpr.pos)[1])
+
+                    self.rightDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] - 5, list(self.leftDoorOpen.pos)[1])
+                    self.rightDoorClose.pos = (list(self.rightDoorClose.pos)[0] - 5, list(self.rightDoorClose.pos)[1])
+                    self.rightDoorSpr.pos = (list(self.rightDoorSpr.pos)[0] - 5, list(self.rightDoorSpr.pos)[1])
+
+                    self.leftDoorButton.pos = (list(self.leftDoorButton.pos)[0] - 5, list(self.leftDoorButton.pos)[1])
+                    self.leftLightButton.pos = (list(self.leftLightButton.pos)[0] - 5, list(self.leftLightButton.pos)[1])
+                    self.rightDoorButton.pos = (list(self.rightDoorButton.pos)[0] - 5, list(self.rightDoorButton.pos)[1])
+                    self.rightLightButton.pos = (list(self.rightLightButton.pos)[0] - 5, list(self.rightLightButton.pos)[1])
 
                     self.movingright = True
 
@@ -399,16 +565,16 @@ class main(object):
                 #print(self.bg.rect.topright, "top right")
 
 
-                if self.LeftLightButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                if self.leftLightButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.leftLight()
 
-                if self.LeftDoorButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                if self.leftDoorButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.leftDoor()
 
-                if self.RightLightButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                if self.rightLightButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.rightLight()
 
-                if self.RightDoorButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                if self.rightDoorButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.rightDoor()
 
                 if self.camButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
@@ -489,16 +655,18 @@ class main(object):
 
                 self.notStatic = True
 
+                if self.time >= 6 :
+                    self.scene = "6am"
+                    self.runAtFrameStart = 0
+
                 if self.power < 0:
                     self.securityOffice()
 
-                if self.runonce == 0 and self.power > 0:
-                    pygame.mixer.stop()
+                if self.runAtSceneStart == 0 and not self.power < 0:
                     self.bg.pos = (0,0)
                     self.changeCamera(self.lastcam)
-                    self.cameraSound.play(-1)
-                    self.cameraSoundTwo.play(-1)
-                    self.runonce = 1
+                    self.channelSeven.play(self.cameraSoundTwo, -1)
+                    self.runAtSceneStart = 1
 
                 self.camgroup.add(self.camButton)
                 self.camgroup.add(self.map)
@@ -513,10 +681,14 @@ class main(object):
                 self.camgroup.add(self.camButtonFive)
                 self.camgroup.add(self.camButtonSix)
                 self.camgroup.add(self.camButtonSeven)
-                self.camgroup.add(self.bg)
                 self.camgroup.add(self.staticTransparent)
 
-                self.camgroup.change_layer(self.bg, 0)
+                if Globals.animatronics[2].foxstatus != 4:
+                    self.camgroup.add(self.bg)
+
+                if Globals.animatronics[2].foxstatus != 4:
+                    self.camgroup.change_layer(self.bg, 0)
+
                 self.camgroup.change_layer(self.map, 8)
                 self.camgroup.change_layer(self.camButtonOneA, 10)
                 self.camgroup.change_layer(self.camButtonOneB, 10)
@@ -693,18 +865,26 @@ class main(object):
                     self.camButtonSix.changeImg("ui\\button\\cam6")
                     self.camButtonSeven.changeImg("ui\\button\\cam7")
 
-                    if Globals.animatronics[0].location == "cam2a":
-                        self.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\r"]))
+                    if Globals.animatronics[2].foxstatus != 4:
+                        if Globals.animatronics[0].location == "cam2a":
+                            self.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\r"]))
 
-                    elif Globals.animatronics[0].location != "cam2a":
-                        self.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\1"]))
+                        elif Globals.animatronics[0].location != "cam2a":
+                            self.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\1"]))
 
+                        else:
+                            self.notStatic = False
+                            self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                            "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                            "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
+                                                            "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
                     else:
-                        self.notStatic = False
-                        self.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
-                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
+                        self.camgroup.remove(self.bg)
+                        self.camgroup.add(self.foxSprinting)
+                        self.camgroup.change_layer(self.foxSprinting, 0)
+                        if self.foxSprinting.has_Finished():
+                            self.securityOffice
+                            self.camgroup.remove(self.foxSprinting)
 
                 elif self.lastcam == "cam2b":
 
@@ -932,22 +1112,27 @@ class main(object):
 
                 self.screen.blit(self.powerLabel, (50,520))
                 self.screen.blit(self.usageLabel, (50,550))
+                self.screen.blit(self.font.render(Globals.camdic[self.lastcam], True, (255,255,255)), (832,292))
 
             elif self.scene == "scarejump":
 
                 self.scaregroup.add(self.bg)
-                self.killed = True
+
+                if self.time >= 6 :
+                    self.scene = "6am"
+                    self.runAtFrameStart = 0
 
                 for animatronic in Globals.animatronics:
                     if animatronic.location == "inside":
-                        if self.runonce == 0:
+                        if self.runAtSceneStart == 0:
                             self.xscream.play(0)
-                            self.runonce = 1
+                            self.runAtSceneStart = 1
                         if animatronic.kind == "chicken":
                             self.scaregroup.add(self.chickenScarejump)
                             self.scaregroup.update()
                             self.scaregroup.draw(self.screen)
                             if self.chickenScarejump.has_Finished():
+                                self.killed = True
                                 self.shutdown()
 
 
@@ -956,6 +1141,7 @@ class main(object):
                             self.scaregroup.update()
                             self.scaregroup.draw(self.screen)
                             if self.rabbitScarejump.has_Finished():
+                                self.killed = True
                                 self.shutdown()
 
 
@@ -964,6 +1150,7 @@ class main(object):
                             self.scaregroup.update()
                             self.scaregroup.draw(self.screen)
                             if self.bearNormalScarejump.has_Finished():
+                                self.killed = True
                                 self.shutdown()
 
 
@@ -972,6 +1159,7 @@ class main(object):
                             self.scaregroup.update()
                             self.scaregroup.draw(self.screen)
                             if self.foxScarejump.has_Finished():
+                                self.killed = True
                                 self.shutdown()
 
                 self.scaregroup.draw(self.screen)
@@ -981,21 +1169,216 @@ class main(object):
 
                 self.scaregroup.add(self.bg)
 
-                pygame.mixer.stop()
+                self.movingleft = False
+                self.movingright = False
+
+                if self.time >= 6:
+                    self.scene = "6am"
+
+                if self.mousex in range(0, 150) and list(self.bg.rect.topleft)[0] in range(-400, -10) and not self.movingright:
+                    self.bg.pos = (list(self.bg.pos)[0] + 20, list(self.bg.pos)[1])
+
+                    self.rightButton.pos = (list(self.rightButton.pos)[0] + 20, list(self.rightButton.pos)[1])
+                    self.leftButton.pos = (list(self.leftButton.pos)[0] + 20, list(self.leftButton.pos)[1])
+
+                    self.leftDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] + 20, list(self.leftDoorOpen.pos)[1])
+                    self.leftDoorClose.pos = (list(self.leftDoorClose.pos)[0] + 20, list(self.leftDoorClose.pos)[1])
+                    self.leftDoorSpr.pos = (list(self.leftDoorSpr.pos)[0] + 20, list(self.leftDoorSpr.pos)[1])
+
+                    self.rightDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] + 20, list(self.leftDoorOpen.pos)[1])
+                    self.rightDoorClose.pos = (list(self.rightDoorClose.pos)[0] + 20, list(self.rightDoorClose.pos)[1])
+                    self.rightDoorSpr.pos = (list(self.rightDoorSpr.pos)[0] + 20, list(self.rightDoorSpr.pos)[1])
+
+                    self.leftDoorButton.pos = (list(self.leftDoorButton.pos)[0] + 20, list(self.leftDoorButton.pos)[1])
+                    self.leftLightButton.pos = (list(self.leftLightButton.pos)[0] + 20, list(self.leftLightButton.pos)[1])
+                    self.rightDoorButton.pos = (list(self.rightDoorButton.pos)[0] + 20, list(self.rightDoorButton.pos)[1])
+                    self.rightLightButton.pos = (list(self.rightLightButton.pos)[0] + 20, list(self.rightLightButton.pos)[1])
+
+                    self.movingleft = True
+
+                if self.mousex in range(150, 315) and list(self.bg.rect.topleft)[0] in range(-400, -10) and not self.movingright:
+                    self.bg.pos = (list(self.bg.pos)[0] + 10, list(self.bg.pos)[1])
+
+                    self.rightButton.pos = (list(self.rightButton.pos)[0] + 10, list(self.rightButton.pos)[1])
+                    self.leftButton.pos = (list(self.leftButton.pos)[0] + 10, list(self.leftButton.pos)[1])
+
+                    self.leftDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] + 10, list(self.leftDoorOpen.pos)[1])
+                    self.leftDoorClose.pos = (list(self.leftDoorClose.pos)[0] + 10, list(self.leftDoorClose.pos)[1])
+                    self.leftDoorSpr.pos = (list(self.leftDoorSpr.pos)[0] + 10, list(self.leftDoorSpr.pos)[1])
+
+                    self.rightDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] + 10, list(self.leftDoorOpen.pos)[1])
+                    self.rightDoorClose.pos = (list(self.rightDoorClose.pos)[0] + 10, list(self.rightDoorClose.pos)[1])
+                    self.rightDoorSpr.pos = (list(self.rightDoorSpr.pos)[0] + 10, list(self.rightDoorSpr.pos)[1])
+
+                    self.leftDoorButton.pos = (list(self.leftDoorButton.pos)[0] + 10, list(self.leftDoorButton.pos)[1])
+                    self.leftLightButton.pos = (list(self.leftLightButton.pos)[0] + 10, list(self.leftLightButton.pos)[1])
+                    self.rightDoorButton.pos = (list(self.rightDoorButton.pos)[0] + 10, list(self.rightDoorButton.pos)[1])
+                    self.rightLightButton.pos = (list(self.rightLightButton.pos)[0] + 10, list(self.rightLightButton.pos)[1])
+
+                    self.movingleft = True
+
+                if self.mousex in range(315, 540) and list(self.bg.rect.topleft)[0] in range(-400, -10) and not self.movingright:
+                    self.bg.pos = (list(self.bg.pos)[0] + 5, list(self.bg.pos)[1])
+
+                    self.rightButton.pos = (list(self.rightButton.pos)[0] + 5, list(self.rightButton.pos)[1])
+                    self.leftButton.pos = (list(self.leftButton.pos)[0] + 5, list(self.leftButton.pos)[1])
+
+                    self.leftDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] + 5, list(self.leftDoorOpen.pos)[1])
+                    self.leftDoorClose.pos = (list(self.leftDoorClose.pos)[0] + 5, list(self.leftDoorClose.pos)[1])
+                    self.leftDoorSpr.pos = (list(self.leftDoorSpr.pos)[0] + 5, list(self.leftDoorSpr.pos)[1])
+
+                    self.rightDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] + 5, list(self.leftDoorOpen.pos)[1])
+                    self.rightDoorClose.pos = (list(self.rightDoorClose.pos)[0] + 5, list(self.rightDoorClose.pos)[1])
+                    self.rightDoorSpr.pos = (list(self.rightDoorSpr.pos)[0] + 5, list(self.rightDoorSpr.pos)[1])
+
+                    self.leftDoorButton.pos = (list(self.leftDoorButton.pos)[0] + 5, list(self.leftDoorButton.pos)[1])
+                    self.leftLightButton.pos = (list(self.leftLightButton.pos)[0] + 5, list(self.leftLightButton.pos)[1])
+                    self.rightDoorButton.pos = (list(self.rightDoorButton.pos)[0] + 5, list(self.rightDoorButton.pos)[1])
+                    self.rightLightButton.pos = (list(self.rightLightButton.pos)[0] + 5, list(self.rightLightButton.pos)[1])
+
+                    self.movingleft = True
+
+                if self.mousex in range(1140, 1280) and not list(self.bg.rect.topright)[0] < 1300 and not self.movingleft:
+                    self.bg.pos = (list(self.bg.pos)[0] - 20, list(self.bg.pos)[1])
+
+                    self.rightButton.pos = (list(self.rightButton.pos)[0] - 20, list(self.rightButton.pos)[1])
+                    self.leftButton.pos = (list(self.leftButton.pos)[0] - 20, list(self.leftButton.pos)[1])
+
+                    self.leftDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] - 20, list(self.leftDoorOpen.pos)[1])
+                    self.leftDoorClose.pos = (list(self.leftDoorClose.pos)[0] - 20, list(self.leftDoorClose.pos)[1])
+                    self.leftDoorSpr.pos = (list(self.leftDoorSpr.pos)[0] - 20, list(self.leftDoorSpr.pos)[1])
+
+                    self.rightDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] - 20, list(self.leftDoorOpen.pos)[1])
+                    self.rightDoorClose.pos = (list(self.rightDoorClose.pos)[0] - 20, list(self.rightDoorClose.pos)[1])
+                    self.rightDoorSpr.pos = (list(self.rightDoorSpr.pos)[0] - 20, list(self.rightDoorSpr.pos)[1])
+
+                    self.leftDoorButton.pos = (list(self.leftDoorButton.pos)[0] - 20, list(self.leftDoorButton.pos)[1])
+                    self.leftLightButton.pos = (list(self.leftLightButton.pos)[0] - 20, list(self.leftLightButton.pos)[1])
+                    self.rightDoorButton.pos = (list(self.rightDoorButton.pos)[0] - 20, list(self.rightDoorButton.pos)[1])
+                    self.rightLightButton.pos = (list(self.rightLightButton.pos)[0] - 20, list(self.rightLightButton.pos)[1])
+
+                    self.movingright = True
+
+                if self.mousex in range(1000, 1140) and not list(self.bg.rect.topright)[0] < 1300 and not self.movingleft:
+                    self.bg.pos = (list(self.bg.pos)[0] - 10, list(self.bg.pos)[1])
+
+                    self.rightButton.pos = (list(self.rightButton.pos)[0] - 10, list(self.rightButton.pos)[1])
+                    self.leftButton.pos = (list(self.leftButton.pos)[0] - 10, list(self.leftButton.pos)[1])
+
+                    self.leftDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] - 10, list(self.leftDoorOpen.pos)[1])
+                    self.leftDoorClose.pos = (list(self.leftDoorClose.pos)[0] - 10, list(self.leftDoorClose.pos)[1])
+                    self.leftDoorSpr.pos = (list(self.leftDoorSpr.pos)[0] - 10, list(self.leftDoorSpr.pos)[1])
+
+                    self.rightDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] - 10, list(self.leftDoorOpen.pos)[1])
+                    self.rightDoorClose.pos = (list(self.rightDoorClose.pos)[0] - 10, list(self.rightDoorClose.pos)[1])
+                    self.rightDoorSpr.pos = (list(self.rightDoorSpr.pos)[0] - 10, list(self.rightDoorSpr.pos)[1])
+
+                    self.leftDoorButton.pos = (list(self.leftDoorButton.pos)[0] - 10, list(self.leftDoorButton.pos)[1])
+                    self.leftLightButton.pos = (list(self.leftLightButton.pos)[0] - 10, list(self.leftLightButton.pos)[1])
+                    self.rightDoorButton.pos = (list(self.rightDoorButton.pos)[0] - 10, list(self.rightDoorButton.pos)[1])
+                    self.rightLightButton.pos = (list(self.rightLightButton.pos)[0] - 10, list(self.rightLightButton.pos)[1])
+
+                    self.movingright = True
+
+                if self.mousex in range(750, 1000) and not list(self.bg.rect.topright)[0] < 1300 and not self.movingleft:
+                    self.bg.pos = (list(self.bg.pos)[0] - 5, list(self.bg.pos)[1])
+
+                    self.rightButton.pos = (list(self.rightButton.pos)[0] - 5, list(self.rightButton.pos)[1])
+                    self.leftButton.pos = (list(self.leftButton.pos)[0] - 5, list(self.leftButton.pos)[1])
+
+                    self.leftDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] - 5, list(self.leftDoorOpen.pos)[1])
+                    self.leftDoorClose.pos = (list(self.leftDoorClose.pos)[0] - 5, list(self.leftDoorClose.pos)[1])
+                    self.leftDoorSpr.pos = (list(self.leftDoorSpr.pos)[0] - 5, list(self.leftDoorSpr.pos)[1])
+
+                    self.rightDoorOpen.pos = (list(self.leftDoorOpen.pos)[0] - 5, list(self.leftDoorOpen.pos)[1])
+                    self.rightDoorClose.pos = (list(self.rightDoorClose.pos)[0] - 5, list(self.rightDoorClose.pos)[1])
+                    self.rightDoorSpr.pos = (list(self.rightDoorSpr.pos)[0] - 5, list(self.rightDoorSpr.pos)[1])
+
+                    self.leftDoorButton.pos = (list(self.leftDoorButton.pos)[0] - 5, list(self.leftDoorButton.pos)[1])
+                    self.leftLightButton.pos = (list(self.leftLightButton.pos)[0] - 5, list(self.leftLightButton.pos)[1])
+                    self.rightDoorButton.pos = (list(self.rightDoorButton.pos)[0] - 5, list(self.rightDoorButton.pos)[1])
+                    self.rightLightButton.pos = (list(self.rightLightButton.pos)[0] - 5, list(self.rightLightButton.pos)[1])
+
+                    self.movingright = True
+
                 self.bg.changeImg("office\\powerdown\\0")
-                if self.runoncePD == 0:
-                    self.powerdown.play(0)
-                    self.runoncePD = 1
+
+                # if self.runAtSceneStart == 0:  #self.powerDownStage == 0 and
+                #     pygame.mixer.stop()
+                #     self.powerdown.play(0, maxtime=random.randint(8000, 15000))
+                #     self.runAtSceneStart = 1
+                #     if not pygame.mixer.get_busy():
+                #         self.musicbox.play(0, maxtime=random.randint(5000, self.musicbox.get_lenght() * 1000))
+                #
+                #
+                # #if self.powerDownStage == 1 and self.runAtSceneStart == 0:
 
                 self.scaregroup.update()
                 self.scaregroup.draw(self.screen)
+
+            elif self.scene == "6am":
+                if self.runAtFrameStart == 0:
+                    pygame.mixer.stop()
+                    self.screen.fill((0,0,0))
+                    self.screen.blit(pygame.font.Font(None, 80).render("5 AM", True, (255,255,255)), (544,298))
+                    self.channelOne.set_volume(1.0)
+                    self.channelOne.play(self.chimes, loops=0)
+                    self.oldTime = self.current_Milliseconds()
+                    self.runAtFrameStart = 1
+                try:
+                    if self.current_Milliseconds() >= self.oldTime + 4500:
+                        self.channelTwo.play(self.children, loops=0)
+                        self.screen.fill((0,0,0))
+                        self.screen.blit(pygame.font.Font(None, 80).render("6 AM", True, (255,255,255)), (544,298))
+                        del self.oldTime
+                except:
+                    pass
+
+                if not self.channelOne.get_busy() and self.runAtFrameStart == 1:
+                    self.scene = "end"
+                    self.runAtFrameStart = 0
+
+            elif self.scene == "end":
+
+                self.scaregroup.add(self.bg)
+
+                if self.runAtFrameStart == 0:
+                    pygame.mixer.stop()
+                    self.channelOne.set_volume(1.0)
+                    self.channelOne.play(self.musicbox, loops=-1)
+                    self.runAtFrameStart = 1
+
+                if self.gmode == "normal":
+                    self.bg.changeImg("ending\\normal")
+
+                elif self.gmode == "overtime":
+                    self.bg.changeImg("ending\\overtime")
+
+                elif self.gmode == "custom":
+                    self.bg.changeImg("ending\\custom")
+
+                self.scaregroup.update()
+                self.scaregroup.draw(self.screen)
+
+            if Globals.animatronics[2].foxstatus == 3 and self.lastcam == "cam2a":
+                Globals.animatronics[2].foxstatus = 4
+
+            if Globals.animatronics[2].foxstatus == 4 and not self.leftdoor:
+                self.securityOffice()
+                Globals.animatronics[2].foxstatus = 5
+
+            if self.scene == "office" and not self.leftlight and not self.rightlight and Globals.animatronics[2].foxstatus != 5:
+                self.channelThree.set_volume(0.0)
+
+            if self.scene == "office" and (self.leftlight or self.rightlight):
+                self.channelThree.set_volume(1.0)
 
             pygame.display.update()
             pygame.display.flip()
             self.FPSCLOCK.tick(self.fps)
 
     def shutdown(self): #Shuts down the whole game.
-        debug.debugprint("Shutting down...")
+        utils.debugprint("Shutting down...")
         pygame.quit()
         for animatronic in Globals.animatronics:
             animatronic.dmove("off")
@@ -1005,12 +1388,19 @@ class main(object):
         os.system("exit")
 
     def changeCamera(self, camera):
-        self.blip.play(0)
+        self.channelNine.play(self.blip, 0)
         self.camgroup.draw(self.screen)
         self.camgroup.update()
         if camera == "cam1c":
-            Globals.animatronics[2].foxtseen += 1
-        pygame.time.wait(150)
+            Globals.animatronics[2].foxviewing = True
+
+        else:
+            Globals.animatronics[2].foxviewing = False
+
+        if camera == "cam2a" and Globals.animatronics[2].foxstatus == 3:
+            Globals.animatronics[2].foxstatus = 4
+
+        pygame.time.wait(100)
         self.lastcam = camera
 
 
@@ -1038,7 +1428,7 @@ class main(object):
         return None
 
     def hourTimer(self): #Timer for the IN-GAME time.
-        if self.time >= 6 and self.killed != True: #This is what happens after 6AM. Yay!
+        if self.time >= 6 or self.time == "win" and self.killed != True: #This is what happens after 6AM. Yay!
             pass
 
         else:
@@ -1097,7 +1487,7 @@ class main(object):
 
 
     def foxkindDoorCheck(self):
-        #debug.debugprint(("Foxkind door check.")
+        #utils.debugprint(("Foxkind door check.")
         if self.time >= 6 or self.power <= 0 - 1:
             pass
 
@@ -1119,11 +1509,13 @@ class main(object):
 
     def leftDoor(self):
         if self.leftdoor == False:
+            self.channelFour.play(self.doorSound, 0)
             self.leftdoor = True
             self.usage += 1
             return None
 
         if self.leftdoor == True:
+            self.channelFour.play(self.doorSound, 0)
             self.leftdoor = False
             self.usage -= 1
             return None
@@ -1144,11 +1536,13 @@ class main(object):
 
     def rightDoor(self):
         if self.rightdoor == False:
+            self.channelFour.play(self.doorSound, 0)
             self.rightdoor = True
             self.usage += 1
             return None
 
         if self.rightdoor == True:
+            self.channelFour.play(self.doorSound, 0)
             self.rightdoor = False
             self.usage -= 1
             return None
@@ -1168,7 +1562,7 @@ class main(object):
             return None
 
     def openCamera(self):
-        debug.debugprint("Open camera")
+        utils.debugprint("Open camera")
         if self.leftlight:
             self.usage -= 1
             self.leftlight = False
@@ -1180,30 +1574,27 @@ class main(object):
         pygame.time.delay(1000)
         pygame.mixer.stop()
         self.scene = "cam"
-        self.runonce = 0
-        debug.debugprint("Camera opened")
+        self.runAtSceneStart = 0
+        utils.debugprint("Camera opened")
         return None
 
     def securityOffice(self):
-        debug.debugprint("Go back into office")
+        utils.debugprint("Go back into office")
+        Globals.animatronics[2].foxviewing = False
         self.usage -= 1
         self.putdown.play(0)
         pygame.time.delay(1000)
         pygame.mixer.stop()
         self.scene = "office"
-        self.runonce = 0
+        self.runAtSceneStart = 0
         for animatronic in Globals.animatronics:
             if animatronic.location == "inside":
-                debug.debugprint("%s was inside!" % (animatronic.name), animatronic)
+                utils.debugprint("%s was inside!" % (animatronic.name), animatronic)
                 self.scene = "scarejump"
-        debug.debugprint("Back into office")
+        utils.debugprint("Back into office")
         return None
 
-    def powerDown(self):
-        pygame.mixer.stop()
-        self.scene = "powerdown"
-        self.runoncePD = 0
-        return None
+    def current_Milliseconds(self): return int(round(time.time() * 1000))
 
 if __name__ == "__main__":
     try:
