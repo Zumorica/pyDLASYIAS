@@ -1100,7 +1100,7 @@ class main(object):
                                                          "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
 
                 if self.camButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.changeScene("cam")
+                    self.changeScene("office")
 
                 if list(self.bg.rect.topright)[0] == 1280 and self.notStatic:
                     self.camMovement = "right"
@@ -1412,7 +1412,7 @@ class main(object):
                 Globals.animatronics[2].foxstatus = 4
 
             if Globals.animatronics[2].foxstatus == 4 and not self.leftdoor:
-                self.securityOffice()
+                self.changeScene("office")
                 Globals.animatronics[2].foxstatus = 5
 
             if self.scene == "office" and not self.leftlight and not self.rightlight and Globals.animatronics[2].foxstatus != 5:
