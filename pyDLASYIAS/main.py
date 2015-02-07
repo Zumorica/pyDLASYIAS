@@ -218,6 +218,18 @@ class main(object):
                                                                            "office\\scarejump\\bear\\normal\\26.png", "office\\scarejump\\bear\\normal\\27.png",
                                                                            "office\\scarejump\\bear\\normal\\28.png", "office\\scarejump\\bear\\normal\\29.png"])
 
+        self.bearPowerdownScarejump = sprite.Animated(startpos=(0,0), images=["office\\scarejump\\bear\\powerdown\\0.png", "office\\scarejump\\bear\\powerdown\\1.png",
+                                                                              "office\\scarejump\\bear\\powerdown\\2.png", "office\\scarejump\\bear\\powerdown\\3.png",
+                                                                              "office\\scarejump\\bear\\powerdown\\4.png", "office\\scarejump\\bear\\powerdown\\5.png",
+                                                                              "office\\scarejump\\bear\\powerdown\\6.png", "office\\scarejump\\bear\\powerdown\\7.png",
+                                                                              "office\\scarejump\\bear\\powerdown\\8.png", "office\\scarejump\\bear\\powerdown\\9.png",
+                                                                              "office\\scarejump\\bear\\powerdown\\10.png", "office\\scarejump\\bear\\powerdown\\11.png",
+                                                                              "office\\scarejump\\bear\\powerdown\\12.png", "office\\scarejump\\bear\\powerdown\\13.png",
+                                                                              "office\\scarejump\\bear\\powerdown\\14.png", "office\\scarejump\\bear\\powerdown\\15.png",
+                                                                              "office\\scarejump\\bear\\powerdown\\16.png", "office\\scarejump\\bear\\powerdown\\17.png",
+                                                                              "office\\scarejump\\bear\\powerdown\\18.png", "office\\scarejump\\bear\\powerdown\\19.png"])
+
+
         self.staticTransparent = sprite.Sprite(startpos=(0,0), image="cameras\\misc\\static\\transparent\\0")
         self.staticTransparent.groups = self.allgroup, self.officegroup, self.camgroup, self.scaregroup
 
@@ -356,6 +368,7 @@ class main(object):
         self.lastBgPos = (0,0)
         self.lastLBPos = (0,0)
         self.lastRBPos = (0,0)
+        self.fullscreen = False
 
         while self.running:
 
@@ -369,6 +382,17 @@ class main(object):
                 if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
                     pygame.quit()
                     self.shutdown()
+
+                if event.type == KEYUP and event.key == 292:
+                    if not self.fullscreen:
+                        self.screen = pygame.display.set_mode((self.width, self.height), FULLSCREEN, 32)
+                        pygame.display.set_caption("--pyDLASYIAS %s--" %(Globals.version))
+                        self.fullscreen = True
+
+                    if self.fullscreen:
+                        self.screen = pygame.display.set_mode((self.width, self.height), 0, 32)
+                        pygame.display.set_caption("--pyDLASYIAS %s--" %(Globals.version))
+
 
                 elif event.type == MOUSEMOTION:
                     self.mousex, self.mousey = event.pos
@@ -395,12 +419,10 @@ class main(object):
                     self.runonce = 1
 
                 if self.time >= 6 :
-                    self.scene = "6am"
-                    self.runAtFrameStart = 0
+                    self.changeScene("6am")
 
                 if self.power < 0:
-                    self.scene = "powerdown"
-                    self.runAtSceneStart = 0
+                    self.changeScene("powerdown")
 
                 if self.runAtSceneStart == 0 and not self.power < 0:
                     self.bg.pos = self.lastBgPos
@@ -578,7 +600,7 @@ class main(object):
                     self.rightDoor()
 
                 if self.camButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.openCamera()
+                    self.changeScene("cam")
 
                 if self.leftlight and not self.rightlight:
                     for animatronic in Globals.animatronics:
@@ -656,11 +678,10 @@ class main(object):
                 self.notStatic = True
 
                 if self.time >= 6 :
-                    self.scene = "6am"
-                    self.runAtFrameStart = 0
+                    self.changeScene("6am")
 
                 if self.power < 0:
-                    self.securityOffice()
+                    self.changeScene("office")
 
                 if self.runAtSceneStart == 0 and not self.power < 0:
                     self.bg.pos = (0,0)
@@ -883,7 +904,7 @@ class main(object):
                         self.camgroup.add(self.foxSprinting)
                         self.camgroup.change_layer(self.foxSprinting, 0)
                         if self.foxSprinting.has_Finished():
-                            self.securityOffice
+                            self.changeScene("office")
                             self.camgroup.remove(self.foxSprinting)
 
                 elif self.lastcam == "cam2b":
@@ -1079,7 +1100,7 @@ class main(object):
                                                          "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
 
                 if self.camButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.securityOffice()
+                    self.changeScene("cam")
 
                 if list(self.bg.rect.topright)[0] == 1280 and self.notStatic:
                     self.camMovement = "right"
@@ -1119,11 +1140,21 @@ class main(object):
                 self.scaregroup.add(self.bg)
 
                 if self.time >= 6 :
-                    self.scene = "6am"
-                    self.runAtFrameStart = 0
+                    self.changeScene("6am")
+
+                if self.power < 0:
+                    if self.runAtSceneStart == 0:
+                        self.xscream.play(0)
+                        self.runAtSceneStart = 1
+                    self.scaregroup.add(self.bearPowerdownScarejump)
+                    self.scaregroup.update()
+                    self.scaregroup.draw(self.screen)
+                    if self.bearPowerdownScarejump.has_Finished():
+                        self.killed = True
+                        self.shutdown()
 
                 for animatronic in Globals.animatronics:
-                    if animatronic.location == "inside":
+                    if animatronic.location == "inside" and self.power > 0:
                         if self.runAtSceneStart == 0:
                             self.xscream.play(0)
                             self.runAtSceneStart = 1
@@ -1173,7 +1204,7 @@ class main(object):
                 self.movingright = False
 
                 if self.time >= 6:
-                    self.scene = "6am"
+                    self.changeScene("6am")
 
                 if self.mousex in range(0, 150) and list(self.bg.rect.topleft)[0] in range(-400, -10) and not self.movingright:
                     self.bg.pos = (list(self.bg.pos)[0] + 20, list(self.bg.pos)[1])
@@ -1301,30 +1332,48 @@ class main(object):
 
                     self.movingright = True
 
-                self.bg.changeImg("office\\powerdown\\0")
+                if self.runAtSceneStart == 0:
+                    pygame.mixer.stop()
+                    self.bg.changeImg("office\\powerdown\\0")
+                    self.channelOne.set_volume(1.0)
+                    self.channelTwo.set_volume(0.5)
 
-                # if self.runAtSceneStart == 0:  #self.powerDownStage == 0 and
-                #     pygame.mixer.stop()
-                #     self.powerdown.play(0, maxtime=random.randint(8000, 15000))
-                #     self.runAtSceneStart = 1
-                #     if not pygame.mixer.get_busy():
-                #         self.musicbox.play(0, maxtime=random.randint(5000, self.musicbox.get_lenght() * 1000))
-                #
-                #
-                # #if self.powerDownStage == 1 and self.runAtSceneStart == 0:
+                    self.channelOne.play(self.powerdown, loops=0)
+                    self.channelOne.fadeout(random.randint(5000, 15000))
+
+                    self.channelTwo.play(self.ambienceTwo, loops=0)
+                    self.powerDownStage = 1
+                    self.runAtSceneStart = 1
+
+                if not self.channelOne.get_busy() and not self.channelThirty.get_busy() and self.powerDownStage == 1:
+                    self.channelThirty.play(self.musicbox, loops=0, maxtime=random.randint(3000, int(self.musicbox.get_length() * 1000)))
+                    self.powerDownStage = 2
+
+                if self.powerDownStage == 2:
+                    self.bg.changeImg(random.choice(["office\\powerdown\\0", "office\\powerdown\\1", "office\\powerdown\\0", "office\\powerdown\\0"]))
+
+                if not self.channelThirty.get_busy() and self.powerDownStage == 2:
+                    self.powerDownStage = 3
+
+                if self.powerDownStage == 3:
+                    self.bg.changeImg("office\\powerdown\\2")
+                    self.oldTime = self.current_Milliseconds()
+
+                if self.current_Milliseconds() >= self.oldTime + 6000 and self.powerDownStage == 3:
+                    self.changeScene("scarejump")
 
                 self.scaregroup.update()
                 self.scaregroup.draw(self.screen)
 
             elif self.scene == "6am":
-                if self.runAtFrameStart == 0:
+                if self.runAtSceneStart == 0:
                     pygame.mixer.stop()
                     self.screen.fill((0,0,0))
                     self.screen.blit(pygame.font.Font(None, 80).render("5 AM", True, (255,255,255)), (544,298))
                     self.channelOne.set_volume(1.0)
                     self.channelOne.play(self.chimes, loops=0)
                     self.oldTime = self.current_Milliseconds()
-                    self.runAtFrameStart = 1
+                    self.runAtSceneStart = 1
                 try:
                     if self.current_Milliseconds() >= self.oldTime + 4500:
                         self.channelTwo.play(self.children, loops=0)
@@ -1334,19 +1383,18 @@ class main(object):
                 except:
                     pass
 
-                if not self.channelOne.get_busy() and self.runAtFrameStart == 1:
-                    self.scene = "end"
-                    self.runAtFrameStart = 0
+                if not self.channelOne.get_busy() and self.runAtSceneStart == 1:
+                    self.changeScene("end")
 
             elif self.scene == "end":
 
                 self.scaregroup.add(self.bg)
 
-                if self.runAtFrameStart == 0:
+                if self.runAtSceneStart == 0:
                     pygame.mixer.stop()
                     self.channelOne.set_volume(1.0)
                     self.channelOne.play(self.musicbox, loops=-1)
-                    self.runAtFrameStart = 1
+                    self.runAtSceneStart = 1
 
                 if self.gmode == "normal":
                     self.bg.changeImg("ending\\normal")
@@ -1561,38 +1609,43 @@ class main(object):
             self.usage += 1
             return None
 
-    def openCamera(self):
-        utils.debugprint("Open camera")
-        if self.leftlight:
+    def changeScene(self, scene):
+        if scene == "office":
+            Globals.animatronics[2].foxviewing = False
             self.usage -= 1
-            self.leftlight = False
-        if self.rightlight:
-            self.usage -= 1
-            self.rightlight = False
-        self.usage += 1
-        self.putdown.play(0)
-        pygame.time.delay(1000)
-        pygame.mixer.stop()
-        self.scene = "cam"
-        self.runAtSceneStart = 0
-        utils.debugprint("Camera opened")
-        return None
+            self.putdown.play(0)
+            pygame.time.delay(1000)
+            self.scene = "office"
+            for animatronic in Globals.animatronics:
+                if animatronic.location == "inside":
+                    self.scene = "scarejump"
 
-    def securityOffice(self):
-        utils.debugprint("Go back into office")
-        Globals.animatronics[2].foxviewing = False
-        self.usage -= 1
-        self.putdown.play(0)
-        pygame.time.delay(1000)
-        pygame.mixer.stop()
-        self.scene = "office"
+        elif scene == "cam":
+            if self.leftlight:
+                self.usage -= 1
+                self.leftlight = False
+            if self.rightlight:
+                self.usage -= 1
+                self.rightlight = False
+            self.usage += 1
+            self.putdown.play(0)
+            pygame.time.delay(1000)
+            self.scene = "cam"
+
+        elif scene == "powerdown":
+            self.scene = "powerdown"
+
+        elif scene == "dead":
+            self.scene = "dead"
+
+        elif scene == "6am":
+            self.scene = "6am"
+
+        elif scene == "end":
+            self.scene = "end"
+
         self.runAtSceneStart = 0
-        for animatronic in Globals.animatronics:
-            if animatronic.location == "inside":
-                utils.debugprint("%s was inside!" % (animatronic.name), animatronic)
-                self.scene = "scarejump"
-        utils.debugprint("Back into office")
-        return None
+        utils.debugprint("Changed scene to %s" % self.scene)
 
     def current_Milliseconds(self): return int(round(time.time() * 1000))
 

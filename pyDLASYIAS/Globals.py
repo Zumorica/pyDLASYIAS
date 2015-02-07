@@ -3,7 +3,7 @@ def init():
 
     pos = (0,0)
 
-    mouseClick = False
+    mouseClick = True
 
     version = "v1.0-alpha (GUI)"
 
