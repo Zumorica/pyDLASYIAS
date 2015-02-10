@@ -205,9 +205,10 @@ def launcher():
         screen.blit(chickenaiLabel, (822,480))
         screen.blit(foxaiLabel, (1102,480))
 
+        screen.blit(pygame.font.Font(None, 42).render("%s FPS" % round(FPSCLOCK.get_fps()), True, (0,255,0)), (10,10))
+
         group.update()
         group.draw(screen)
-        pygame.display.update()
         pygame.display.flip()
         FPSCLOCK.tick(30)
 

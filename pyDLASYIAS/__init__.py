@@ -1,3 +1,7 @@
 import pyDLASYIAS.Globals
+import pyDLASYIAS.spr
+import pyDLASYIAS.snd
 
-Globals.init() #Inits all global variables.
+Globals.init()
+spr.init()
+snd.init()
