@@ -12,6 +12,7 @@ import pyDLASYIAS.animatronics as animatronics
 import pyDLASYIAS.sprite as sprite
 import pyDLASYIAS.main as main
 import pyDLASYIAS.utils.functions as utils
+import pyDLASYIAS.pyganim as pyganim
 
 def launcher():
     running = True

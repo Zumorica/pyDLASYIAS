@@ -11,6 +11,7 @@ import pyDLASYIAS.Globals as Globals
 import pyDLASYIAS.spr as spr
 import pyDLASYIAS.snd as snd
 import pyDLASYIAS.utils.functions as utils
+import pyDLASYIAS.pyganim as pyganim
 from pygame.locals import *
 
 class main(object):
@@ -75,6 +76,9 @@ class main(object):
         self.powerDownStage = 0
 
         self.camButtonCooldown = False
+
+        self.leftDoorReversed = False
+        self.rightDoorReversed = False
 
         self.lastBgPos = (0,0)
         self.lastLBPos = (0,0)
@@ -151,9 +155,9 @@ class main(object):
                 spr.officegroup.add(spr.rightDoorButton)
                 spr.officegroup.add(spr.rightLightButton)
                 spr.officegroup.add(spr.camButton)
-                spr.officegroup.add(spr.bg)
                 spr.officegroup.add(spr.leftDoor)
                 spr.officegroup.add(spr.rightDoor)
+                spr.officegroup.add(spr.bg)
 
                 spr.officegroup.change_layer(spr.bg, 0)
                 spr.officegroup.change_layer(spr.leftButton, 1)
@@ -162,9 +166,9 @@ class main(object):
                 spr.officegroup.change_layer(spr.leftLightButton, 2)
                 spr.officegroup.change_layer(spr.rightDoorButton, 2)
                 spr.officegroup.change_layer(spr.rightLightButton, 2)
+                spr.officegroup.change_layer(spr.camButton, 4)
                 spr.officegroup.change_layer(spr.leftDoor, 3)
                 spr.officegroup.change_layer(spr.rightDoor, 3)
-                spr.officegroup.change_layer(spr.camButton, 5)
 
                 self.movingleft = False
                 self.movingright = False
@@ -175,12 +179,7 @@ class main(object):
                     spr.rightButton.pos = (spr.rightButton.pos[0] + 20, spr.rightButton.pos[1])
                     spr.leftButton.pos = (spr.leftButton.pos[0] + 20, spr.leftButton.pos[1])
 
-                    spr.leftDoorOpen.pos = (spr.leftDoorOpen.pos[0] + 20, spr.leftDoorOpen.pos[1])
-                    spr.leftDoorClose.pos = (spr.leftDoorClose.pos[0] + 20, spr.leftDoorClose.pos[1])
                     spr.leftDoor.pos = (spr.leftDoor.pos[0] + 20, spr.leftDoor.pos[1])
-
-                    spr.rightDoorOpen.pos = (spr.leftDoorOpen.pos[0] + 20, spr.leftDoorOpen.pos[1])
-                    spr.rightDoorClose.pos = (spr.rightDoorClose.pos[0] + 20, spr.rightDoorClose.pos[1])
                     spr.rightDoor.pos = (spr.rightDoor.pos[0] + 20, spr.rightDoor.pos[1])
 
                     spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] + 20, spr.leftDoorButton.pos[1])
@@ -192,14 +191,6 @@ class main(object):
                         spr.leftDoor.update()
                     if spr.officegroup.has(spr.rightDoor):
                         spr.rightDoor.update()
-                    if spr.officegroup.has(spr.leftDoorOpen):
-                        spr.leftDoorOpen.update()
-                    if spr.officegroup.has(spr.leftDoorClose):
-                        spr.leftDoorClose.update()
-                    if spr.officegroup.has(spr.rightDoorOpen):
-                        spr.rightDoorOpen.update()
-                    if spr.officegroup.has(spr.rightDoorClose):
-                        spr.rightDoorClose.update()
 
                     self.movingleft = True
 
@@ -209,12 +200,7 @@ class main(object):
                     spr.rightButton.pos = (spr.rightButton.pos[0] + 10, spr.rightButton.pos[1])
                     spr.leftButton.pos = (spr.leftButton.pos[0] + 10, spr.leftButton.pos[1])
 
-                    spr.leftDoorOpen.pos = (spr.leftDoorOpen.pos[0] + 10, spr.leftDoorOpen.pos[1])
-                    spr.leftDoorClose.pos = (spr.leftDoorClose.pos[0] + 10, spr.leftDoorClose.pos[1])
                     spr.leftDoor.pos = (spr.leftDoor.pos[0] + 10, spr.leftDoor.pos[1])
-
-                    spr.rightDoorOpen.pos = (spr.leftDoorOpen.pos[0] + 10, spr.leftDoorOpen.pos[1])
-                    spr.rightDoorClose.pos = (spr.rightDoorClose.pos[0] + 10, spr.rightDoorClose.pos[1])
                     spr.rightDoor.pos = (spr.rightDoor.pos[0] + 10, spr.rightDoor.pos[1])
 
                     spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] + 10, spr.leftDoorButton.pos[1])
@@ -226,14 +212,6 @@ class main(object):
                         spr.leftDoor.update()
                     if spr.officegroup.has(spr.rightDoor):
                         spr.rightDoor.update()
-                    if spr.officegroup.has(spr.leftDoorOpen):
-                        spr.leftDoorOpen.update()
-                    if spr.officegroup.has(spr.leftDoorClose):
-                        spr.leftDoorClose.update()
-                    if spr.officegroup.has(spr.rightDoorOpen):
-                        spr.rightDoorOpen.update()
-                    if spr.officegroup.has(spr.rightDoorClose):
-                        spr.rightDoorClose.update()
 
                     self.movingleft = True
 
@@ -243,12 +221,7 @@ class main(object):
                     spr.rightButton.pos = (spr.rightButton.pos[0] + 5, spr.rightButton.pos[1])
                     spr.leftButton.pos = (spr.leftButton.pos[0] + 5, spr.leftButton.pos[1])
 
-                    spr.leftDoorOpen.pos = (spr.leftDoorOpen.pos[0] + 5, spr.leftDoorOpen.pos[1])
-                    spr.leftDoorClose.pos = (spr.leftDoorClose.pos[0] + 5, spr.leftDoorClose.pos[1])
                     spr.leftDoor.pos = (spr.leftDoor.pos[0] + 5, spr.leftDoor.pos[1])
-
-                    spr.rightDoorOpen.pos = (spr.leftDoorOpen.pos[0] + 5, spr.leftDoorOpen.pos[1])
-                    spr.rightDoorClose.pos = (spr.rightDoorClose.pos[0] + 5, spr.rightDoorClose.pos[1])
                     spr.rightDoor.pos = (spr.rightDoor.pos[0] + 5, spr.rightDoor.pos[1])
 
                     spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] + 5, spr.leftDoorButton.pos[1])
@@ -260,14 +233,6 @@ class main(object):
                         spr.leftDoor.update()
                     if spr.officegroup.has(spr.rightDoor):
                         spr.rightDoor.update()
-                    if spr.officegroup.has(spr.leftDoorOpen):
-                        spr.leftDoorOpen.update()
-                    if spr.officegroup.has(spr.leftDoorClose):
-                        spr.leftDoorClose.update()
-                    if spr.officegroup.has(spr.rightDoorOpen):
-                        spr.rightDoorOpen.update()
-                    if spr.officegroup.has(spr.rightDoorClose):
-                        spr.rightDoorClose.update()
 
                     self.movingleft = True
 
@@ -277,12 +242,7 @@ class main(object):
                     spr.rightButton.pos = (spr.rightButton.pos[0] - 20, spr.rightButton.pos[1])
                     spr.leftButton.pos = (spr.leftButton.pos[0] - 20, spr.leftButton.pos[1])
 
-                    spr.leftDoorOpen.pos = (spr.leftDoorOpen.pos[0] - 20, spr.leftDoorOpen.pos[1])
-                    spr.leftDoorClose.pos = (spr.leftDoorClose.pos[0] - 20, spr.leftDoorClose.pos[1])
                     spr.leftDoor.pos = (spr.leftDoor.pos[0] - 20, spr.leftDoor.pos[1])
-
-                    spr.rightDoorOpen.pos = (spr.leftDoorOpen.pos[0] - 20, spr.leftDoorOpen.pos[1])
-                    spr.rightDoorClose.pos = (spr.rightDoorClose.pos[0] - 20, spr.rightDoorClose.pos[1])
                     spr.rightDoor.pos = (spr.rightDoor.pos[0] - 20, spr.rightDoor.pos[1])
 
                     spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] - 20, spr.leftDoorButton.pos[1])
@@ -294,14 +254,6 @@ class main(object):
                         spr.leftDoor.update()
                     if spr.officegroup.has(spr.rightDoor):
                         spr.rightDoor.update()
-                    if spr.officegroup.has(spr.leftDoorOpen):
-                        spr.leftDoorOpen.update()
-                    if spr.officegroup.has(spr.leftDoorClose):
-                        spr.leftDoorClose.update()
-                    if spr.officegroup.has(spr.rightDoorOpen):
-                        spr.rightDoorOpen.update()
-                    if spr.officegroup.has(spr.rightDoorClose):
-                        spr.rightDoorClose.update()
 
                     self.movingright = True
 
@@ -311,12 +263,7 @@ class main(object):
                     spr.rightButton.pos = (spr.rightButton.pos[0] - 10, spr.rightButton.pos[1])
                     spr.leftButton.pos = (spr.leftButton.pos[0] - 10, spr.leftButton.pos[1])
 
-                    spr.leftDoorOpen.pos = (spr.leftDoorOpen.pos[0] - 10, spr.leftDoorOpen.pos[1])
-                    spr.leftDoorClose.pos = (spr.leftDoorClose.pos[0] - 10, spr.leftDoorClose.pos[1])
                     spr.leftDoor.pos = (spr.leftDoor.pos[0] - 10, spr.leftDoor.pos[1])
-
-                    spr.rightDoorOpen.pos = (spr.leftDoorOpen.pos[0] - 10, spr.leftDoorOpen.pos[1])
-                    spr.rightDoorClose.pos = (spr.rightDoorClose.pos[0] - 10, spr.rightDoorClose.pos[1])
                     spr.rightDoor.pos = (spr.rightDoor.pos[0] - 10, spr.rightDoor.pos[1])
 
                     spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] - 10, spr.leftDoorButton.pos[1])
@@ -328,14 +275,6 @@ class main(object):
                         spr.leftDoor.update()
                     if spr.officegroup.has(spr.rightDoor):
                         spr.rightDoor.update()
-                    if spr.officegroup.has(spr.leftDoorOpen):
-                        spr.leftDoorOpen.update()
-                    if spr.officegroup.has(spr.leftDoorClose):
-                        spr.leftDoorClose.update()
-                    if spr.officegroup.has(spr.rightDoorOpen):
-                        spr.rightDoorOpen.update()
-                    if spr.officegroup.has(spr.rightDoorClose):
-                        spr.rightDoorClose.update()
 
                     self.movingright = True
 
@@ -345,12 +284,7 @@ class main(object):
                     spr.rightButton.pos = (spr.rightButton.pos[0] - 5, spr.rightButton.pos[1])
                     spr.leftButton.pos = (spr.leftButton.pos[0] - 5, spr.leftButton.pos[1])
 
-                    spr.leftDoorOpen.pos = (spr.leftDoorOpen.pos[0] - 5, spr.leftDoorOpen.pos[1])
-                    spr.leftDoorClose.pos = (spr.leftDoorClose.pos[0] - 5, spr.leftDoorClose.pos[1])
                     spr.leftDoor.pos = (spr.leftDoor.pos[0] - 5, spr.leftDoor.pos[1])
-
-                    spr.rightDoorOpen.pos = (spr.leftDoorOpen.pos[0] - 5, spr.leftDoorOpen.pos[1])
-                    spr.rightDoorClose.pos = (spr.rightDoorClose.pos[0] - 5, spr.rightDoorClose.pos[1])
                     spr.rightDoor.pos = (spr.rightDoor.pos[0] - 5, spr.rightDoor.pos[1])
 
                     spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] - 5, spr.leftDoorButton.pos[1])
@@ -362,14 +296,6 @@ class main(object):
                         spr.leftDoor.update()
                     if spr.officegroup.has(spr.rightDoor):
                         spr.rightDoor.update()
-                    if spr.officegroup.has(spr.leftDoorOpen):
-                        spr.leftDoorOpen.update()
-                    if spr.officegroup.has(spr.leftDoorClose):
-                        spr.leftDoorClose.update()
-                    if spr.officegroup.has(spr.rightDoorOpen):
-                        spr.rightDoorOpen.update()
-                    if spr.officegroup.has(spr.rightDoorClose):
-                        spr.rightDoorClose.update()
 
                     self.movingright = True
 
@@ -387,7 +313,6 @@ class main(object):
 
                 if spr.camButton.rect.collidepoint(Globals.pos) and not self.camButtonCooldown:
                     self.camButtonCooldown = True
-                    spr.officegroup.add(spr.cameraOpen)
                     self.changeScene("cam")
 
                 if not spr.camButton.rect.collidepoint(Globals.pos):
@@ -922,19 +847,16 @@ class main(object):
 
             elif self.scene == "scarejump":
 
-                spr.scaregroup.add(spr.bg)
-
-                if self.time >= 6 :
+                if self.time >= 6:
                     self.changeScene("6am")
 
                 if self.powerDownStage == 4:
                     if self.runAtSceneStart == 0:
+                        pygame.mixer.stop()
                         snd.channelNine.play(snd.xscream, 0)
                         self.runAtSceneStart = 1
-                    spr.scaregroup.add(spr.bearPowerdownScarejump)
-                    spr.scaregroup.update()
-                    spr.scaregroup.draw(self.screen)
-                    if spr.bearPowerdownScarejump.has_Finished():
+
+                    if spr.bearPowerdownScarejump.isFinished():
                         self.killed = True
                         self.shutdown()
 
@@ -942,45 +864,38 @@ class main(object):
                     if animatronic.location == "inside" and self.power > 0:
                         if self.runAtSceneStart == 0:
                             snd.channelNine.play(snd.xscream, 0)
+                            spr.chickenScarejump.play()
+                            spr.rabbitScarejump.play()
+                            spr.bearNormalScarejump.play()
+                            spr.foxScarejump.play()
                             self.runAtSceneStart = 1
 
                         if animatronic.kind == "chicken":
-                            spr.scaregroup.add(spr.chickenScarejump)
-                            spr.scaregroup.update()
-                            spr.scaregroup.draw(self.screen)
-                            if spr.chickenScarejump.has_Finished():
+                            spr.chickenScarejump.blit(self.screen, (0,0))
+                            if spr.chickenScarejump.isFinished():
                                 self.killed = True
                                 self.shutdown()
 
 
                         if animatronic.kind == "rabbit":
-                            spr.scaregroup.add(spr.rabbitScarejump)
-                            spr.scaregroup.update()
-                            spr.scaregroup.draw(self.screen)
-                            if spr.rabbitScarejump.has_Finished():
+                            spr.rabbitScarejump.blit(self.screen, (0,0))
+                            if spr.rabbitScarejump.isFinished():
                                 self.killed = True
                                 self.shutdown()
 
 
                         if animatronic.kind == "bear":
-                            spr.scaregroup.add(spr.bearNormalScarejump)
-                            spr.scaregroup.update()
-                            spr.scaregroup.draw(self.screen)
-                            if spr.bearNormalScarejump.has_Finished():
+                            spr.bearNormalScarejump.blit(self.screen, (0,0))
+                            if spr.bearNormalScarejump.isFinished():
                                 self.killed = True
                                 self.shutdown()
 
 
                         if animatronic.kind == "fox":
-                            spr.scaregroup.add(spr.foxScarejump)
-                            spr.scaregroup.update()
-                            spr.scaregroup.draw(self.screen)
-                            if spr.foxScarejump.has_Finished():
+                            spr.foxScarejump.blit((0,0), self.screen, (0,0))
+                            if spr.foxScarejump.isFinished():
                                 self.killed = True
                                 self.shutdown()
-
-                spr.scaregroup.draw(self.screen)
-                spr.scaregroup.update()
 
             elif self.scene == "powerdown":
 
@@ -999,12 +914,7 @@ class main(object):
                     spr.rightButton.pos = (spr.rightButton.pos[0] + 20, spr.rightButton.pos[1])
                     spr.leftButton.pos = (spr.leftButton.pos[0] + 20, spr.leftButton.pos[1])
 
-                    spr.leftDoorOpen.pos = (spr.leftDoorOpen.pos[0] + 20, spr.leftDoorOpen.pos[1])
-                    spr.leftDoorClose.pos = (spr.leftDoorClose.pos[0] + 20, spr.leftDoorClose.pos[1])
                     spr.leftDoor.pos = (spr.leftDoor.pos[0] + 20, spr.leftDoor.pos[1])
-
-                    spr.rightDoorOpen.pos = (spr.leftDoorOpen.pos[0] + 20, spr.leftDoorOpen.pos[1])
-                    spr.rightDoorClose.pos = (spr.rightDoorClose.pos[0] + 20, spr.rightDoorClose.pos[1])
                     spr.rightDoor.pos = (spr.rightDoor.pos[0] + 20, spr.rightDoor.pos[1])
 
                     spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] + 20, spr.leftDoorButton.pos[1])
@@ -1016,14 +926,6 @@ class main(object):
                         spr.leftDoor.update()
                     if spr.officegroup.has(spr.rightDoor):
                         spr.rightDoor.update()
-                    if spr.officegroup.has(spr.leftDoorOpen):
-                        spr.leftDoorOpen.update()
-                    if spr.officegroup.has(spr.leftDoorClose):
-                        spr.leftDoorClose.update()
-                    if spr.officegroup.has(spr.rightDoorOpen):
-                        spr.rightDoorOpen.update()
-                    if spr.officegroup.has(spr.rightDoorClose):
-                        spr.rightDoorClose.update()
 
                     self.movingleft = True
 
@@ -1033,12 +935,7 @@ class main(object):
                     spr.rightButton.pos = (spr.rightButton.pos[0] + 10, spr.rightButton.pos[1])
                     spr.leftButton.pos = (spr.leftButton.pos[0] + 10, spr.leftButton.pos[1])
 
-                    spr.leftDoorOpen.pos = (spr.leftDoorOpen.pos[0] + 10, spr.leftDoorOpen.pos[1])
-                    spr.leftDoorClose.pos = (spr.leftDoorClose.pos[0] + 10, spr.leftDoorClose.pos[1])
                     spr.leftDoor.pos = (spr.leftDoor.pos[0] + 10, spr.leftDoor.pos[1])
-
-                    spr.rightDoorOpen.pos = (spr.leftDoorOpen.pos[0] + 10, spr.leftDoorOpen.pos[1])
-                    spr.rightDoorClose.pos = (spr.rightDoorClose.pos[0] + 10, spr.rightDoorClose.pos[1])
                     spr.rightDoor.pos = (spr.rightDoor.pos[0] + 10, spr.rightDoor.pos[1])
 
                     spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] + 10, spr.leftDoorButton.pos[1])
@@ -1050,14 +947,6 @@ class main(object):
                         spr.leftDoor.update()
                     if spr.officegroup.has(spr.rightDoor):
                         spr.rightDoor.update()
-                    if spr.officegroup.has(spr.leftDoorOpen):
-                        spr.leftDoorOpen.update()
-                    if spr.officegroup.has(spr.leftDoorClose):
-                        spr.leftDoorClose.update()
-                    if spr.officegroup.has(spr.rightDoorOpen):
-                        spr.rightDoorOpen.update()
-                    if spr.officegroup.has(spr.rightDoorClose):
-                        spr.rightDoorClose.update()
 
                     self.movingleft = True
 
@@ -1067,12 +956,7 @@ class main(object):
                     spr.rightButton.pos = (spr.rightButton.pos[0] + 5, spr.rightButton.pos[1])
                     spr.leftButton.pos = (spr.leftButton.pos[0] + 5, spr.leftButton.pos[1])
 
-                    spr.leftDoorOpen.pos = (spr.leftDoorOpen.pos[0] + 5, spr.leftDoorOpen.pos[1])
-                    spr.leftDoorClose.pos = (spr.leftDoorClose.pos[0] + 5, spr.leftDoorClose.pos[1])
                     spr.leftDoor.pos = (spr.leftDoor.pos[0] + 5, spr.leftDoor.pos[1])
-
-                    spr.rightDoorOpen.pos = (spr.leftDoorOpen.pos[0] + 5, spr.leftDoorOpen.pos[1])
-                    spr.rightDoorClose.pos = (spr.rightDoorClose.pos[0] + 5, spr.rightDoorClose.pos[1])
                     spr.rightDoor.pos = (spr.rightDoor.pos[0] + 5, spr.rightDoor.pos[1])
 
                     spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] + 5, spr.leftDoorButton.pos[1])
@@ -1084,14 +968,6 @@ class main(object):
                         spr.leftDoor.update()
                     if spr.officegroup.has(spr.rightDoor):
                         spr.rightDoor.update()
-                    if spr.officegroup.has(spr.leftDoorOpen):
-                        spr.leftDoorOpen.update()
-                    if spr.officegroup.has(spr.leftDoorClose):
-                        spr.leftDoorClose.update()
-                    if spr.officegroup.has(spr.rightDoorOpen):
-                        spr.rightDoorOpen.update()
-                    if spr.officegroup.has(spr.rightDoorClose):
-                        spr.rightDoorClose.update()
 
                     self.movingleft = True
 
@@ -1101,12 +977,7 @@ class main(object):
                     spr.rightButton.pos = (spr.rightButton.pos[0] - 20, spr.rightButton.pos[1])
                     spr.leftButton.pos = (spr.leftButton.pos[0] - 20, spr.leftButton.pos[1])
 
-                    spr.leftDoorOpen.pos = (spr.leftDoorOpen.pos[0] - 20, spr.leftDoorOpen.pos[1])
-                    spr.leftDoorClose.pos = (spr.leftDoorClose.pos[0] - 20, spr.leftDoorClose.pos[1])
                     spr.leftDoor.pos = (spr.leftDoor.pos[0] - 20, spr.leftDoor.pos[1])
-
-                    spr.rightDoorOpen.pos = (spr.leftDoorOpen.pos[0] - 20, spr.leftDoorOpen.pos[1])
-                    spr.rightDoorClose.pos = (spr.rightDoorClose.pos[0] - 20, spr.rightDoorClose.pos[1])
                     spr.rightDoor.pos = (spr.rightDoor.pos[0] - 20, spr.rightDoor.pos[1])
 
                     spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] - 20, spr.leftDoorButton.pos[1])
@@ -1118,14 +989,6 @@ class main(object):
                         spr.leftDoor.update()
                     if spr.officegroup.has(spr.rightDoor):
                         spr.rightDoor.update()
-                    if spr.officegroup.has(spr.leftDoorOpen):
-                        spr.leftDoorOpen.update()
-                    if spr.officegroup.has(spr.leftDoorClose):
-                        spr.leftDoorClose.update()
-                    if spr.officegroup.has(spr.rightDoorOpen):
-                        spr.rightDoorOpen.update()
-                    if spr.officegroup.has(spr.rightDoorClose):
-                        spr.rightDoorClose.update()
 
                     self.movingright = True
 
@@ -1135,12 +998,7 @@ class main(object):
                     spr.rightButton.pos = (spr.rightButton.pos[0] - 10, spr.rightButton.pos[1])
                     spr.leftButton.pos = (spr.leftButton.pos[0] - 10, spr.leftButton.pos[1])
 
-                    spr.leftDoorOpen.pos = (spr.leftDoorOpen.pos[0] - 10, spr.leftDoorOpen.pos[1])
-                    spr.leftDoorClose.pos = (spr.leftDoorClose.pos[0] - 10, spr.leftDoorClose.pos[1])
                     spr.leftDoor.pos = (spr.leftDoor.pos[0] - 10, spr.leftDoor.pos[1])
-
-                    spr.rightDoorOpen.pos = (spr.leftDoorOpen.pos[0] - 10, spr.leftDoorOpen.pos[1])
-                    spr.rightDoorClose.pos = (spr.rightDoorClose.pos[0] - 10, spr.rightDoorClose.pos[1])
                     spr.rightDoor.pos = (spr.rightDoor.pos[0] - 10, spr.rightDoor.pos[1])
 
                     spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] - 10, spr.leftDoorButton.pos[1])
@@ -1152,14 +1010,6 @@ class main(object):
                         spr.leftDoor.update()
                     if spr.officegroup.has(spr.rightDoor):
                         spr.rightDoor.update()
-                    if spr.officegroup.has(spr.leftDoorOpen):
-                        spr.leftDoorOpen.update()
-                    if spr.officegroup.has(spr.leftDoorClose):
-                        spr.leftDoorClose.update()
-                    if spr.officegroup.has(spr.rightDoorOpen):
-                        spr.rightDoorOpen.update()
-                    if spr.officegroup.has(spr.rightDoorClose):
-                        spr.rightDoorClose.update()
 
                     self.movingright = True
 
@@ -1169,12 +1019,7 @@ class main(object):
                     spr.rightButton.pos = (spr.rightButton.pos[0] - 5, spr.rightButton.pos[1])
                     spr.leftButton.pos = (spr.leftButton.pos[0] - 5, spr.leftButton.pos[1])
 
-                    spr.leftDoorOpen.pos = (spr.leftDoorOpen.pos[0] - 5, spr.leftDoorOpen.pos[1])
-                    spr.leftDoorClose.pos = (spr.leftDoorClose.pos[0] - 5, spr.leftDoorClose.pos[1])
                     spr.leftDoor.pos = (spr.leftDoor.pos[0] - 5, spr.leftDoor.pos[1])
-
-                    spr.rightDoorOpen.pos = (spr.leftDoorOpen.pos[0] - 5, spr.leftDoorOpen.pos[1])
-                    spr.rightDoorClose.pos = (spr.rightDoorClose.pos[0] - 5, spr.rightDoorClose.pos[1])
                     spr.rightDoor.pos = (spr.rightDoor.pos[0] - 5, spr.rightDoor.pos[1])
 
                     spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] - 5, spr.leftDoorButton.pos[1])
@@ -1186,14 +1031,6 @@ class main(object):
                         spr.leftDoor.update()
                     if spr.officegroup.has(spr.rightDoor):
                         spr.rightDoor.update()
-                    if spr.officegroup.has(spr.leftDoorOpen):
-                        spr.leftDoorOpen.update()
-                    if spr.officegroup.has(spr.leftDoorClose):
-                        spr.leftDoorClose.update()
-                    if spr.officegroup.has(spr.rightDoorOpen):
-                        spr.rightDoorOpen.update()
-                    if spr.officegroup.has(spr.rightDoorClose):
-                        spr.rightDoorClose.update()
 
                     self.movingright = True
 
@@ -1203,6 +1040,22 @@ class main(object):
                     snd.channelOne.set_volume(1.0)
                     snd.channelTwo.set_volume(0.5)
 
+                    if self.leftdoor:
+                        if not self.leftDoorReversed:
+                            spr.leftDoorAnim.reverse()
+                            self.leftDoorReversed = True
+                        spr.leftDoorAnim.play()
+                        snd.channelFour.play(snd.doorSound, 0)
+                        self.leftdoor = False
+
+                    if self.rightdoor:
+                        if not self.rightDoorReversed:
+                            spr.rightDoorAnim.reverse()
+                            self.rightDoorReversed = True
+                        spr.rightDoorAnim.play()
+                        snd.channelFour.play(snd.doorSound, 0)
+                        self.rightdoor = False
+
                     snd.channelOne.play(snd.powerDown, loops=0)
                     snd.channelOne.fadeout(random.randint(5000, 15000))
 
@@ -1211,6 +1064,7 @@ class main(object):
                     self.runAtSceneStart = 1
 
                 if not snd.channelOne.get_busy() and not snd.channelThirty.get_busy() and self.powerDownStage == 1:
+                    snd.channelThirty.set_volume(0.7, 0.3)
                     snd.channelThirty.play(snd.musicBox, loops=0, maxtime=random.randint(3000, int(snd.musicBox.get_length() * 1000)))
                     self.powerDownStage = 2
 
@@ -1241,7 +1095,7 @@ class main(object):
                     self.oldTime = self.current_Milliseconds()
                     self.runAtSceneStart = 2
                 try:
-                    if self.current_Milliseconds() >= self.oldTime + 4500:
+                    if self.current_Milliseconds() >= self.oldTime + 4500:#
                         snd.channelTwo.play(snd.children, loops=0)
                         self.screen.fill((0,0,0))
                         self.screen.blit(pygame.font.Font(None, 80).render("6 AM", True, (255,255,255)), (544,298))
@@ -1276,7 +1130,7 @@ class main(object):
 
             if Globals.animatronics[2].foxstatus == 3 and self.lastcam == "cam2a":
                 Globals.animatronics[2].foxstatus = 4
-
+#
             if Globals.animatronics[2].foxstatus == 4 and not self.leftdoor:
                 self.changeScene("office")
                 Globals.animatronics[2].foxstatus = 5
@@ -1289,16 +1143,31 @@ class main(object):
 
             if self.scene == "office" and self.rightlight:
                 snd.channelThree.set_volume(0.3, 0.7)
-            #
-            # if self.scene == "office" and spr.officegroup.has(spr.cameraClose):
-            #     spr.cameraClose.update()
-            #     if spr.cameraClose.has_Finished():
-            #         spr.officegroup.remove(spr.cameraClose)
-            #
-            # if self.scene == "office" and spr.officegroup.has(spr.cameraOpen):
-            #     spr.cameraOpen.update()
-            #     if spr.cameraOpen.has_Finished():
-            #         spr.officegroup.remove(spr.cameraOpen)
+
+            if spr.leftDoorAnim.state == pyganim.STOPPED and self.leftdoor:
+                spr.leftDoor.changeImg("office\\doors\\left\\15")
+
+            if spr.leftDoorAnim.state == pyganim.PLAYING:
+                if not self.leftdoor:
+                    spr.leftDoor.changeImg("office\\doors\\left\\0")
+
+                spr.leftDoorAnim.blit(self.screen, tuple(spr.leftDoor.pos))
+                self.screen.blit(self.powerLabel, (50,520))
+                self.screen.blit(self.usageLabel, (50,550))
+
+            if spr.rightDoorAnim.state == pyganim.STOPPED and self.rightdoor:
+                spr.rightDoor.changeImg("office\\doors\\right\\15")
+
+            if spr.rightDoorAnim.state == pyganim.PLAYING:
+                if not self.rightdoor:
+                    spr.rightDoor.changeImg("office\\doors\\right\\0")
+
+                spr.rightDoorAnim.blit(self.screen, tuple(spr.rightDoor.pos))
+                self.screen.blit(self.powerLabel, (50,520))
+                self.screen.blit(self.usageLabel, (50,550))
+
+
+
 
             self.screen.blit(self.font.render("%s FPS" % round(self.FPSCLOCK.get_fps()), True, (0,255,0)), (10,10))
 
@@ -1419,7 +1288,6 @@ class main(object):
         #utils.debugprint(("Foxkind door check.")
         if self.time >= 6 or self.power <= 0 - 1:
             pass
-
         else:
             if Globals.animatronics[2].foxstatus == 5 or Globals.animatronics[2].foxstatus == 4:
                 if self.leftdoor == True:
@@ -1436,14 +1304,20 @@ class main(object):
 
     def leftDoor(self):
         if not self.leftdoor:
-            spr.leftDoor.changeImg("office\\doors\\left\\15")
+            if self.leftDoorReversed:
+                spr.leftDoorAnim.reverse()
+                self.leftDoorReversed = False
+            spr.leftDoorAnim.play()
             snd.channelFour.play(snd.doorSound, 0)
             self.leftdoor = True
             self.usage += 1
             return None
 
         if self.leftdoor:
-            spr.leftDoor.changeImg("office\\doors\\left\\0")
+            if not self.leftDoorReversed:
+                spr.leftDoorAnim.reverse()
+                self.leftDoorReversed = True
+            spr.leftDoorAnim.play()
             snd.channelFour.play(snd.doorSound, 0)
             self.leftdoor = False
             self.usage -= 1
@@ -1468,14 +1342,22 @@ class main(object):
 
     def rightDoor(self):
         if not self.rightdoor:
-            spr.rightDoor.changeImg("office\\doors\\right\\15")
+            if self.rightDoorReversed:
+                spr.rightDoorAnim.reverse()
+                self.rightDoorReversed = False
+            spr.rightDoorAnim.play()
+            #spr.rightDoor.changeImg("office\\doors\\right\\15")
             snd.channelFour.play(snd.doorSound, 0)
             self.rightdoor = True
             self.usage += 1
             return None
 
         if self.rightdoor:
-            spr.rightDoor.changeImg("office\\doors\\right\\0")
+            if not self.rightDoorReversed:
+                spr.rightDoorAnim.reverse()
+                self.rightDoorReversed = True
+            spr.rightDoorAnim.play()
+            #spr.rightDoor.changeImg("office\\doors\\right\\0")
             snd.channelFour.play(snd.doorSound, 0)
             self.rightdoor = False
             self.usage -= 1
@@ -1505,13 +1387,7 @@ class main(object):
             Globals.animatronics[2].foxviewing = False
             self.usage -= 1
             snd.putDown.play(0)
-            spr.officegroup.add(spr.cameraClose)
-            spr.officegroup.change_layer(spr.cameraClose, 10)
             self.scene = "office"
-            if spr.officegroup.has(spr.cameraClose):
-                spr.officegroup.remove(spr.cameraClose)
-                spr.cameraClose.index = 0
-
             for animatronic in Globals.animatronics:
                 if animatronic.location == "inside":
                     self.scene = "scarejump"
@@ -1525,14 +1401,7 @@ class main(object):
                 self.rightlight = False
             self.usage += 1
             snd.putDown.play(0)
-            spr.cameraOpen.index = 0
-            spr.officegroup.add(spr.cameraOpen)
-            spr.officegroup.change_layer(spr.cameraOpen, 10)
-
             self.scene = "cam"
-            if spr.officegroup.has(spr.cameraOpen):
-                spr.officegroup.remove(spr.cameraOpen)
-                spr.cameraOpen.index = 0
 
         elif scene == "powerdown":
             self.scene = "powerdown"
