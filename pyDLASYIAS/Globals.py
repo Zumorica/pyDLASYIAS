@@ -3,15 +3,15 @@ def init():
 
     pos = (0,0)
 
-    mouseClick = True
+    mouseClick = False
 
     version = "v1.0-alpha (GUI)"
 
-    debug = True #Debug variable. If set to true, prints debug info into the console.
+    debug = True
 
-    animatronics = [] #A list for all the animatronics. They auto-append themselves to this list.
+    animatronics = []
 
-    camdic = {"cam1a" : "Stage Show", #A list containing cameras and their names.
+    camdic = {"cam1a" : "Stage Show",
               "cam1b" : "Dinning Area",
               "cam1c" : "Pirate Cove",
               "cam2a" : "West Hall",
@@ -23,7 +23,7 @@ def init():
               "cam6" : "Kitchen -Camera Disabled- (AUDIO ONLY)",
               "cam7" : "Restrooms"}
 
-    adjcam = {"cam1a" : ["cam1b"], #A list containing cameras and their adjacent cameras.
+    adjcam = {"cam1a" : ["cam1b"],
               "cam1b" : ["cam1a", "cam1c", "cam5", "cam6", "cam7", "cam2a", "cam4a"],
               "cam5" : ["cam1b"],
               "cam6" : ["cam1b"],

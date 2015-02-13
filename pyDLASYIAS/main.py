@@ -27,6 +27,7 @@ class main(object):
         for animatronic in Globals.animatronics:
             self.animlvlsum += animatronic.ailvl
             self.ailvl = self.animlvlsum / len(Globals.animatronics)            # This is the lvl of the night.
+
         del self.animlvlsum
 
         self.leftdoor = False
@@ -42,13 +43,9 @@ class main(object):
         self.lastcam = "cam1a"
 
         if self.gmode != "survival":                                            # Initializes the hour timer if the gamemode isn't survival.
-            threading.Timer(0.1, self.hourTimer).start()
+            threading.Timer(0.01, self.hourTimer).start()
 
-        threading.Timer(0.1, self.powerTimer).start()
-
-        _thread.start_new_thread(self.checkDoorTimer, ())
-
-        _thread.start_new_thread(self.foxkindDoorCheck, ())
+        threading.Timer(0.01, self.powerTimer).start()
 
         self.width = width
         self.height = height
@@ -79,6 +76,7 @@ class main(object):
 
         self.leftDoorReversed = False
         self.rightDoorReversed = False
+        self.cameraAnimReversed = False
 
         self.lastBgPos = (0,0)
         self.lastLBPos = (0,0)
@@ -93,7 +91,7 @@ class main(object):
 
             for event in pygame.event.get():
 
-                utils.debugprint(event, writetolog=False)
+                #utils.debugprint(event, writetolog=False)
 
                 if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
                     pygame.quit()
@@ -347,9 +345,6 @@ class main(object):
                 elif not self.leftlight and self.leftdoor:
                     spr.leftButton.changeImg("office\\button\\left\\d")
 
-                #elif self.leftlight == "broken" or self.leftdoor == "broken":
-                #    spr.leftButton.changeImg("office\\button\\left\\0")
-
                 if not self.rightlight and not self.rightdoor:
                     spr.rightButton.changeImg("office\\button\\right\\0")
 
@@ -362,11 +357,11 @@ class main(object):
                 elif not self.rightlight and self.rightdoor:
                     spr.rightButton.changeImg("office\\button\\right\\d")
 
-                #elif self.rightlight == "broken" or self.rightdoor == "broken":
-                #    spr.rightButton.changeImg("office\\button\\right\\0")
-
                 spr.officegroup.draw(self.screen)
                 spr.officegroup.update()
+
+                for animatronic in Globals.animatronics:
+                    animatronic.beingWatched = False
 
                 if self.time == 0:
                     self.timeLabel = self.font.render("12 PM", True, (255,255,255))
@@ -412,10 +407,10 @@ class main(object):
                 spr.camgroup.add(spr.camButtonSeven)
                 spr.camgroup.add(spr.staticTransparent)
 
-                if Globals.animatronics[2].foxstatus != 4:
+                if Globals.animatronics[2].status != 4:
                     spr.camgroup.add(spr.bg)
 
-                if Globals.animatronics[2].foxstatus != 4:
+                if Globals.animatronics[2].status != 4 and spr.camgroup.has(spr.bg):
                     spr.camgroup.change_layer(spr.bg, 0)
 
                 spr.camgroup.change_layer(spr.map, 8)
@@ -558,19 +553,19 @@ class main(object):
                     spr.camButtonSix.changeImg("ui\\button\\cam6")
                     spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
-                    if Globals.animatronics[2].foxstatus == 0:
+                    if Globals.animatronics[2].status == 0:
                         spr.bg.changeImg("cameras\\cam1c\\0")
 
-                    elif Globals.animatronics[2].foxstatus == 1:
+                    elif Globals.animatronics[2].status == 1:
                         spr.bg.changeImg("cameras\\cam1c\\2")
 
-                    elif Globals.animatronics[2].foxstatus == 2:
+                    elif Globals.animatronics[2].status == 2:
                         spr.bg.changeImg("cameras\\cam1c\\3")
 
-                    elif Globals.animatronics[2].foxstatus == 3:
+                    elif Globals.animatronics[2].status == 3:
                         spr.bg.changeImg("cameras\\cam1c\\4")
 
-                    elif Globals.animatronics[2].foxstatus == 4:
+                    elif Globals.animatronics[2].status == 4:
                         spr.bg.changeImg("cameras\\cam1c\\4")
 
                     else:
@@ -594,7 +589,7 @@ class main(object):
                     spr.camButtonSix.changeImg("ui\\button\\cam6")
                     spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
-                    if Globals.animatronics[2].foxstatus != 4:
+                    if Globals.animatronics[2].status != 4:
                         if Globals.animatronics[0].location == "cam2a":
                             spr.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\r"]))
 
@@ -827,6 +822,13 @@ class main(object):
                 if not self.notStatic:
                     spr.bg.pos = (0,0)
 
+                for animatronic in Globals.animatronics:
+                    if animatronic.location == self.lastcam:
+                        animatronic.beingWatched = True
+
+                    else:
+                        animatronic.beingWatched = False
+
 
                 spr.camgroup.draw(self.screen)
                 spr.camgroup.update()
@@ -853,8 +855,11 @@ class main(object):
                 if self.powerDownStage == 4:
                     if self.runAtSceneStart == 0:
                         pygame.mixer.stop()
+                        spr.bearPowerdownScarejump.play()
                         snd.channelNine.play(snd.xscream, 0)
                         self.runAtSceneStart = 1
+
+                    spr.bearPowerdownScarejump.blit(self.screen, (0,0))
 
                     if spr.bearPowerdownScarejump.isFinished():
                         self.killed = True
@@ -892,7 +897,7 @@ class main(object):
 
 
                         if animatronic.kind == "fox":
-                            spr.foxScarejump.blit((0,0), self.screen, (0,0))
+                            spr.foxScarejump.blit(self.screen, (0,0))
                             if spr.foxScarejump.isFinished():
                                 self.killed = True
                                 self.shutdown()
@@ -1128,14 +1133,14 @@ class main(object):
                 spr.scaregroup.update()
                 spr.scaregroup.draw(self.screen)
 
-            if Globals.animatronics[2].foxstatus == 3 and self.lastcam == "cam2a":
-                Globals.animatronics[2].foxstatus = 4
-#
-            if Globals.animatronics[2].foxstatus == 4 and not self.leftdoor:
-                self.changeScene("office")
-                Globals.animatronics[2].foxstatus = 5
+            if Globals.animatronics[2].status == 3 and self.lastcam == "cam2a":
+                Globals.animatronics[2].status = 4
 
-            if self.scene == "office" and not self.leftlight and not self.rightlight and Globals.animatronics[2].foxstatus != 5:
+            if Globals.animatronics[2].status == 4 and not self.leftdoor:
+                self.changeScene("office")
+                Globals.animatronics[2].status = 5
+
+            if self.scene == "office" and not self.leftlight and not self.rightlight and Globals.animatronics[2].status != 5:
                 snd.channelThree.set_volume(0.0)
 
             if self.scene == "office" and self.leftlight:
@@ -1154,6 +1159,7 @@ class main(object):
                 spr.leftDoorAnim.blit(self.screen, tuple(spr.leftDoor.pos))
                 self.screen.blit(self.powerLabel, (50,520))
                 self.screen.blit(self.usageLabel, (50,550))
+                self.screen.blit(spr.camButton.image, tuple(spr.camButton.pos))
 
             if spr.rightDoorAnim.state == pyganim.STOPPED and self.rightdoor:
                 spr.rightDoor.changeImg("office\\doors\\right\\15")
@@ -1165,13 +1171,16 @@ class main(object):
                 spr.rightDoorAnim.blit(self.screen, tuple(spr.rightDoor.pos))
                 self.screen.blit(self.powerLabel, (50,520))
                 self.screen.blit(self.usageLabel, (50,550))
+                self.screen.blit(self.timeLabel, (1400,50))
 
+            if spr.cameraAnim.state == pyganim.PLAYING:
+                spr.cameraAnim.blit(self.screen, (0,0))
 
-
+            if spr.cameraAnim.state == pyganim.STOPPED and not self.cameraAnimReversed:
+                self.scene = "cam"
 
             self.screen.blit(self.font.render("%s FPS" % round(self.FPSCLOCK.get_fps()), True, (0,255,0)), (10,10))
 
-            #pygame.display.update()
             pygame.display.flip()
 
             self.FPSCLOCK.tick(self.fps)
@@ -1180,7 +1189,7 @@ class main(object):
         utils.debugprint("Shutting down...")
         pygame.quit()
         for animatronic in Globals.animatronics:
-            animatronic.dmove("off")
+            animatronic.move("off", True)
         del self
         sys.exit(0)
         os._exit(0)
@@ -1190,14 +1199,8 @@ class main(object):
         snd.channelNine.play(snd.blip, 0)
         spr.camgroup.draw(self.screen)
         spr.camgroup.update()
-        if camera == "cam1c":
-            Globals.animatronics[2].foxviewing = True
-
-        else:
-            Globals.animatronics[2].foxviewing = False
-
-        if camera == "cam2a" and Globals.animatronics[2].foxstatus == 3:
-            Globals.animatronics[2].foxstatus = 4
+        if camera == "cam2a" and Globals.animatronics[2].status == 3:
+            Globals.animatronics[2].status = 4
 
         pygame.time.wait(100)
         self.lastcam = camera
@@ -1231,76 +1234,43 @@ class main(object):
 
         else:
             self.time += 1
-            if self.time == 1:
-                for animatronic in Globals.animatronics:
-                    if animatronic.agressiveness < 2:
-                        animatronic.agressiveness = 1
 
-            if self.time == 3:
-                for animatronic in Globals.animatronics:
-                    if animatronic.agressiveness < 3:
-                        animatronic.agressiveness = 2
+            if self.time == 2 or self.time == 3 or self.time == 4:
 
-            if self.time == 5:
                 for animatronic in Globals.animatronics:
-                    animatronic.agressiveness = 3
+                    if animatronic.kind != "bear":
+                        animatronic.ailvl += 1
+
             threading.Timer(self.sectohour, self.hourTimer).start()
         return None
 
-    def checkDoorTimer(self): #"Timer" that checks if there are animatronics at the doors
-        for animatronic in Globals.animatronics: #Checks for animatronics
-            if animatronic.location == "leftdoor": #If animatronic is at left door
-                time.sleep(random.randint(20, 30) / animatronic.ailvl)
-                if self.leftdoor: #If leftdoor is closed
-                    animatronic.rmove(["cam1b"]) #Go back to cam1b or not
+    def checkDoorTimer(self):
+        for animatronic in Globals.animatronics:
+            if animatronic.location == "leftdoor":
+                time.sleep(random.randint(0, self.ailvl / 20))
+                if self.leftdoor:
+                    animatronic.move("cam1b")
 
-                if not self.leftdoor: #Else if leftdoor is open
-                    time.sleep(random.randint(20, 30) / animatronic.ailvl)
-                    animatronic.rmove(["inside"]) #Random move the animatronic inside or not.
-                    if self.ailvl > 12 and animatronic.location == "inside": #If AILVL is over 12 and the animatronic is inside...
-                        #self.leftlight = "broken" #Break the light and door
-                        #self.leftdoor = "broken"
-                        pass
+                if not self.leftdoor:
+                    time.sleep(random.randint(0, self.ailvl / 20))
+                    animatronic.move("inside")
 
             if animatronic.location == "rightdoor":
-                time.sleep(random.randint(20, 30) / animatronic.ailvl)
+                time.sleep(random.randint(0, self.ailvl / 20))
                 if self.rightdoor == True:
-                    animatronic.rmove(["cam1b"])
+                    animatronic.move("cam1b")
 
 
                 else:
-                    time.sleep(random.randint(20, 30) / animatronic.ailvl)
-                    animatronic.rmove(["inside"])
-                    if self.ailvl > 12 and animatronic.location == "inside":
-                        #self.rightlight = "broken"
-                        #self.rightdoor = "broken"
-                        pass
+                    time.sleep(random.randint(0, self.ailvl / 20))
+                    animatronic.move("inside")
 
         if self.time >= 6 or self.power <= 0:
             pass
         else:
-            time.sleep(20 / self.ailvl)
+            time.sleep(1)
             self.checkDoorTimer()
         return None
-
-
-    def foxkindDoorCheck(self):
-        #utils.debugprint(("Foxkind door check.")
-        if self.time >= 6 or self.power <= 0 - 1:
-            pass
-        else:
-            if Globals.animatronics[2].foxstatus == 5 or Globals.animatronics[2].foxstatus == 4:
-                if self.leftdoor == True:
-                    self.power -= random.randint(1, 15)
-                    Globals.animatronics[2].foxstatus = random.randint(1, 2)
-                    Globals.animatronics[2].location = "cam1c"
-
-                else:
-                    Globals.animatronics[2].location = "inside"
-                    self.changeScene("scarejump")
-
-
-            threading.Timer(3.0, self.foxkindDoorCheck).start()
 
     def leftDoor(self):
         if not self.leftdoor:
@@ -1346,7 +1316,6 @@ class main(object):
                 spr.rightDoorAnim.reverse()
                 self.rightDoorReversed = False
             spr.rightDoorAnim.play()
-            #spr.rightDoor.changeImg("office\\doors\\right\\15")
             snd.channelFour.play(snd.doorSound, 0)
             self.rightdoor = True
             self.usage += 1
@@ -1357,7 +1326,6 @@ class main(object):
                 spr.rightDoorAnim.reverse()
                 self.rightDoorReversed = True
             spr.rightDoorAnim.play()
-            #spr.rightDoor.changeImg("office\\doors\\right\\0")
             snd.channelFour.play(snd.doorSound, 0)
             self.rightdoor = False
             self.usage -= 1
@@ -1384,7 +1352,15 @@ class main(object):
 
     def changeScene(self, scene):
         if scene == "office":
-            Globals.animatronics[2].foxviewing = False
+            if not self.cameraAnimReversed:
+                spr.cameraAnim.reverse()
+                self.cameraAnimReversed = True
+
+            spr.cameraAnim.play()
+
+            for animatronic in Globals.animatronics:
+                animatronic.beingWatched = False
+
             self.usage -= 1
             snd.putDown.play(0)
             self.scene = "office"
@@ -1393,6 +1369,12 @@ class main(object):
                     self.scene = "scarejump"
 
         elif scene == "cam":
+            if self.cameraAnimReversed:
+                spr.cameraAnim.reverse()
+                self.cameraAnimReversed = False
+
+            spr.cameraAnim.play()
+
             if self.leftlight:
                 self.usage -= 1
                 self.leftlight = False
@@ -1401,7 +1383,7 @@ class main(object):
                 self.rightlight = False
             self.usage += 1
             snd.putDown.play(0)
-            self.scene = "cam"
+            # Scene changes at 1170
 
         elif scene == "powerdown":
             self.scene = "powerdown"

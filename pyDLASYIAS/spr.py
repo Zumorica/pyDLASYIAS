@@ -84,20 +84,20 @@ def init():
     rightDoor = sprite.Sprite(startpos=(1270,0), image="office\\doors\\right\\0")
     rightDoor.groups = allgroup, officegroup
 
-    foxSprinting = pyganim.PygAnimation([("images\\cameras\\cam2a\\animation\\0.png", 0.1), ("images\\cameras\\cam2a\\animation\\1.png", 0.1),
-                                         ("images\\cameras\\cam2a\\animation\\2.png", 0.1), ("images\\cameras\\cam2a\\animation\\3.png", 0.1),
-                                         ("images\\cameras\\cam2a\\animation\\4.png", 0.1), ("images\\cameras\\cam2a\\animation\\5.png", 0.1),
-                                         ("images\\cameras\\cam2a\\animation\\6.png", 0.1), ("images\\cameras\\cam2a\\animation\\7.png", 0.1),
-                                         ("images\\cameras\\cam2a\\animation\\8.png", 0.1), ("images\\cameras\\cam2a\\animation\\9.png", 0.1),
-                                         ("images\\cameras\\cam2a\\animation\\10.png", 0.1), ("images\\cameras\\cam2a\\animation\\11.png", 0.1),
-                                         ("images\\cameras\\cam2a\\animation\\12.png", 0.1), ("images\\cameras\\cam2a\\animation\\13.png", 0.1),
-                                         ("images\\cameras\\cam2a\\animation\\14.png", 0.1), ("images\\cameras\\cam2a\\animation\\15.png", 0.1),
-                                         ("images\\cameras\\cam2a\\animation\\16.png", 0.1), ("images\\cameras\\cam2a\\animation\\17.png", 0.1),
-                                         ("images\\cameras\\cam2a\\animation\\18.png", 0.1), ("images\\cameras\\cam2a\\animation\\19.png", 0.1),
-                                         ("images\\cameras\\cam2a\\animation\\20.png", 0.1), ("images\\cameras\\cam2a\\animation\\21.png", 0.1),
-                                         ("images\\cameras\\cam2a\\animation\\22.png", 0.1), ("images\\cameras\\cam2a\\animation\\23.png", 0.1),
-                                         ("images\\cameras\\cam2a\\animation\\24.png", 0.1), ("images\\cameras\\cam2a\\animation\\25.png", 0.1),
-                                         ("images\\cameras\\cam2a\\animation\\26.png", 0.1)], loop=False)
+    foxSprinting = sprite.Animated(["cameras\\cam2a\\animation\\0.png", "cameras\\cam2a\\animation\\1.png",
+                                         "cameras\\cam2a\\animation\\2.png", "cameras\\cam2a\\animation\\3.png",
+                                         "cameras\\cam2a\\animation\\4.png", "cameras\\cam2a\\animation\\5.png",
+                                         "cameras\\cam2a\\animation\\6.png", "cameras\\cam2a\\animation\\7.png",
+                                         "cameras\\cam2a\\animation\\8.png", "cameras\\cam2a\\animation\\9.png",
+                                         "cameras\\cam2a\\animation\\10.png", "cameras\\cam2a\\animation\\11.png",
+                                         "cameras\\cam2a\\animation\\12.png", "cameras\\cam2a\\animation\\13.png",
+                                         "cameras\\cam2a\\animation\\14.png", "cameras\\cam2a\\animation\\15.png",
+                                         "cameras\\cam2a\\animation\\16.png", "cameras\\cam2a\\animation\\17.png",
+                                         "cameras\\cam2a\\animation\\18.png", "cameras\\cam2a\\animation\\19.png",
+                                         "cameras\\cam2a\\animation\\20.png", "cameras\\cam2a\\animation\\21.png",
+                                         "cameras\\cam2a\\animation\\22.png", "cameras\\cam2a\\animation\\23.png",
+                                         "cameras\\cam2a\\animation\\24.png", "cameras\\cam2a\\animation\\25.png",
+                                         "cameras\\cam2a\\animation\\26.png"])
 
     leftDoorAnim = pyganim.PygAnimation([("images\\office\\doors\\left\\0.png", 0.05), ("images\\office\\doors\\left\\1.png", 0.05),
                                          ("images\\office\\doors\\left\\2.png", 0.05), ("images\\office\\doors\\left\\3.png", 0.05),
@@ -143,37 +143,37 @@ def init():
                                          ("images\\office\\scarejump\\fox\\16.png", 0.1), ("images\\office\\scarejump\\fox\\17.png", 0.1),
                                          ("images\\office\\scarejump\\fox\\18.png", 0.1)], loop=False)
 
-    bearNormalScarejump = pyganim.PygAnimation([("images\\office\\scarejump\\bear\\normal\\0.png", 0.1), ("images\\office\\scarejump\\bear\\normal\\1.png", 0.1),
-                                                ("images\\office\\scarejump\\bear\\normal\\2.png", 0.1), ("images\\office\\scarejump\\bear\\normal\\3.png", 0.1),
-                                                ("images\\office\\scarejump\\bear\\normal\\4.png", 0.1), ("images\\office\\scarejump\\bear\\normal\\5.png", 0.1),
-                                                ("images\\office\\scarejump\\bear\\normal\\6.png", 0.1), ("images\\office\\scarejump\\bear\\normal\\7.png", 0.1),
-                                                ("images\\office\\scarejump\\bear\\normal\\8.png", 0.1), ("images\\office\\scarejump\\bear\\normal\\9.png", 0.1),
-                                                ("images\\office\\scarejump\\bear\\normal\\10.png", 0.1), ("images\\office\\scarejump\\bear\\normal\\11.png", 0.1),
-                                                ("images\\office\\scarejump\\bear\\normal\\12.png", 0.1), ("images\\office\\scarejump\\bear\\normal\\13.png", 0.1),
-                                                ("images\\office\\scarejump\\bear\\normal\\14.png", 0.1), ("images\\office\\scarejump\\bear\\normal\\15.png", 0.1),
-                                                ("images\\office\\scarejump\\bear\\normal\\16.png", 0.1), ("images\\office\\scarejump\\bear\\normal\\17.png", 0.1),
-                                                ("images\\office\\scarejump\\bear\\normal\\18.png", 0.1), ("images\\office\\scarejump\\bear\\normal\\19.png", 0.1),
-                                                ("images\\office\\scarejump\\bear\\normal\\20.png", 0.1), ("images\\office\\scarejump\\bear\\normal\\21.png", 0.1),
-                                                ("images\\office\\scarejump\\bear\\normal\\22.png", 0.1), ("images\\office\\scarejump\\bear\\normal\\23.png", 0.1),
-                                                ("images\\office\\scarejump\\bear\\normal\\24.png", 0.1), ("images\\office\\scarejump\\bear\\normal\\25.png", 0.1),
-                                                ("images\\office\\scarejump\\bear\\normal\\26.png", 0.1), ("images\\office\\scarejump\\bear\\normal\\27.png", 0.1),
-                                                ("images\\office\\scarejump\\bear\\normal\\28.png", 0.1), ("images\\office\\scarejump\\bear\\normal\\29.png", 0.1)], loop=False)
+    bearNormalScarejump = pyganim.PygAnimation([("images\\office\\scarejump\\bear\\normal\\0.png", 0.05), ("images\\office\\scarejump\\bear\\normal\\1.png", 0.05),
+                                                ("images\\office\\scarejump\\bear\\normal\\2.png", 0.05), ("images\\office\\scarejump\\bear\\normal\\3.png", 0.05),
+                                                ("images\\office\\scarejump\\bear\\normal\\4.png", 0.05), ("images\\office\\scarejump\\bear\\normal\\5.png", 0.05),
+                                                ("images\\office\\scarejump\\bear\\normal\\6.png", 0.05), ("images\\office\\scarejump\\bear\\normal\\7.png", 0.05),
+                                                ("images\\office\\scarejump\\bear\\normal\\8.png", 0.05), ("images\\office\\scarejump\\bear\\normal\\9.png", 0.05),
+                                                ("images\\office\\scarejump\\bear\\normal\\10.png", 0.05), ("images\\office\\scarejump\\bear\\normal\\11.png", 0.05),
+                                                ("images\\office\\scarejump\\bear\\normal\\12.png", 0.05), ("images\\office\\scarejump\\bear\\normal\\13.png", 0.05),
+                                                ("images\\office\\scarejump\\bear\\normal\\14.png", 0.05), ("images\\office\\scarejump\\bear\\normal\\15.png", 0.05),
+                                                ("images\\office\\scarejump\\bear\\normal\\16.png", 0.05), ("images\\office\\scarejump\\bear\\normal\\17.png", 0.05),
+                                                ("images\\office\\scarejump\\bear\\normal\\18.png", 0.05), ("images\\office\\scarejump\\bear\\normal\\19.png", 0.05),
+                                                ("images\\office\\scarejump\\bear\\normal\\20.png", 0.05), ("images\\office\\scarejump\\bear\\normal\\21.png", 0.05),
+                                                ("images\\office\\scarejump\\bear\\normal\\22.png", 0.05), ("images\\office\\scarejump\\bear\\normal\\23.png", 0.05),
+                                                ("images\\office\\scarejump\\bear\\normal\\24.png", 0.05), ("images\\office\\scarejump\\bear\\normal\\25.png", 0.05),
+                                                ("images\\office\\scarejump\\bear\\normal\\26.png", 0.05), ("images\\office\\scarejump\\bear\\normal\\27.png", 0.05),
+                                                ("images\\office\\scarejump\\bear\\normal\\28.png", 0.05), ("images\\office\\scarejump\\bear\\normal\\29.png", 0.05)], loop=False)
 
-    bearPowerdownScarejump = pyganim.PygAnimation([("images\\office\\scarejump\\bear\\powerdown\\0.png", 0.1), ("images\\office\\scarejump\\bear\\powerdown\\1.png", 0.1),
-                                                   ("images\\office\\scarejump\\bear\\powerdown\\2.png", 0.1), ("images\\office\\scarejump\\bear\\powerdown\\3.png", 0.1),
-                                                   ("images\\office\\scarejump\\bear\\powerdown\\4.png", 0.1), ("images\\office\\scarejump\\bear\\powerdown\\5.png", 0.1),
-                                                   ("images\\office\\scarejump\\bear\\powerdown\\6.png", 0.1), ("images\\office\\scarejump\\bear\\powerdown\\7.png", 0.1),
-                                                   ("images\\office\\scarejump\\bear\\powerdown\\8.png", 0.1), ("images\\office\\scarejump\\bear\\powerdown\\9.png", 0.1),
-                                                   ("images\\office\\scarejump\\bear\\powerdown\\10.png", 0.1), ("images\\office\\scarejump\\bear\\powerdown\\11.png", 0.1),
-                                                   ("images\\office\\scarejump\\bear\\powerdown\\12.png", 0.1), ("images\\office\\scarejump\\bear\\powerdown\\13.png", 0.1),
-                                                   ("images\\office\\scarejump\\bear\\powerdown\\14.png", 0.1), ("images\\office\\scarejump\\bear\\powerdown\\15.png", 0.1),
-                                                   ("images\\office\\scarejump\\bear\\powerdown\\16.png", 0.1), ("images\\office\\scarejump\\bear\\powerdown\\17.png", 0.1),
-                                                   ("images\\office\\scarejump\\bear\\powerdown\\18.png", 0.1), ("images\\office\\scarejump\\bear\\powerdown\\19.png", 0.1)], loop=False)
+    bearPowerdownScarejump = pyganim.PygAnimation([("images\\office\\scarejump\\bear\\powerdown\\0.png", 0.05), ("images\\office\\scarejump\\bear\\powerdown\\1.png", 0.05),
+                                                   ("images\\office\\scarejump\\bear\\powerdown\\2.png", 0.05), ("images\\office\\scarejump\\bear\\powerdown\\3.png", 0.05),
+                                                   ("images\\office\\scarejump\\bear\\powerdown\\4.png", 0.05), ("images\\office\\scarejump\\bear\\powerdown\\5.png", 0.05),
+                                                   ("images\\office\\scarejump\\bear\\powerdown\\6.png", 0.05), ("images\\office\\scarejump\\bear\\powerdown\\7.png", 0.05),
+                                                   ("images\\office\\scarejump\\bear\\powerdown\\8.png", 0.05), ("images\\office\\scarejump\\bear\\powerdown\\9.png", 0.05),
+                                                   ("images\\office\\scarejump\\bear\\powerdown\\10.png", 0.05), ("images\\office\\scarejump\\bear\\powerdown\\11.png", 0.05),
+                                                   ("images\\office\\scarejump\\bear\\powerdown\\12.png", 0.05), ("images\\office\\scarejump\\bear\\powerdown\\13.png", 0.05),
+                                                   ("images\\office\\scarejump\\bear\\powerdown\\14.png", 0.05), ("images\\office\\scarejump\\bear\\powerdown\\15.png", 0.05),
+                                                   ("images\\office\\scarejump\\bear\\powerdown\\16.png", 0.05), ("images\\office\\scarejump\\bear\\powerdown\\17.png", 0.05),
+                                                   ("images\\office\\scarejump\\bear\\powerdown\\18.png", 0.05), ("images\\office\\scarejump\\bear\\powerdown\\19.png", 0.05)], loop=False)
 
-    cameraAnim = pyganim.PygAnimation([("images\\cameras\\misc\\animation\\0.png", 0.1), ("images\\cameras\\misc\\animation\\1.png", 0.1), ("images\\cameras\\misc\\animation\\2.png", 0.1),
-                                       ("images\\cameras\\misc\\animation\\3.png", 0.1), ("images\\cameras\\misc\\animation\\4.png", 0.1), ("images\\cameras\\misc\\animation\\5.png", 0.1),
-                                       ("images\\cameras\\misc\\animation\\6.png", 0.1), ("images\\cameras\\misc\\animation\\7.png", 0.1), ("images\\cameras\\misc\\animation\\8.png", 0.1),
-                                       ("images\\cameras\\misc\\animation\\9.png", 0.1), ("images\\cameras\\misc\\animation\\10.png", 0.1)], loop=False)
+    cameraAnim = pyganim.PygAnimation([("images\\cameras\\misc\\animation\\0.png", 0.035), ("images\\cameras\\misc\\animation\\1.png", 0.035), ("images\\cameras\\misc\\animation\\2.png", 0.035),
+                                       ("images\\cameras\\misc\\animation\\3.png", 0.035), ("images\\cameras\\misc\\animation\\4.png", 0.035), ("images\\cameras\\misc\\animation\\5.png", 0.035),
+                                       ("images\\cameras\\misc\\animation\\6.png", 0.035), ("images\\cameras\\misc\\animation\\7.png", 0.035), ("images\\cameras\\misc\\animation\\8.png", 0.035),
+                                       ("images\\cameras\\misc\\animation\\9.png", 0.035), ("images\\cameras\\misc\\animation\\10.png", 0.035)], loop=False)
 
     staticTransparent = sprite.Sprite(startpos=(0,0), image="cameras\\misc\\static\\transparent\\0")
     staticTransparent.groups = allgroup, officegroup, camgroup, scaregroup
