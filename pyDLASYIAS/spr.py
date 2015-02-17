@@ -3,9 +3,6 @@ import pyDLASYIAS.pyganim as pyganim
 import pygame
 from pygame.locals import *
 
-pygame.init()
-pygame.display.set_mode((1280,720), 0, 0)
-
 def init():
     global allgroup, officegroup, camgroup, scaregroup, animationgroup
 

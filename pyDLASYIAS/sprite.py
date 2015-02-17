@@ -3,6 +3,7 @@ import pyDLASYIAS.Globals as Globals
 from pygame.locals import *
 
 pygame.init()
+pygame.display.set_mode((1,1), pygame.NOFRAME, 0)
 
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, image, startpos=(0,0), autoupdates=True):

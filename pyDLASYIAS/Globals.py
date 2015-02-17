@@ -7,7 +7,7 @@ def init():
 
     version = "v1.0-alpha (GUI)"
 
-    debug = True
+    debug = False
 
     animatronics = []
 
