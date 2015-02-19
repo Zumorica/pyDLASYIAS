@@ -16,17 +16,18 @@ from pygame.locals import *
 
 class main(object):
     def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1280, height=720, fps=40):
-        utils.debugprint("pyDLASYIAS %s started. Setting up game variables..." % (Globals.version))
+
+        Globals.main = self
 
         sys.setrecursionlimit(5000)
         threading.stack_size(128*4096)
 
         self.animlvlsum = 0
-        self.gmode = gmode                                                      # Game mode. Normal | Custom (custom animatronics AI) | Survival (No time, no energy) | ???
+        self.gmode = gmode
 
         for animatronic in Globals.animatronics:
             self.animlvlsum += animatronic.ailvl
-            self.ailvl = self.animlvlsum / len(Globals.animatronics)            # This is the lvl of the night.
+            self.ailvl = self.animlvlsum / len(Globals.animatronics)
 
         del self.animlvlsum
 
@@ -36,13 +37,13 @@ class main(object):
         self.rightlight = False
         self.power = power
         self.killed = False
-        self.time = time - 1                                                    # The "-1" is there because the timer automatically adds 1 to the variable.
+        self.time = time - 1
         self.sectohour = sectohour
-        self.usage = 1                                                          # 1 Usage: 9.6 / 2 Usage: 4.8 / 3 Usage: 2.8 - 2.9 - 3.9 / 4 Usage: 1.9 - 2.9
-        self.scene = "office"                                                   # Scene. Used for knowing what sprites needs to be printed. SCENES: "office", "cam", "powerdown", "scarejump"
+        self.usage = 1
+        self.scene = "office"
         self.lastcam = "cam1a"
 
-        if self.gmode != "survival":                                            # Initializes the hour timer if the gamemode isn't survival.
+        if self.gmode != "survival":
             threading.Timer(0.01, self.hourTimer).start()
 
         threading.Timer(0.01, self.powerTimer).start()
@@ -71,6 +72,8 @@ class main(object):
         self.camMovement = "left"
 
         self.powerDownStage = 0
+
+        spr.cameraAnim.state = pyganim.PAUSED
 
         self.camButtonCooldown = False
 
@@ -318,14 +321,14 @@ class main(object):
 
                 if self.leftlight and not self.rightlight:
                     if Globals.animatronics[0].location == "leftdoor":
-                        spr.bg.changeImg(random.choice(["office\\r", "office\\0"]))
+                        spr.bg.changeImg("office\\r")
 
                     else:
                         spr.bg.changeImg(random.choice(["office\\1", "office\\0"]))
 
                 elif not self.leftlight and self.rightlight:
                     if Globals.animatronics[1].location == "rightdoor":
-                        spr.bg.changeImg(random.choice(["office\\c", "office\\0"]))
+                        spr.bg.changeImg("office\\c")
 
                     else:
                         spr.bg.changeImg(random.choice(["office\\2", "office\\0"]))
@@ -906,12 +909,12 @@ class main(object):
 
                 spr.scaregroup.add(spr.bg)
 
-                self.movingleft = False
-                self.movingright = False
-
                 if self.time >= 6:
                     self.changeScene("6am")
 
+
+                self.movingleft = False
+                self.movingright = False
 
                 if self.mousex in range(0, 150) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
                     spr.bg.pos = (spr.bg.pos[0] + 20, spr.bg.pos[1])
@@ -1185,7 +1188,7 @@ class main(object):
 
             self.FPSCLOCK.tick(self.fps)
 
-    def shutdown(self): #Shuts down the whole game.
+    def shutdown(self):
         utils.debugprint("Shutting down...")
         pygame.quit()
         for animatronic in Globals.animatronics:
@@ -1202,75 +1205,34 @@ class main(object):
         if camera == "cam2a" and Globals.animatronics[2].status == 3:
             Globals.animatronics[2].status = 4
 
-        pygame.time.wait(100)
         self.lastcam = camera
 
 
-    def powerTimer(self): #Timer for the power.
-        if self.killed == True or self.time >= 6 or self.power == 0 - 1: #Checks if the game has finished
-            pass
-        else:
-            if self.power < 30:
-                for animatronic in Globals.animatronics:
-                    if animatronic.agressiveness != 3:
-                        animatronic.agressiveness = 2
-            if self.power < 15:
-                for animatronic in Globals.animatronics:
-                    animatronic.agressiveness = 3
-            self.power -= 1
-            if self.usage == 1:
-                threading.Timer(9.6, self.powerTimer).start()
-            elif self.usage == 2:
-                threading.Timer(4.8, self.powerTimer).start()
-            elif self.usage == 3:
-                threading.Timer(random.choice([2.8, 2.9, 3.9]), self.powerTimer).start()
-            elif self.usage >= 4:
-                threading.Timer(random.choice([1.9, 2.9]), self.powerTimer).start()
-        return None
+    def powerTimer(self):
+        self.power -= 1
+
+        if self.usage == 1:
+            threading.Timer(9.6, self.powerTimer).start()
+
+        elif self.usage == 2:
+            threading.Timer(4.8, self.powerTimer).start()
+
+        elif self.usage == 3:
+            threading.Timer(random.choice([2.8, 2.9, 3.9]), self.powerTimer).start()
+
+        elif self.usage >= 4:
+            threading.Timer(random.choice([1.9, 2.9]), self.powerTimer).start()
 
     def hourTimer(self):
-        if self.time >= 6 or self.time == "win" and self.killed != True: #This is what happens after 6AM. Yay!
-            pass
+        self.time += 1
 
-        else:
-            self.time += 1
+        if self.time == 2 or self.time == 3 or self.time == 4:
 
-            if self.time == 2 or self.time == 3 or self.time == 4:
+            for animatronic in Globals.animatronics:
+                if animatronic.kind != "bear":
+                    animatronic.ailvl += 1
 
-                for animatronic in Globals.animatronics:
-                    if animatronic.kind != "bear":
-                        animatronic.ailvl += 1
-
-            threading.Timer(self.sectohour, self.hourTimer).start()
-        return None
-
-    def checkDoorTimer(self):
-        for animatronic in Globals.animatronics:
-            if animatronic.location == "leftdoor":
-                time.sleep(random.randint(0, self.ailvl / 20))
-                if self.leftdoor:
-                    animatronic.move("cam1b")
-
-                if not self.leftdoor:
-                    time.sleep(random.randint(0, self.ailvl / 20))
-                    animatronic.move("inside")
-
-            if animatronic.location == "rightdoor":
-                time.sleep(random.randint(0, self.ailvl / 20))
-                if self.rightdoor == True:
-                    animatronic.move("cam1b")
-
-
-                else:
-                    time.sleep(random.randint(0, self.ailvl / 20))
-                    animatronic.move("inside")
-
-        if self.time >= 6 or self.power <= 0:
-            pass
-        else:
-            time.sleep(1)
-            self.checkDoorTimer()
-        return None
+        threading.Timer(self.sectohour, self.hourTimer).start()
 
     def leftDoor(self):
         if not self.leftdoor:
@@ -1374,6 +1336,7 @@ class main(object):
                 self.cameraAnimReversed = False
 
             spr.cameraAnim.play()
+            self.usage += 1
 
             if self.leftlight:
                 self.usage -= 1
@@ -1381,7 +1344,7 @@ class main(object):
             if self.rightlight:
                 self.usage -= 1
                 self.rightlight = False
-            self.usage += 1
+
             snd.putDown.play(0)
             # Scene changes at 1170
 

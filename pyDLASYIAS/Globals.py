@@ -1,5 +1,7 @@
 def init():
-    global animatronics, camdic, adjcam, debug, m, version, log, BLACK, RED, GREEN, BLUE, WHITE, pos, mouseClick
+    global animatronics, camdic, adjcam, debug, m, version, log, BLACK, RED, GREEN, BLUE, WHITE, pos, mouseClick, main
+
+    main = None
 
     pos = (0,0)
 
@@ -7,7 +9,7 @@ def init():
 
     version = "v1.0-alpha (GUI)"
 
-    debug = False
+    debug = True
 
     animatronics = []
 

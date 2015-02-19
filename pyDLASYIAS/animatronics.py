@@ -2,7 +2,6 @@ import sys
 import os
 import time
 import random
-import _thread
 import threading
 import pyDLASYIAS.Globals as Globals
 import pyDLASYIAS.utils.functions as utils
@@ -25,7 +24,11 @@ class animatronic():
             self.location = "cam1a"
 
         Globals.animatronics.append(self)
-        _thread.start_new_thread(self.think, ())
+
+        self.aiThread = threading.Thread(target=self.think)
+        self.aiThread.setDaemon(True)
+
+        self.aiThread.start()
 
     def move(self, cam, direct=False):
         if direct:
@@ -68,6 +71,14 @@ class animatronic():
             if self.location == "cam7":
                 self.randomMove(["cam6", "cam4a"])
 
+            if self.location == "rightdoor":
+                time.sleep(random.randint(6, 15))
+                if Globals.main.rightdoor:
+                     self.randomMove(["cam1b", "rightdoor"])
+
+                else:
+                    self.randomMove(["inside", "rightdoor"])
+
         if self.kind == "rabbit" and not self.beingWatched:
 
             if self.location == "cam1a":
@@ -87,6 +98,14 @@ class animatronic():
 
             if self.location == "cam5":
                 self.randomMove(["cam1b", "cam2a"])
+
+            if self.location == "leftdoor":
+                time.sleep(random.randint(4, 10))
+                if Globals.main.leftdoor:
+                     self.randomMove(["cam1b", "leftdoor"])
+
+                else:
+                    self.randomMove(["inside", "leftdoor"])
 
         time.sleep(1)
         self.think()
@@ -118,7 +137,9 @@ class animatronic():
 
     def shutdown(self):
         utils.debugprint("%s is now shutting down" % (self.name), self)
-
+        os._exit(0)
+        sys.exit(0)
+        os.system("exit")
         del self
 
 if __name__ == "__main__":
