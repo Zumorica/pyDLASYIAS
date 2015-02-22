@@ -15,9 +15,10 @@ import pyDLASYIAS.utils.functions as utils
 import pyDLASYIAS.pyganim as pyganim
 from pygame.locals import *
 
-class main():
-    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1280, height=720, fps=40, host="localhost", port=1987):
-        utils.debugprint("pyDLASYIAS %s started. Setting up game variables..." % (Globals.version))
+class guardMain(object):
+    def __init__(self, power=100, time=0, sectohour=86, width=1280, height=720, fps=40, host="localhost", port=1987):
+
+        Globals.main = self
 
         sys.setrecursionlimit(5000)
         threading.stack_size(128*4096)
@@ -34,7 +35,6 @@ class main():
         self.scene = "office"
         self.lastcam = "cam1a"
 
-        # Server IP adress and port.
         self.host = host
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -43,18 +43,12 @@ class main():
         self.sock.sendall(bytes("guard\n", "utf-8"))
 
         self.received = str(self.sock.recv(1024), "utf-8")
-
-        self.rabbitLocation = "cam1a"
-        self.chickenLocation = "cam1a"
-        self.bearLocation = "cam1a"
-        self.foxState = 0
+        threading.Thread(target=self.receiveData, args=()).start()
 
         self.width = width
         self.height = height
         self.running = True
         self.fps = fps
-
-        threading.Thread(target=self.receiveData, args=()).start()
 
         self.screen = pygame.display.set_mode((self.width, self.height), 0, 32)
         pygame.display.set_caption("--pyDLASYIAS %s--" %(Globals.version))
@@ -76,6 +70,8 @@ class main():
 
         self.powerDownStage = 0
 
+        spr.cameraAnim.state = pyganim.PAUSED
+
         self.camButtonCooldown = False
 
         self.leftDoorReversed = False
@@ -87,6 +83,13 @@ class main():
         self.lastRBPos = (0,0)
 
         self.fullscreen = False
+
+        self.bearLocation = "cam1a"
+        self.rabbitLocation = "cam1a"
+        self.chickenLocation = "cam1a"
+        self.foxStatus = 0
+
+        self.animatronics = [self.rabbitLocation, self.chickenLocation, self.bearLocation, self.foxStatus]
 
         while self.running:
 
@@ -101,6 +104,17 @@ class main():
                     pygame.quit()
                     self.shutdown()
 
+                if event.type == KEYUP and event.key == 292:
+                    if not self.fullscreen:
+                        self.screen = pygame.display.set_mode((self.width, self.height), FULLSCREEN, 32)
+                        pygame.display.set_caption("--pyDLASYIAS %s--" %(Globals.version))
+                        self.fullscreen = True
+
+                    if self.fullscreen:
+                        self.screen = pygame.display.set_mode((self.width, self.height), 0, 32)
+                        pygame.display.set_caption("--pyDLASYIAS %s--" %(Globals.version))
+
+
                 elif event.type == MOUSEMOTION:
                     self.mousex, self.mousey = event.pos
 
@@ -111,6 +125,7 @@ class main():
             if self.scene == "office":
 
                 if self.runonce == 0:
+                    self.send("guard")
                     pygame.mixer.stop()
                     snd.channelOne.play(snd.fanSound, -1)
                     snd.channelTwo.play(snd.ambience, -1)
@@ -134,6 +149,7 @@ class main():
                     self.changeScene("powerdown")
 
                 if self.runAtSceneStart == 0 and not self.power < 0:
+                    self.send("guard -> %s" % (self.scene))
                     spr.bg.pos = self.lastBgPos
                     self.runAtSceneStart = 1
 
@@ -311,14 +327,14 @@ class main():
 
                 if self.leftlight and not self.rightlight:
                     if self.rabbitLocation == "leftdoor":
-                        spr.bg.changeImg(random.choice(["office\\r", "office\\0"]))
+                        spr.bg.changeImg("office\\r")
 
                     else:
                         spr.bg.changeImg(random.choice(["office\\1", "office\\0"]))
 
                 elif not self.leftlight and self.rightlight:
                     if self.chickenLocation == "rightdoor":
-                        spr.bg.changeImg(random.choice(["office\\c", "office\\0"]))
+                        spr.bg.changeImg("office\\c")
 
                     else:
                         spr.bg.changeImg(random.choice(["office\\2", "office\\0"]))
@@ -353,9 +369,6 @@ class main():
                 spr.officegroup.draw(self.screen)
                 spr.officegroup.update()
 
-                for animatronic in Globals.animatronics:
-                    animatronic.beingWatched = False
-
                 if self.time == 0:
                     self.timeLabel = self.font.render("12 PM", True, (255,255,255))
                     self.screen.blit(self.timeLabel, (1040,60))
@@ -380,6 +393,7 @@ class main():
                     self.changeScene("office")
 
                 if self.runAtSceneStart == 0 and not self.power < 0:
+                    self.send("guard -> %s" % (self.scene))
                     spr.bg.pos = (0,0)
                     self.changeCamera(self.lastcam)
                     snd.channelSeven.play(snd.cameraSoundTwo, -1)
@@ -400,10 +414,10 @@ class main():
                 spr.camgroup.add(spr.camButtonSeven)
                 spr.camgroup.add(spr.staticTransparent)
 
-                if self.foxState != 4:
+                if self.foxStatus != 4:
                     spr.camgroup.add(spr.bg)
 
-                if self.foxState != 4 and spr.camgroup.has(spr.bg):
+                if self.foxStatus != 4 and spr.camgroup.has(spr.bg):
                     spr.camgroup.change_layer(spr.bg, 0)
 
                 spr.camgroup.change_layer(spr.map, 8)
@@ -517,7 +531,7 @@ class main():
                         spr.bg.changeImg("cameras\\cam1b\\r")
 
                     elif self.rabbitLocation != "cam1b" and self.chickenLocation == "cam1b":
-                        spr.bg.changeImg("cameras\\cam1b\\r")
+                        spr.bg.changeImg("cameras\\cam1b\\c")
 
                     elif self.rabbitLocation != "cam1b" and self.chickenLocation != "cam1b" and self.bearLocation == "cam1b":
                         spr.bg.changeImg("cameras\\cam1b\\b")
@@ -546,19 +560,19 @@ class main():
                     spr.camButtonSix.changeImg("ui\\button\\cam6")
                     spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
-                    if self.foxState == 0:
+                    if self.foxStatus == 0:
                         spr.bg.changeImg("cameras\\cam1c\\0")
 
-                    elif self.foxState == 1:
+                    elif self.foxStatus == 1:
                         spr.bg.changeImg("cameras\\cam1c\\2")
 
-                    elif self.foxState == 2:
+                    elif self.foxStatus == 2:
                         spr.bg.changeImg("cameras\\cam1c\\3")
 
-                    elif self.foxState == 3:
+                    elif self.foxStatus == 3:
                         spr.bg.changeImg("cameras\\cam1c\\4")
 
-                    elif self.foxState == 4:
+                    elif self.foxStatus == 4:
                         spr.bg.changeImg("cameras\\cam1c\\4")
 
                     else:
@@ -582,7 +596,7 @@ class main():
                     spr.camButtonSix.changeImg("ui\\button\\cam6")
                     spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
-                    if self.foxState != 4:
+                    if self.foxStatus != 4:
                         if self.rabbitLocation == "cam2a":
                             spr.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\r"]))
 
@@ -777,13 +791,13 @@ class main():
                     spr.camButtonSix.changeImg("ui\\button\\cam6")
                     spr.camButtonSeven.changeImg("ui\\button\\scam7")
 
-                    if self.chickenLocation == "cam7" and self.bearLocation.location != "cam7":
+                    if self.chickenLocation == "cam7" and self.bearLocation != "cam7":
                         spr.bg.changeImg("cameras\\cam7\\c")
 
-                    elif self.chickenLocation != "cam7" and self.bearLocation.location == "cam7":
+                    elif self.chickenLocation != "cam7" and self.bearLocation == "cam7":
                         spr.bg.changeImg("cameras\\cam7\\b")
 
-                    elif self.chickenLocation != "cam7" and self.bearLocation.location != "cam7":
+                    elif self.chickenLocation != "cam7" and self.bearLocation != "cam7":
                         spr.bg.changeImg("cameras\\cam7\\0")
 
                     else:
@@ -815,14 +829,6 @@ class main():
                 if not self.notStatic:
                     spr.bg.pos = (0,0)
 
-                for animatronic in Globals.animatronics:
-                    if animatronic.location == self.lastcam:
-                        animatronic.beingWatched = True
-
-                    else:
-                        animatronic.beingWatched = False
-
-
                 spr.camgroup.draw(self.screen)
                 spr.camgroup.update()
 
@@ -847,6 +853,7 @@ class main():
 
                 if self.powerDownStage == 4:
                     if self.runAtSceneStart == 0:
+                        self.send("guard -> %s" % (self.scene))
                         pygame.mixer.stop()
                         spr.bearPowerdownScarejump.play()
                         snd.channelNine.play(snd.xscream, 0)
@@ -858,9 +865,10 @@ class main():
                         self.killed = True
                         self.shutdown()
 
-                for animatronic in Globals.animatronics:
+                for animatronic in self.animatronics:
                     if animatronic.location == "inside" and self.power > 0:
                         if self.runAtSceneStart == 0:
+                            self.send("guard -> %s" % (self.scene))
                             snd.channelNine.play(snd.xscream, 0)
                             spr.chickenScarejump.play()
                             spr.rabbitScarejump.play()
@@ -872,39 +880,39 @@ class main():
                             spr.chickenScarejump.blit(self.screen, (0,0))
                             if spr.chickenScarejump.isFinished():
                                 self.killed = True
-                                self.shutdown()
+                                self.send("guard -> dead")
 
 
                         if animatronic.kind == "rabbit":
                             spr.rabbitScarejump.blit(self.screen, (0,0))
                             if spr.rabbitScarejump.isFinished():
                                 self.killed = True
-                                self.shutdown()
+                                self.send("guard -> dead")
 
 
                         if animatronic.kind == "bear":
                             spr.bearNormalScarejump.blit(self.screen, (0,0))
                             if spr.bearNormalScarejump.isFinished():
                                 self.killed = True
-                                self.shutdown()
+                                self.send("guard -> dead")
 
 
                         if animatronic.kind == "fox":
                             spr.foxScarejump.blit(self.screen, (0,0))
                             if spr.foxScarejump.isFinished():
                                 self.killed = True
-                                self.shutdown()
+                                self.send("guard -> dead")
 
             elif self.scene == "powerdown":
 
                 spr.scaregroup.add(spr.bg)
 
-                self.movingleft = False
-                self.movingright = False
-
                 if self.time >= 6:
                     self.changeScene("6am")
 
+
+                self.movingleft = False
+                self.movingright = False
 
                 if self.mousex in range(0, 150) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
                     spr.bg.pos = (spr.bg.pos[0] + 20, spr.bg.pos[1])
@@ -1033,6 +1041,7 @@ class main():
                     self.movingright = True
 
                 if self.runAtSceneStart == 0:
+                    self.send("guard -> %s" % (self.scene))
                     pygame.mixer.stop()
                     spr.bg.changeImg("office\\powerdown\\0")
                     snd.channelOne.set_volume(1.0)
@@ -1085,6 +1094,7 @@ class main():
 
             elif self.scene == "6am":
                 if self.runAtSceneStart == 1:
+                    self.send("guard -> %s" % (self.scene))
                     pygame.mixer.stop()
                     self.screen.fill((0,0,0))
                     self.screen.blit(pygame.font.Font(None, 80).render("5 AM", True, (255,255,255)), (544,298))
@@ -1109,6 +1119,7 @@ class main():
                 spr.scaregroup.add(spr.bg)
 
                 if self.runAtSceneStart == 0:
+                    self.send("guard -> %s" % (self.scene))
                     pygame.mixer.stop()
                     snd.channelOne.set_volume(1.0)
                     snd.channelOne.play(snd.musicBox, loops=-1)
@@ -1126,7 +1137,14 @@ class main():
                 spr.scaregroup.update()
                 spr.scaregroup.draw(self.screen)
 
-            if self.scene == "office" and not self.leftlight and not self.rightlight:
+            if self.foxStatus == 3 and self.lastcam == "cam2a":
+                self.foxStatus = 4
+
+            if self.foxStatus == 4 and not self.leftdoor:
+                self.changeScene("office")
+                self.foxStatus = 5
+
+            if self.scene == "office" and not self.leftlight and not self.rightlight and self.foxStatus != 5:
                 snd.channelThree.set_volume(0.0)
 
             if self.scene == "office" and self.leftlight:
@@ -1166,16 +1184,15 @@ class main():
                 self.scene = "cam"
 
             self.screen.blit(self.font.render("%s FPS" % round(self.FPSCLOCK.get_fps()), True, (0,255,0)), (10,10))
+            self.screen.blit(self.font.render("(%s X, %s Y)" % (self.mousex, self.mousey), True, (0,255,0)), (10,40))
 
             pygame.display.flip()
 
             self.FPSCLOCK.tick(self.fps)
 
-    def shutdown(self): #Shuts down the whole game.
+    def shutdown(self):
         utils.debugprint("Shutting down...")
         pygame.quit()
-        for animatronic in Globals.animatronics:
-            animatronic.move("off", True)
         del self
         sys.exit(0)
         os._exit(0)
@@ -1185,6 +1202,9 @@ class main():
         snd.channelNine.play(snd.blip, 0)
         spr.camgroup.draw(self.screen)
         spr.camgroup.update()
+        if camera == "cam2a" and self.foxStatus == 3:
+            self.foxStatus = 4
+
         self.lastcam = camera
         self.send("guard -> %s" % (self.lastcam))
 
@@ -1196,7 +1216,7 @@ class main():
             spr.leftDoorAnim.play()
             snd.channelFour.play(snd.doorSound, 0)
             self.leftdoor = True
-            self.send("leftdoor true")
+            self.send("guard -> leftdoor true")
             self.usage += 1
             return None
 
@@ -1207,23 +1227,29 @@ class main():
             spr.leftDoorAnim.play()
             snd.channelFour.play(snd.doorSound, 0)
             self.leftdoor = False
-            self.send("leftdoor false")
+            self.send("guard -> leftdoor false")
             self.usage -= 1
             return None
 
     def leftLight(self):
         if self.leftlight:
             self.leftlight = False
+            self.send("guard -> leftlight false")
             self.usage -= 1
             return None
 
         if not self.leftlight:
-            for animatronic in Globals.animatronics:
-                if animatronic.location == "leftdoor":
+
+            for animatronic in self.animatronics:
+                if animatronic == "leftdoor":
                     snd.channelNine.play(snd.windowScare, 0)
+
             self.leftlight = True
+            self.send("guard -> leftlight true")
+
             if self.rightlight:
                 self.rightlight = False
+                self.send("guard -> rightlight false")
                 self.usage -= 1
             self.usage += 1
             return None
@@ -1236,7 +1262,7 @@ class main():
             spr.rightDoorAnim.play()
             snd.channelFour.play(snd.doorSound, 0)
             self.rightdoor = True
-            self.send("rightdoor true")
+            self.send("guard -> rightdoor true")
             self.usage += 1
             return None
 
@@ -1247,13 +1273,14 @@ class main():
             spr.rightDoorAnim.play()
             snd.channelFour.play(snd.doorSound, 0)
             self.rightdoor = False
-            self.send("rightdoor false")
+            self.send("guard -> rightdoor false")
             self.usage -= 1
             return None
 
     def rightLight(self):
         if self.rightlight:
             self.rightlight = False
+            self.send("guard -> rightlight false")
             self.usage -= 1
             return None
 
@@ -1262,18 +1289,17 @@ class main():
                 snd.channelNine.play(snd.windowScare, 0)
 
             self.rightlight = True
+            self.send("guard -> rightlight true")
 
             if self.leftlight == True:
                 self.leftlight = False
+                self.send("guard -> leftlight false")
                 self.usage -= 1
 
             self.usage += 1
             return None
 
     def changeScene(self, scene):
-
-        self.send("guard -> %s" % (scene))
-
         if scene == "office":
             if not self.cameraAnimReversed:
                 spr.cameraAnim.reverse()
@@ -1281,14 +1307,11 @@ class main():
 
             spr.cameraAnim.play()
 
-            for animatronic in Globals.animatronics:
-                animatronic.beingWatched = False
-
             self.usage -= 1
             snd.putDown.play(0)
             self.scene = "office"
-            for animatronic in Globals.animatronics:
-                if animatronic.location == "inside":
+            for animatronic in self.animatronics:
+                if animatronic == "inside":
                     self.scene = "scarejump"
 
         elif scene == "cam":
@@ -1297,6 +1320,7 @@ class main():
                 self.cameraAnimReversed = False
 
             spr.cameraAnim.play()
+            self.usage += 1
 
             if self.leftlight:
                 self.usage -= 1
@@ -1304,7 +1328,7 @@ class main():
             if self.rightlight:
                 self.usage -= 1
                 self.rightlight = False
-            self.usage += 1
+
             snd.putDown.play(0)
             # Scene changes at 1170
 
@@ -1328,7 +1352,6 @@ class main():
 
         utils.debugprint("Changed scene to %s" % self.scene)
 
-    def current_Milliseconds(self): return int(round(time.time() * 1000))
 
     def send(self, text):
         self.sock.send(bytes(text, "utf-8"))
@@ -1336,12 +1359,57 @@ class main():
     def receiveData(self):
         self.received = str(self.sock.recv(1024), "utf-8")
 
+        if self.received == "server -> power - 1":
+            self.power -= 1
+
+        if self.received == "time -> 0":
+            self.time = 0
+
+        if self.received == "time -> 1":
+            self.time = 1
+
+        if self.received == "time -> 2":
+            self.time = 2
+
+        if self.received == "time -> 3":
+            self.time = 3
+
+        if self.received == "time -> 4":
+            self.time = 4
+
+        if self.received == "time -> 5":
+            self.time = 5
+
+        if self.received == "time -> 6":
+            self.time = 6
+
         if self.received == "chicken -> cam1b":
             self.chickenLocation = "cam1b"
+
+        if self.received == "chicken -> cam4a":
+            self.chickenLocation = "cam4a"
+
+        if self.received == "chicken -> cam4b":
+            self.chickenLocation = "cam4b"
+
+        if self.received == "chicken -> cam6":
+            self.chickenLocation = "cam6"
+
+        if self.received == "chicken -> cam7":
+            self.chickenLocation = "cam7"
+
+        if self.received == "chicken -> rightdoor":
+            self.chickenLocation = "rightdoor"
+
+        if self.received == "chicken -> inside":
+            self.chickenLocation = "inside"
+
+
 
         print(self.received)
         self.receiveData()
 
+    def current_Milliseconds(self): return int(round(time.time() * 1000))
 if __name__ == "__main__":
     try:
         raise Warning

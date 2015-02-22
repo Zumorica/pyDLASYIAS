@@ -16,7 +16,8 @@ def init():
            map, camButtonOneA, camButtonOneB, camButtonOneC, camButtonTwoA, camButtonTwoB, camButtonThree, camButtonFourA, \
            camButtonFourB, camButtonFive, camButtonSix, camButtonSeven, leftDoor, rightDoor, foxSprinting, leftDoorClose, \
            leftDoorOpen, rightDoorClose, rightDoorOpen, chickenScarejump, rabbitScarejump, bearNormalScarejump, foxScarejump, \
-           bearPowerdownScarejump, staticTransparent, bg, cameraAnim, leftDoorAnim, rightDoorAnim
+           bearPowerdownScarejump, staticTransparent, bg, cameraAnim, leftDoorAnim, rightDoorAnim, mapAnim, camButtonRight, \
+           camButtonLeft
 
     leftButton = sprite.Sprite(startpos=(0, 180), image="office\\button\\left\\0")
     leftButton.groups = allgroup, officegroup
@@ -39,8 +40,11 @@ def init():
     camButton = sprite.Sprite(startpos=(245, 635), image="ui\\button\\camera")
     camButton.groups = allgroup, officegroup, camgroup
 
-    map = sprite.Sprite(startpos=(848, 313), image="ui\\map")
+    map = sprite.Sprite(startpos=(848, 313), image="ui\\map-0")
     map.groups = allgroup, camgroup
+
+    mapAnim = sprite.Sprite(startpos=(848, 313), image="ui\\map-1")
+    mapAnim.groups = allgroup, camgroup
 
     camButtonOneA = sprite.Sprite(startpos=(983,353), image="ui\\button\\cam1a")
     camButtonOneA.groups = allgroup, camgroup
@@ -74,6 +78,12 @@ def init():
 
     camButtonSeven = sprite.Sprite(startpos=(1172,424), image="ui\\button\\cam7")
     camButtonSeven.groups = allgroup, camgroup
+
+    camButtonLeft = sprite.Sprite(startpos=(250,400), image="ui\\button\\left")
+    camButtonLeft.groups = allgroup, camgroup
+
+    camButtonRight = sprite.Sprite(startpos=(250,400), image="ui\\button\\right")
+    camButtonRight.groups = allgroup, camgroup
 
     leftDoor = sprite.Sprite(startpos=(72,0), image="office\\doors\\left\\0")
     leftDoor.groups = allgroup, officegroup
@@ -186,6 +196,7 @@ def init():
     allgroup.add(rightLightButton)
     allgroup.add(camButton)
     allgroup.add(map)
+    allgroup.add(mapAnim)
     allgroup.add(bg)
     allgroup.add(camButtonOneA)
     allgroup.add(camButtonOneA)

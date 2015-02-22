@@ -2,194 +2,192 @@ import socketserver
 import threading
 import time
 
+global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
+
+clients = []
+
 data = None
+
+time = 0
+
+power = 100
+usage = 1
+
+leftdoor = False
+rightdoor = False
+
+leftlight = False
+rightlight = False
+
+guardScene = "office"
 
 class requestHandler(socketserver.BaseRequestHandler):
     def setup(self):
+
+        global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
+
         print(self.client_address, 'connected!')
-        self.request.send(bytes('hi ' + str(self.client_address) + '\n', "utf-8"))
-        threading.Thread(target=self.sendData).start()
-        self.character = None
+
+        self.request.send(bytes("time -> %s" % (time), "utf-8"))
 
     def handle(self):
+
+        global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
+
         while 1:
-            global data
+            if self.request not in clients:
+                clients.append(self.request)
+                print(clients)
+
             data = self.request.recv(1024)
 
-            if data == b"guard" and not self.character:
-                self.character = "guard"
+            if str(data) == "guard -> leftdoor true":
+                leftdoor = True
+                print("leftdoor %s" % (leftdoor))
+                usage += 1
 
-            if data == b"chicken" and not self.character:
-                self.character = "chicken"
+            if str(data) == "guard -> leftdoor false":
+                leftdoor = False
+                usage -= 1
 
-            if data == b"rabbit" and not self.character:
-                self.character = "rabbit"
+            if str(data) == "guard -> rightdoor true":
+                rightdoor = True
+                usage += 1
 
-            if data == b"bear" and not self.character:
-                self.character = "bear"
+            if str(data) == "guard -> rightdoor false":
+                rightdoor = False
+                usage -= 1
 
-            if data == b"fox" and not self.character:
-                self.character = "fox"
+
+            if str(data) == "guard -> leftlight false":
+                leftlight = False
+                usage -= 1
+
+            if str(data) == "guard -> leftlight true":
+                leftlight = True
+                usage += 1
+
+                if rightlight:
+                    rightlight = False
+                    usage -= 1
+
+            if str(data) == "guard -> rightlight false":
+                rightlight = False
+                usage -= 1
+
+            if str(data) == "guard -> rightlight true":
+                rightlight = True
+                usage += 1
+
+                if leftlight:
+                    leftlight = False
+                    usage -= 1
+
+
+            if str(data) == "guard -> cam":
+                if guardScene == "office":
+                    guardScene == "cam"
+                    usage += 1
+
+            if str(data) == "guard -> office":
+                if guardScene == "cam":
+                    guardScene = "office"
+                    usage -= 1
+
+            if str(data) == "guard -> 6AM":
+                guardScene == "6AM"
+
+            if str(data) == "guard -> end":
+                guardScene = "end"
+                sendToAll("server -> shutdown")
 
             print(str(data) + ' ' + str(self.client_address) + '\n')
 
-    def sendData(self):
-        print("Thread started")
-        while 1:
-            global data
-            if not self.character and data != None:
-                self.request.send(bytes(str(data), "utf-8"))
-                print("sent " + str(data))
-
-            if self.character == "guard" and data != None:
-                if b"guard" not in data:
-                    self.request.sendall(bytes(str(data), "utf-8"))
-                    print("sent " + str(data) + "" + str(self.client_address))
-
-            if self.character == "chicken" and data != None:
-                if b"chicken" not in data:
-                    self.request.sendall(bytes(str(data), "utf-8"))
-                    print("sent " + str(data) + "" + str(self.client_address))
-
-            if self.character == "rabbit" and data != None:
-                if b"rabbit" not in data:
-                    self.request.sendall(bytes(str(data), "utf-8"))
-                    print("sent " + str(data) + "" + str(self.client_address))
-
-            if self.character == "bear" and data != None:
-                if b"bear" not in data:
-                    self.request.sendall(bytes(str(data), "utf-8"))
-                    print("sent " + str(data) + "" + str(self.client_address))
-
-            if self.character == "fox" and data != None:
-                if b"fox" not in data:
-                    self.request.sendall(bytes(str(data), "utf-8"))
-                    print("sent " + str(data) + "" + str(self.client_address))
-
-            print(data)
-            time.sleep(1)
-            data = None
-
     def finish(self):
+        clients.remove(self.request)
         print(self.client_address, 'disconnected!')
 
+def sendData():
+
+    global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
+
+    while 1:
+        if data != None and data != b'':
+            for client in clients:
+                client.send(bytes(data))
+                print("Sent " + str(data) + " to %s" % (client))
+
+            data = None
+
+def sendToAll(text):
+
+    global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
+
+    for client in clients:
+        client.send(bytes(text, "utf-8"))
+
+def powerTimer():
+
+    global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
+
+    if len(clients) > 2:
+        power -= 1
+
+    sendToAll("server -> power - 1")
+
+    if usage == 1:
+        threading.Timer(9.6, powerTimer).start()
+
+    elif usage == 2:
+        threading.Timer(4.8, powerTimer).start()
+
+    elif usage == 3:
+        threading.Timer(random.choice([2.8, 2.9, 3.9]), powerTimer).start()
+
+    elif usage >= 4:
+        threading.Timer(random.choice([1.9, 2.9]), powerTimer).start()
+
+def hourTimer():
+
+    global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
+
+    time += 1
+
+    sendToAll("time -> %s" %(time))
+
+    threading.Timer(86, hourTimer).start()
+
+
+def cmd():
+
+    global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
+
+    command = input("> ")
+
+    if command.lower() == "power":
+
+        power += 0
+        usage += 0
+
+        print("Power left: %s, Usage: %s" % (power,usage))
+
+    if command.lower() == "time":
+
+        time += 0
+
+        print("Time: %s" % (time))
+
+    if command.lower() == "state":
+        print("Left Door: %s" % (leftdoor))
+        print("Right Door: %s" % (rightdoor))
+        print("Left Light: %s" % (leftlight))
+        print("Right Light: %s" % (rightlight))
+
+    cmd()
+
+threading.Timer(0.1, powerTimer).start()
+threading.Timer(86, hourTimer).start()
+threading.Thread(target=cmd).start()
+threading.Thread(target=sendData).start()
 server = socketserver.ThreadingTCPServer(('localhost', 1987), requestHandler)
 server.serve_forever()
-
-
-# import socket
-# import threading
-#
-# class server:
-#     def __init__(self):
-#
-#         self.time = 0
-#         self.power = 100
-#         self.usage = 1
-#
-#         self.rabbitLocation = "cam1a"
-#         self.chickenLocation = "cam1a"
-#         self.bearLocation = "cam1a"
-#         self.foxStatus = 0
-#
-#         self.guardLastCam = "cam1a"
-#         self.guardScene = "cam"
-#         self.guardLeftDoor = False
-#         self.guardRightDoor = False
-#
-#         self.receivedOne = b""
-#         self.receivedTwo = b""
-#         self.receivedThree = b""
-#         self.receivedFour = b""
-#         self.receivedFive = b""
-#
-#         self.threads = []
-#
-#         self.running = False
-#         self.socket = None
-#         self.address = input("Address (Blank for automatic)> ")
-#         self.port = input("Port (Blank for default port -1987-)> ")
-#
-#         threading.Timer(0.01, self.powerTimer).start()
-#
-#         threading.Timer(0.01, self.hourTimer).start()
-#
-#         self.run()
-#
-#     def run(self):
-#
-#         self.running = True
-#         self.socket = socket.socket(socket.AF_INET)
-#
-#         if self.address == "" and self.port == "":
-#             self.socket.bind(("", 1987))
-#
-#         elif self.address != "" and self.port != "":
-#             self.socket.bind((self.address, self.port))
-#
-#         elif self.address == "" and self.port != "":
-#             self.socket.bind(("", self.port))
-#
-#         elif self.address != "" and self.port == "":
-#             self.socket.bind((self.address, 1987))
-#
-#         if len(self.threads) != 5:
-#             self.socket.listen(5)
-#
-#         while self.running:
-#
-#             print(len(self.threads), self.threads)
-#
-#             if len(self.threads) != 5:
-#                 client = self.socket.accept()[0]
-#
-#                 new_thread = clientThread(client)
-#
-#                 self.threads.append(new_thread)
-#
-#             if len(self.threads) == 5:
-#
-#                 self.receivedFirst = self.threads[0].receive()
-#                 self.receivedTwo = self.threads[1].receive()
-#                 self.receivedThree = self.threads[2].receive()
-#                 self.receivedFour = self.threads[3].receive()
-#                 self.receivedFive = self.threads[4].receive()
-#
-#                 print(self.receivedOne, self.receivedTwo, self.receivedThree, self.receivedFour, self.receivedFive)
-#
-#
-#         self.socket.close()
-#
-#     def hourTimer(self):
-#         if self.time != 6:
-#             self.time += 1
-#             threading.Timer(86, self.hourTimer).start()
-#
-#     def powerTimer(self):
-#         self.power -= 1
-#         if self.usage == 1:
-#             threading.Timer(9.6, self.powerTimer).start()
-#         elif self.usage == 2:
-#             threading.Timer(4.8, self.powerTimer).start()
-#         elif self.usage == 3:
-#             threading.Timer(random.choice([2.8, 2.9, 3.9]), self.powerTimer).start()
-#         elif self.usage >= 4:
-#             threading.Timer(random.choice([1.9, 2.9]), self.powerTimer).start()
-#
-# class clientThread(threading.Thread):
-#     def __init__(self, socket):
-#
-#         threading.Thread.__init__(self, target=self.receive)
-#         self.socket = socket
-#
-#         self.start()
-#
-#     def send(self, text):
-#         self.socket.send(bytes(str(text), "utf-8"))
-#
-#     def receive(self):
-#         while True:
-#             return self.socket.recv(1024)
-#
-# s = server()
-# s.run()

@@ -15,7 +15,7 @@ import pyDLASYIAS.utils.functions as utils
 import pyDLASYIAS.pyganim as pyganim
 from pygame.locals import *
 
-class main():
+class chickenMain():
     def __init__(self, host="localhost", port=1987, fps=40, width=1280, height=720):
 
         sys.setrecursionlimit(5000)
@@ -70,6 +70,18 @@ class main():
 
         self.camMovement = "left"
 
+        self.bearLocation = "cam1a"
+        self.rabbitLocation = "cam1a"
+        self.foxStatus = 0
+        self.guardLocation = "office"
+
+        self.leftdoor = False
+        self.rightdoor = False
+        self.leftlight = False
+        self.rightlight = False
+
+        self.animatronics = [self.bearLocation, self.rabbitLocation]
+
         while self.running:
 
             if self.cooldown != 0:
@@ -84,7 +96,9 @@ class main():
 
                 if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
                     pygame.quit()
-                    self.shutdown()
+
+                elif event.type == KEYUP and event.key == K_SPACE:
+                    self.cooldown = 0
 
                 elif event.type == MOUSEMOTION:
                     self.mousex, self.mousey = event.pos
@@ -102,7 +116,7 @@ class main():
                     snd.channelSeven.play(snd.cameraSoundTwo, -1)
                     self.runAtSceneStart = 1
 
-                    spr.camgroup.add(spr.map)
+                    spr.camgroup.add(spr.mapAnim)
                     spr.camgroup.add(spr.camButtonOneA)
                     spr.camgroup.add(spr.camButtonOneB)
                     spr.camgroup.add(spr.camButtonFourA)
@@ -112,8 +126,11 @@ class main():
                     spr.camgroup.add(spr.staticTransparent)
                     spr.camgroup.add(spr.bg)
 
+                    if self.location == "cam4b":
+                        spr.camgroup.add(spr.camButtonRight)
+
                     spr.camgroup.change_layer(spr.bg, 0)
-                    spr.camgroup.change_layer(spr.map, 8)
+                    spr.camgroup.change_layer(spr.mapAnim, 8)
                     spr.camgroup.change_layer(spr.camButtonOneA, 10)
                     spr.camgroup.change_layer(spr.camButtonOneB, 10)
                     spr.camgroup.change_layer(spr.camButtonFourA, 10)
@@ -121,6 +138,10 @@ class main():
                     spr.camgroup.change_layer(spr.camButtonSix, 10)
                     spr.camgroup.change_layer(spr.camButtonSeven, 10)
                     spr.camgroup.change_layer(spr.staticTransparent, 2)
+                    if spr.camgroup.has(spr.camButtonRight):
+                        spr.camgroup.change_layer(spr.camButtonRight, 10)
+
+
 
                 spr.staticTransparent.changeImg(random.choice(["cameras\\misc\\static\\transparent\\0", "cameras\\misc\\static\\transparent\\1",
                                                                "cameras\\misc\\static\\transparent\\2", "cameras\\misc\\static\\transparent\\3",
@@ -301,6 +322,9 @@ class main():
             self.screen.blit(self.cooldownLabel, (50,550))
             self.screen.blit(self.font.render(Globals.camdic[self.location], True, (255,255,255)), (832,292))
 
+            self.screen.blit(self.font.render("%s FPS" % round(self.FPSCLOCK.get_fps()), True, (0,255,0)), (10,10))
+            self.screen.blit(self.font.render("(%s X, %s Y)" % (self.mousex, self.mousey), True, (0,255,0)), (10,40))
+
             pygame.display.flip()
             pygame.display.update()
 
@@ -320,4 +344,98 @@ class main():
     def receiveData(self):
         self.received = str(self.sock.recv(1024), "utf-8")
         print(self.received)
+
+
+        if self.received == "server -> power - 1":
+            self.power -= 1
+
+        if self.received == "time -> 0":
+            self.time = 0
+
+        if self.received == "time -> 1":
+            self.time = 1
+
+        if self.received == "time -> 2":
+            self.time = 2
+
+        if self.received == "time -> 3":
+            self.time = 3
+
+        if self.received == "time -> 4":
+            self.time = 4
+
+        if self.received == "time -> 5":
+            self.time = 5
+
+        if self.received == "time -> 6":
+            self.time = 6
+
+
+        if self.received == "guard -> cam1a":
+            self.guardLocation = "cam1a"
+
+        if self.received == "guard -> cam1b":
+            self.guardLocation = "cam1b"
+
+        if self.received == "guard -> cam1c":
+            self.guardLocation = "cam1c"
+
+        if self.received == "guard -> cam2a":
+            self.guardLocation = "cam2a"
+
+        if self.received == "guard -> cam2b":
+            self.guardLocation = "cam2b"
+
+        if self.received == "guard -> cam3":
+            self.guardLocation = "cam3"
+
+        if self.received == "guard -> cam4a":
+            self.guardLocation = "cam4a"
+
+        if self.received == "guard -> cam4b":
+            self.guardLocation = "cam4b"
+
+        if self.received == "guard -> cam5":
+            self.guardLocation = "cam5"
+
+        if self.received == "guard -> cam6":
+            self.guardLocation = "cam6"
+
+        if self.received == "guard -> cam7":
+            self.guardLocation = "cam7"
+
+        if self.received == "guard -> office":
+            self.guardLocation = "office"
+
+        if self.received == "guard -> cam":
+            self.guardLocation = "cam"
+
+        if self.received == "guard -> leftdoor true":
+            self.leftdoor = True
+
+        if self.received == "guard -> leftdoor false":
+            self.leftdoor = False
+
+        if self.received == "guard -> rightdoor true":
+            self.rightdoor = True
+
+        if self.received == "guard -> rightdoor false":
+            self.rightdoor = False
+
+        if self.received == "guard -> leftlight false":
+            self.leftlight = False
+
+        if self.received == "guard -> leftlight true":
+            self.leftlight = True
+            if self.rightlight:
+                self.rightlight = False
+
+        if self.received == "guard -> rightlight false":
+            self.rightlight = False
+
+        if self.received == "guard -> rightlight true":
+            self.rightlight = True
+            if self.leftlight:
+                self.leftlight = False
+
         self.receiveData()

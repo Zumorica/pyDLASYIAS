@@ -14,7 +14,6 @@ import pyDLASYIAS.main as main
 import pyDLASYIAS.utils.functions as utils
 import pyDLASYIAS.pyganim as pyganim
 
-
 def launcher():
     running = True
     screen = pygame.display.set_mode((1280, 720), 0, 32)
@@ -39,6 +38,9 @@ def launcher():
 
     customNightButton = sprite.Sprite(startpos=(122,560), image="menu\\custom-0")
     customNightButton.groups = group
+
+    multiplayerButton = sprite.Sprite(startpos=(122,500), image="menu\\multiplayer-0")
+    multiplayerButton.groups = group
 
     timeleft = sprite.Sprite(startpos=(122, 560), image="custom\\buttons\\0")
     timeleft.groups = group
@@ -166,9 +168,19 @@ def launcher():
 
             group.add(title)
             group.add(customNightButton)
+            group.add(multiplayerButton)
 
             if customNightButton.rect.collidepoint(pos) and mouseClick:
                 scene = "custom"
+
+            if multiplayerButton.rect.collidepoint(pos) and mouseClick:
+                scene = "multihall"
+
+            if multiplayerButton.rect.collidepoint(pos):
+                multiplayerButton.changeImg("menu\\multiplayer-1")
+
+            if not multiplayerButton.rect.collidepoint(pos):
+                multiplayerButton.changeImg("menu\\multiplayer-0")
 
             if customNightButton.rect.collidepoint(pos):
                 customNightButton.changeImg("menu\\custom-1")
@@ -178,6 +190,24 @@ def launcher():
 
             group.update()
             group.draw(screen)
+
+        if scene == "multihall":
+            ip = input("IP> ")
+            port = input("PORT> ")
+            char = input("1 Guard / 2 Rabbit / 3 Chicken / 4 Fox (Doesn't work) / 5 Bear (Doesn't work)")
+
+            if char == "1":
+                import pyDLASYIAS.multiplayer.guard as guard
+                guard.guardMain(host=ip, port=int(port))
+
+            if char == "2":
+                import pyDLASYIAS.multiplayer.rabbit as rabbit
+                rabbit.rabbitMain(host=ip, port=int(port))
+
+            if char == "3":
+                import pyDLASYIAS.multiplayer.chicken as chicken
+                chicken.chickenMain(host=ip, port=int(port))
+
 
         if scene == "custom":
 
@@ -254,7 +284,7 @@ def launcher():
                 chicken = animatronics.animatronic("Chicken", "chicken", chickenai)
                 fox = animatronics.animatronic("Fox", "fox", foxai)
                 bear = animatronics.animatronic("Bear", "bear", bearai)
-                main.main(time=time, power=power)
+                main.main()
 
             timeLabel = font.render(str(time), True, (255, 255, 255))
             powerLabel = font.render(str(power), True, (255, 255, 255))

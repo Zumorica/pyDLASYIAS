@@ -2,7 +2,7 @@ import socket
 import sys
 import threading
 
-HOST, PORT = "localhost", 1987
+HOST, PORT = "localhost", int(input())
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
