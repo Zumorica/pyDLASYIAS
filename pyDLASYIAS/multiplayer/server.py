@@ -22,7 +22,9 @@ rightlight = False
 guardScene = "office"
 
 class requestHandler(socketserver.BaseRequestHandler):
+    '''Handles the requests.'''
     def setup(self):
+        '''When a new client connects to the server, this function gets called.'''
 
         global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
 
@@ -31,6 +33,7 @@ class requestHandler(socketserver.BaseRequestHandler):
         self.request.send(bytes("time -> %s" % (time), "utf-8"))
 
     def handle(self):
+        '''Handles requests.'''
 
         global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
 
@@ -104,10 +107,13 @@ class requestHandler(socketserver.BaseRequestHandler):
             print(str(data) + ' ' + str(self.client_address) + '\n')
 
     def finish(self):
+        '''When a clients disconnects this function gets called.'''
+
         clients.remove(self.request)
         print(self.client_address, 'disconnected!')
 
 def sendData():
+    '''Sends received data to all connected clients.'''
 
     global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
 
@@ -120,6 +126,7 @@ def sendData():
             data = None
 
 def sendToAll(text):
+    '''Send text to all connected clients.'''
 
     global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
 
@@ -127,7 +134,6 @@ def sendToAll(text):
         client.send(bytes(text, "utf-8"))
 
 def powerTimer():
-
     global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
 
     if len(clients) > 2:

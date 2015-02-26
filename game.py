@@ -27,6 +27,7 @@ def launcher():
     font = pygame.font.Font(None, 50)
     group = pygame.sprite.Group()
     customgroup = pygame.sprite.Group()
+    multigroup = pygame.sprite.Group()
 
     mousex = 0
     mousey = 0
@@ -135,6 +136,12 @@ def launcher():
     musicBox = pygame.mixer.Sound("sounds\\misc\\musicbox.wav")
     musicBox.play(0)
 
+    chickenAvailable = True
+    rabbitAvailable = True
+    bearAvailable = True
+    foxAvailable = True
+    guardAvailable = True
+
     intro.play()
 
     while running:
@@ -194,19 +201,28 @@ def launcher():
         if scene == "multihall":
             ip = input("IP> ")
             port = input("PORT> ")
-            char = input("1 Guard / 2 Rabbit / 3 Chicken / 4 Fox (Doesn't work) / 5 Bear (Doesn't work)")
 
-            if char == "1":
-                import pyDLASYIAS.multiplayer.guard as guard
-                guard.guardMain(host=ip, port=int(port))
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((ip, port))
 
-            if char == "2":
-                import pyDLASYIAS.multiplayer.rabbit as rabbit
-                rabbit.rabbitMain(host=ip, port=int(port))
 
-            if char == "3":
-                import pyDLASYIAS.multiplayer.chicken as chicken
-                chicken.chickenMain(host=ip, port=int(port))
+
+            multigroup.update()
+            multigroup.draw(screen)
+
+            # char = input("1 Guard / 2 Rabbit / 3 Chicken / 4 Fox (Doesn't work) / 5 Bear (Doesn't work)")
+            #
+            # if char == "1":
+            #     import pyDLASYIAS.multiplayer.guard as guard
+            #     guard.guardMain(host=ip, port=int(port))
+            #
+            # if char == "2":
+            #     import pyDLASYIAS.multiplayer.rabbit as rabbit
+            #     rabbit.rabbitMain(host=ip, port=int(port))
+            #
+            # if char == "3":
+            #     import pyDLASYIAS.multiplayer.chicken as chicken
+            #     chicken.chickenMain(host=ip, port=int(port))
 
 
         if scene == "custom":

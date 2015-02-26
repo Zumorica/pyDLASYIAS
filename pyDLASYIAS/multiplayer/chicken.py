@@ -16,7 +16,7 @@ import pyDLASYIAS.pyganim as pyganim
 from pygame.locals import *
 
 class chickenMain():
-    def __init__(self, host="localhost", port=1987, fps=40, width=1280, height=720):
+    def __init__(self, host="localhost", port=1987, fps=60, width=1280, height=720):
 
         sys.setrecursionlimit(5000)
         threading.stack_size(128*4096)

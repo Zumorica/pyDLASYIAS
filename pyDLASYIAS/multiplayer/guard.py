@@ -16,7 +16,7 @@ import pyDLASYIAS.pyganim as pyganim
 from pygame.locals import *
 
 class guardMain(object):
-    def __init__(self, power=100, time=0, sectohour=86, width=1280, height=720, fps=40, host="localhost", port=1987):
+    def __init__(self, power=100, time=0, sectohour=86, width=1280, height=720, fps=60, host="localhost", port=1987):
 
         Globals.main = self
 

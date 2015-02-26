@@ -15,7 +15,7 @@ import pyDLASYIAS.pyganim as pyganim
 from pygame.locals import *
 
 class main(object):
-    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1280, height=720, fps=40):
+    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1280, height=720, fps=60):
 
         Globals.main = self
 
@@ -146,8 +146,6 @@ class main(object):
                 if self.runAtSceneStart == 0 and not self.power < 0:
                     spr.bg.pos = self.lastBgPos
                     self.runAtSceneStart = 1
-
-                self.lastBgPos = spr.bg.pos
 
                 spr.officegroup.add(spr.leftButton)
                 spr.officegroup.add(spr.rightButton)
@@ -360,6 +358,8 @@ class main(object):
                 elif not self.rightlight and self.rightdoor:
                     spr.rightButton.changeImg("office\\button\\right\\d")
 
+                self.lastBgPos = spr.bg.pos
+
                 spr.officegroup.draw(self.screen)
                 spr.officegroup.update()
 
@@ -390,7 +390,7 @@ class main(object):
                     self.changeScene("office")
 
                 if self.runAtSceneStart == 0 and not self.power < 0:
-                    spr.bg.pos = (0,0)
+                    spr.bg.pos = [0,0]
                     self.changeCamera(self.lastcam)
                     snd.channelSeven.play(snd.cameraSoundTwo, -1)
                     self.runAtSceneStart = 1
@@ -611,6 +611,7 @@ class main(object):
                         spr.camgroup.change_layer(spr.foxSprinting, 0)
                         if spr.foxSprinting.has_Finished():
                             self.changeScene("office")
+                            self.changeCamera("cam1a")
                             spr.camgroup.remove(spr.foxSprinting)
 
                 elif self.lastcam == "cam2b":

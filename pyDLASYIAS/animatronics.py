@@ -51,89 +51,94 @@ class animatronic():
         if self.location == "off":
             self.shutdown()
 
-        if self.kind == "chicken" and not self.beingWatched:
+        if self.kind == "chicken":
 
-            if self.location == "cam1a":
+            if self.location == "cam1a" and not self.beingWatched:
                 self.move("cam1b")
 
-            if self.location == "cam1b":
+            if self.location == "cam1b" and not self.beingWatched:
                 self.randomMove(["cam7", "cam6"])
 
-            if self.location == "cam4a":
+            if self.location == "cam4a" and not self.beingWatched:
                 self.randomMove(["cam1b", "cam4b"])
 
-            if self.location == "cam4b":
+            if self.location == "cam4b" and not self.beingWatched:
                 self.randomMove(["cam4a", "rightdoor"])
 
-            if self.location == "cam6":
+            if self.location == "cam6" and not self.beingWatched:
                 self.randomMove(["cam7", "cam4a"])
 
-            if self.location == "cam7":
+            if self.location == "cam7" and not self.beingWatched:
                 self.randomMove(["cam6", "cam4a"])
 
             if self.location == "rightdoor":
-                time.sleep(random.randint(6, 15))
                 if Globals.main.rightdoor:
                      self.randomMove(["cam1b", "rightdoor"])
 
                 else:
                     self.randomMove(["inside", "rightdoor"])
 
-        if self.kind == "rabbit" and not self.beingWatched:
+            time.sleep(4)
 
-            if self.location == "cam1a":
+        if self.kind == "rabbit":
+
+            if self.location == "cam1a" and not self.beingWatched:
                 self.randomMove(["cam5", "cam1b"])
 
-            if self.location == "cam1b":
+            if self.location == "cam1b" and not self.beingWatched:
                 self.randomMove(["cam5", "cam2a"])
 
-            if self.location == "cam2a":
+            if self.location == "cam2a" and not self.beingWatched:
                 self.randomMove(["cam3", "cam2b"])
 
-            if self.location == "cam2b":
+            if self.location == "cam2b" and not self.beingWatched:
                 self.randomMove(["cam3", "leftdoor"])
 
-            if self.location == "cam3":
+            if self.location == "cam3" and not self.beingWatched:
                 self.randomMove(["leftdoor", "cam2a"])
 
-            if self.location == "cam5":
+            if self.location == "cam5" and not self.beingWatched:
                 self.randomMove(["cam1b", "cam2a"])
 
             if self.location == "leftdoor":
-                time.sleep(random.randint(4, 10))
                 if Globals.main.leftdoor:
                      self.randomMove(["cam1b", "leftdoor"])
 
                 else:
                     self.randomMove(["inside", "leftdoor"])
 
-        time.sleep(1)
-        self.think()
+            time.sleep(4)
 
         if self.kind == "fox":
             if self.status < 3 and not self.beingWatched:
                 if random.randint(0, 20) <= self.ailvl:
                     self.status += 1
 
-        if self.kind == "bear" and not self.beingWatched:
+            time.sleep(5)
+
+        if self.kind == "bear":
             if self.location == "cam1a" and Globals.animatronics[0].location != "cam1a" \
-                                        and Globals.animatronics[1].location != "cam1a":
+                                        and Globals.animatronics[1].location != "cam1a" and not self.beingWatched:
                 self.move("cam1b")
 
-            if self.location == "cam1b":
+            if self.location == "cam1b" and not self.beingWatched:
                 self.move("cam7")
 
-            if self.location == "cam7":
+            if self.location == "cam7" and not self.beingWatched:
                 self.move("cam6")
 
-            if self.location == "cam6":
+            if self.location == "cam6" and not self.beingWatched:
                 self.move("cam4a")
 
-            if self.location == "cam4a":
+            if self.location == "cam4a" and not self.beingWatched:
                 self.move("cam4b")
 
-            if self.location == "cam4b":
+            if self.location == "cam4b" and not self.beingWatched and not Globals.main.rightdoor:
                 self.randomMove(["inside", "cam4a"])
+
+            time.sleep(3)
+
+        self.think()
 
     def shutdown(self):
         utils.debugprint("%s is now shutting down" % (self.name), self)
