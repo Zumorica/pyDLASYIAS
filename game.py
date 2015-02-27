@@ -300,7 +300,7 @@ def launcher():
                 chicken = animatronics.animatronic("Chicken", "chicken", chickenai)
                 fox = animatronics.animatronic("Fox", "fox", foxai)
                 bear = animatronics.animatronic("Bear", "bear", bearai)
-                main.main()
+                main.main(power=power, time=time)
 
             timeLabel = font.render(str(time), True, (255, 255, 255))
             powerLabel = font.render(str(power), True, (255, 255, 255))

@@ -15,7 +15,7 @@ import pyDLASYIAS.pyganim as pyganim
 from pygame.locals import *
 
 class main(object):
-    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1280, height=720, fps=60):
+    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1280, height=720, fps=40):
 
         Globals.main = self
 
@@ -39,7 +39,7 @@ class main(object):
         self.killed = False
         self.time = time - 1
         self.sectohour = sectohour
-        self.usage = 1
+        self.usage = 2 # Compensate for runAtSceneStart in office.
         self.scene = "office"
         self.lastcam = "cam1a"
 
@@ -54,6 +54,7 @@ class main(object):
         self.fps = fps
 
         self.screen = pygame.display.set_mode((self.width, self.height), 0, 32)
+
         pygame.display.set_caption("--pyDLASYIAS %s--" %(Globals.version))
 
         pygame.init()
@@ -74,6 +75,8 @@ class main(object):
         self.powerDownStage = 0
 
         spr.cameraAnim.state = pyganim.PAUSED
+
+        self.movable = [spr.bg, spr.rightButton, spr.leftButton, spr.leftDoor, spr.rightDoor, spr.leftDoorButton, spr.rightDoorButton, spr.leftLightButton, spr.rightLightButton]
 
         self.camButtonCooldown = False
 
@@ -137,164 +140,113 @@ class main(object):
 
                     self.runonce = 1
 
+                if self.runAtSceneStart == 0 and not self.power < 0:
+                    spr.bg.pos = self.lastBgPos
+                    self.usage -= 1
+                    self.runAtSceneStart = 1
+
                 if self.time >= 6 :
                     self.changeScene("6am")
 
                 if self.power < 0:
                     self.changeScene("powerdown")
 
-                if self.runAtSceneStart == 0 and not self.power < 0:
-                    spr.bg.pos = self.lastBgPos
-                    self.runAtSceneStart = 1
-
-                spr.officegroup.add(spr.leftButton)
-                spr.officegroup.add(spr.rightButton)
-                spr.officegroup.add(spr.leftDoorButton)
-                spr.officegroup.add(spr.leftLightButton)
-                spr.officegroup.add(spr.rightDoorButton)
-                spr.officegroup.add(spr.rightLightButton)
-                spr.officegroup.add(spr.camButton)
-                spr.officegroup.add(spr.leftDoor)
-                spr.officegroup.add(spr.rightDoor)
                 spr.officegroup.add(spr.bg)
-
                 spr.officegroup.change_layer(spr.bg, 0)
-                spr.officegroup.change_layer(spr.leftButton, 1)
-                spr.officegroup.change_layer(spr.rightButton, 1)
-                spr.officegroup.change_layer(spr.leftDoorButton, 2)
-                spr.officegroup.change_layer(spr.leftLightButton, 2)
-                spr.officegroup.change_layer(spr.rightDoorButton, 2)
-                spr.officegroup.change_layer(spr.rightLightButton, 2)
-                spr.officegroup.change_layer(spr.camButton, 4)
-                spr.officegroup.change_layer(spr.leftDoor, 3)
-                spr.officegroup.change_layer(spr.rightDoor, 3)
+
+                if spr.leftButton.rect.colliderect(self.screen.get_rect()):
+                    spr.officegroup.add(spr.leftButton)
+                    spr.officegroup.change_layer(spr.leftButton, 1)
+
+                    spr.officegroup.add(spr.leftDoorButton)
+                    spr.officegroup.change_layer(spr.leftDoorButton, 2)
+
+                    spr.officegroup.add(spr.leftLightButton)
+                    spr.officegroup.change_layer(spr.leftLightButton, 2)
+
+                elif spr.officegroup.has(spr.leftButton):
+                    spr.officegroup.remove(spr.leftButton)
+
+
+                if spr.rightButton.rect.colliderect(self.screen.get_rect()):
+                    spr.officegroup.add(spr.rightButton)
+                    spr.officegroup.change_layer(spr.rightButton, 1)
+
+                    spr.officegroup.add(spr.rightDoorButton)
+                    spr.officegroup.change_layer(spr.rightDoorButton, 2)
+
+                    spr.officegroup.add(spr.rightLightButton)
+                    spr.officegroup.change_layer(spr.rightLightButton, 2)
+
+                elif spr.officegroup.has(spr.rightButton):
+                    spr.officegroup.remove(spr.rightButton)
+
+
+                if spr.camButton.rect.colliderect(self.screen.get_rect()):
+                    spr.officegroup.add(spr.camButton)
+                    spr.officegroup.change_layer(spr.camButton, 4)
+
+                elif spr.officegroup.has(spr.camButton):
+                    spr.officegroup.remove(spr.camButton)
+
+
+                if spr.leftDoor.rect.colliderect(self.screen.get_rect()):
+                    spr.officegroup.add(spr.leftDoor)
+                    spr.officegroup.change_layer(spr.leftDoor, 3)
+
+                elif spr.officegroup.has(spr.leftDoor):
+                    spr.officegroup.remove(spr.leftDoor)
+
+
+                if spr.rightDoor.rect.colliderect(self.screen.get_rect()):
+                    spr.officegroup.add(spr.rightDoor)
+                    spr.officegroup.change_layer(spr.rightDoor, 3)
+
+                elif spr.officegroup.has(spr.rightDoor):
+                    spr.officegroup.remove(spr.rightDoor)
 
                 self.movingleft = False
                 self.movingright = False
 
                 if self.mousex in range(0, 150) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
-                    spr.bg.pos = (spr.bg.pos[0] + 20, spr.bg.pos[1])
-
-                    spr.rightButton.pos = (spr.rightButton.pos[0] + 20, spr.rightButton.pos[1])
-                    spr.leftButton.pos = (spr.leftButton.pos[0] + 20, spr.leftButton.pos[1])
-
-                    spr.leftDoor.pos = (spr.leftDoor.pos[0] + 20, spr.leftDoor.pos[1])
-                    spr.rightDoor.pos = (spr.rightDoor.pos[0] + 20, spr.rightDoor.pos[1])
-
-                    spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] + 20, spr.leftDoorButton.pos[1])
-                    spr.leftLightButton.pos = (spr.leftLightButton.pos[0] + 20, spr.leftLightButton.pos[1])
-                    spr.rightDoorButton.pos = (spr.rightDoorButton.pos[0] + 20, spr.rightDoorButton.pos[1])
-                    spr.rightLightButton.pos = (spr.rightLightButton.pos[0] + 20, spr.rightLightButton.pos[1])
-
-                    if spr.officegroup.has(spr.leftDoor):
-                        spr.leftDoor.update()
-                    if spr.officegroup.has(spr.rightDoor):
-                        spr.rightDoor.update()
+                    for s in self.movable:
+                        s.pos = (s.pos[0] + 20, s.pos[1])
+                        s.update()
 
                     self.movingleft = True
 
                 if self.mousex in range(150, 315) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
-                    spr.bg.pos = (spr.bg.pos[0] + 10, spr.bg.pos[1])
-
-                    spr.rightButton.pos = (spr.rightButton.pos[0] + 10, spr.rightButton.pos[1])
-                    spr.leftButton.pos = (spr.leftButton.pos[0] + 10, spr.leftButton.pos[1])
-
-                    spr.leftDoor.pos = (spr.leftDoor.pos[0] + 10, spr.leftDoor.pos[1])
-                    spr.rightDoor.pos = (spr.rightDoor.pos[0] + 10, spr.rightDoor.pos[1])
-
-                    spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] + 10, spr.leftDoorButton.pos[1])
-                    spr.leftLightButton.pos = (spr.leftLightButton.pos[0] + 10, spr.leftLightButton.pos[1])
-                    spr.rightDoorButton.pos = (spr.rightDoorButton.pos[0] + 10, spr.rightDoorButton.pos[1])
-                    spr.rightLightButton.pos = (spr.rightLightButton.pos[0] + 10, spr.rightLightButton.pos[1])
-
-                    if spr.officegroup.has(spr.leftDoor):
-                        spr.leftDoor.update()
-                    if spr.officegroup.has(spr.rightDoor):
-                        spr.rightDoor.update()
+                    for s in self.movable:
+                        s.pos = (s.pos[0] + 10, s.pos[1])
+                        s.update()
 
                     self.movingleft = True
 
                 if self.mousex in range(315, 540) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
-                    spr.bg.pos = (spr.bg.pos[0] + 5, spr.bg.pos[1])
-
-                    spr.rightButton.pos = (spr.rightButton.pos[0] + 5, spr.rightButton.pos[1])
-                    spr.leftButton.pos = (spr.leftButton.pos[0] + 5, spr.leftButton.pos[1])
-
-                    spr.leftDoor.pos = (spr.leftDoor.pos[0] + 5, spr.leftDoor.pos[1])
-                    spr.rightDoor.pos = (spr.rightDoor.pos[0] + 5, spr.rightDoor.pos[1])
-
-                    spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] + 5, spr.leftDoorButton.pos[1])
-                    spr.leftLightButton.pos = (spr.leftLightButton.pos[0] + 5, spr.leftLightButton.pos[1])
-                    spr.rightDoorButton.pos = (spr.rightDoorButton.pos[0] + 5, spr.rightDoorButton.pos[1])
-                    spr.rightLightButton.pos = (spr.rightLightButton.pos[0] + 5, spr.rightLightButton.pos[1])
-
-                    if spr.officegroup.has(spr.leftDoor):
-                        spr.leftDoor.update()
-                    if spr.officegroup.has(spr.rightDoor):
-                        spr.rightDoor.update()
+                    for s in self.movable:
+                        s.pos = (s.pos[0] + 5, s.pos[1])
+                        s.update()
 
                     self.movingleft = True
 
                 if self.mousex in range(1140, 1280) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
-                    spr.bg.pos = (spr.bg.pos[0] - 20, spr.bg.pos[1])
-
-                    spr.rightButton.pos = (spr.rightButton.pos[0] - 20, spr.rightButton.pos[1])
-                    spr.leftButton.pos = (spr.leftButton.pos[0] - 20, spr.leftButton.pos[1])
-
-                    spr.leftDoor.pos = (spr.leftDoor.pos[0] - 20, spr.leftDoor.pos[1])
-                    spr.rightDoor.pos = (spr.rightDoor.pos[0] - 20, spr.rightDoor.pos[1])
-
-                    spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] - 20, spr.leftDoorButton.pos[1])
-                    spr.leftLightButton.pos = (spr.leftLightButton.pos[0] - 20, spr.leftLightButton.pos[1])
-                    spr.rightDoorButton.pos = (spr.rightDoorButton.pos[0] - 20, spr.rightDoorButton.pos[1])
-                    spr.rightLightButton.pos = (spr.rightLightButton.pos[0] - 20, spr.rightLightButton.pos[1])
-
-                    if spr.officegroup.has(spr.leftDoor):
-                        spr.leftDoor.update()
-                    if spr.officegroup.has(spr.rightDoor):
-                        spr.rightDoor.update()
+                    for s in self.movable:
+                        s.pos = (s.pos[0] - 20, s.pos[1])
+                        s.update()
 
                     self.movingright = True
 
                 if self.mousex in range(1000, 1140) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
-                    spr.bg.pos = (spr.bg.pos[0] - 10, spr.bg.pos[1])
-
-                    spr.rightButton.pos = (spr.rightButton.pos[0] - 10, spr.rightButton.pos[1])
-                    spr.leftButton.pos = (spr.leftButton.pos[0] - 10, spr.leftButton.pos[1])
-
-                    spr.leftDoor.pos = (spr.leftDoor.pos[0] - 10, spr.leftDoor.pos[1])
-                    spr.rightDoor.pos = (spr.rightDoor.pos[0] - 10, spr.rightDoor.pos[1])
-
-                    spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] - 10, spr.leftDoorButton.pos[1])
-                    spr.leftLightButton.pos = (spr.leftLightButton.pos[0] - 10, spr.leftLightButton.pos[1])
-                    spr.rightDoorButton.pos = (spr.rightDoorButton.pos[0] - 10, spr.rightDoorButton.pos[1])
-                    spr.rightLightButton.pos = (spr.rightLightButton.pos[0] - 10, spr.rightLightButton.pos[1])
-
-                    if spr.officegroup.has(spr.leftDoor):
-                        spr.leftDoor.update()
-                    if spr.officegroup.has(spr.rightDoor):
-                        spr.rightDoor.update()
+                    for s in self.movable:
+                        s.pos = (s.pos[0] - 10, s.pos[1])
+                        s.update()
 
                     self.movingright = True
 
                 if self.mousex in range(750, 1000) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
-                    spr.bg.pos = (spr.bg.pos[0] - 5, spr.bg.pos[1])
-
-                    spr.rightButton.pos = (spr.rightButton.pos[0] - 5, spr.rightButton.pos[1])
-                    spr.leftButton.pos = (spr.leftButton.pos[0] - 5, spr.leftButton.pos[1])
-
-                    spr.leftDoor.pos = (spr.leftDoor.pos[0] - 5, spr.leftDoor.pos[1])
-                    spr.rightDoor.pos = (spr.rightDoor.pos[0] - 5, spr.rightDoor.pos[1])
-
-                    spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] - 5, spr.leftDoorButton.pos[1])
-                    spr.leftLightButton.pos = (spr.leftLightButton.pos[0] - 5, spr.leftLightButton.pos[1])
-                    spr.rightDoorButton.pos = (spr.rightDoorButton.pos[0] - 5, spr.rightDoorButton.pos[1])
-                    spr.rightLightButton.pos = (spr.rightLightButton.pos[0] - 5, spr.rightLightButton.pos[1])
-
-                    if spr.officegroup.has(spr.leftDoor):
-                        spr.leftDoor.update()
-                    if spr.officegroup.has(spr.rightDoor):
-                        spr.rightDoor.update()
+                    for s in self.movable:
+                        s.pos = (s.pos[0] - 5, s.pos[1])
+                        s.update()
 
                     self.movingright = True
 
@@ -393,6 +345,7 @@ class main(object):
                     spr.bg.pos = [0,0]
                     self.changeCamera(self.lastcam)
                     snd.channelSeven.play(snd.cameraSoundTwo, -1)
+                    self.usage += 1
                     self.runAtSceneStart = 1
 
                 spr.camgroup.add(spr.camButton)
@@ -918,128 +871,44 @@ class main(object):
                 self.movingright = False
 
                 if self.mousex in range(0, 150) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
-                    spr.bg.pos = (spr.bg.pos[0] + 20, spr.bg.pos[1])
-
-                    spr.rightButton.pos = (spr.rightButton.pos[0] + 20, spr.rightButton.pos[1])
-                    spr.leftButton.pos = (spr.leftButton.pos[0] + 20, spr.leftButton.pos[1])
-
-                    spr.leftDoor.pos = (spr.leftDoor.pos[0] + 20, spr.leftDoor.pos[1])
-                    spr.rightDoor.pos = (spr.rightDoor.pos[0] + 20, spr.rightDoor.pos[1])
-
-                    spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] + 20, spr.leftDoorButton.pos[1])
-                    spr.leftLightButton.pos = (spr.leftLightButton.pos[0] + 20, spr.leftLightButton.pos[1])
-                    spr.rightDoorButton.pos = (spr.rightDoorButton.pos[0] + 20, spr.rightDoorButton.pos[1])
-                    spr.rightLightButton.pos = (spr.rightLightButton.pos[0] + 20, spr.rightLightButton.pos[1])
-
-                    if spr.officegroup.has(spr.leftDoor):
-                        spr.leftDoor.update()
-                    if spr.officegroup.has(spr.rightDoor):
-                        spr.rightDoor.update()
+                    for s in self.movable:
+                        s.pos = (s.pos[0] + 20, s.pos[1])
+                        s.update()
 
                     self.movingleft = True
 
                 if self.mousex in range(150, 315) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
-                    spr.bg.pos = (spr.bg.pos[0] + 10, spr.bg.pos[1])
-
-                    spr.rightButton.pos = (spr.rightButton.pos[0] + 10, spr.rightButton.pos[1])
-                    spr.leftButton.pos = (spr.leftButton.pos[0] + 10, spr.leftButton.pos[1])
-
-                    spr.leftDoor.pos = (spr.leftDoor.pos[0] + 10, spr.leftDoor.pos[1])
-                    spr.rightDoor.pos = (spr.rightDoor.pos[0] + 10, spr.rightDoor.pos[1])
-
-                    spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] + 10, spr.leftDoorButton.pos[1])
-                    spr.leftLightButton.pos = (spr.leftLightButton.pos[0] + 10, spr.leftLightButton.pos[1])
-                    spr.rightDoorButton.pos = (spr.rightDoorButton.pos[0] + 10, spr.rightDoorButton.pos[1])
-                    spr.rightLightButton.pos = (spr.rightLightButton.pos[0] + 10, spr.rightLightButton.pos[1])
-
-                    if spr.officegroup.has(spr.leftDoor):
-                        spr.leftDoor.update()
-                    if spr.officegroup.has(spr.rightDoor):
-                        spr.rightDoor.update()
+                    for s in self.movable:
+                        s.pos = (s.pos[0] + 10, s.pos[1])
+                        s.update()
 
                     self.movingleft = True
 
                 if self.mousex in range(315, 540) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
-                    spr.bg.pos = (spr.bg.pos[0] + 5, spr.bg.pos[1])
-
-                    spr.rightButton.pos = (spr.rightButton.pos[0] + 5, spr.rightButton.pos[1])
-                    spr.leftButton.pos = (spr.leftButton.pos[0] + 5, spr.leftButton.pos[1])
-
-                    spr.leftDoor.pos = (spr.leftDoor.pos[0] + 5, spr.leftDoor.pos[1])
-                    spr.rightDoor.pos = (spr.rightDoor.pos[0] + 5, spr.rightDoor.pos[1])
-
-                    spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] + 5, spr.leftDoorButton.pos[1])
-                    spr.leftLightButton.pos = (spr.leftLightButton.pos[0] + 5, spr.leftLightButton.pos[1])
-                    spr.rightDoorButton.pos = (spr.rightDoorButton.pos[0] + 5, spr.rightDoorButton.pos[1])
-                    spr.rightLightButton.pos = (spr.rightLightButton.pos[0] + 5, spr.rightLightButton.pos[1])
-
-                    if spr.officegroup.has(spr.leftDoor):
-                        spr.leftDoor.update()
-                    if spr.officegroup.has(spr.rightDoor):
-                        spr.rightDoor.update()
+                    for s in self.movable:
+                        s.pos = (s.pos[0] + 5, s.pos[1])
+                        s.update()
 
                     self.movingleft = True
 
                 if self.mousex in range(1140, 1280) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
-                    spr.bg.pos = (spr.bg.pos[0] - 20, spr.bg.pos[1])
-
-                    spr.rightButton.pos = (spr.rightButton.pos[0] - 20, spr.rightButton.pos[1])
-                    spr.leftButton.pos = (spr.leftButton.pos[0] - 20, spr.leftButton.pos[1])
-
-                    spr.leftDoor.pos = (spr.leftDoor.pos[0] - 20, spr.leftDoor.pos[1])
-                    spr.rightDoor.pos = (spr.rightDoor.pos[0] - 20, spr.rightDoor.pos[1])
-
-                    spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] - 20, spr.leftDoorButton.pos[1])
-                    spr.leftLightButton.pos = (spr.leftLightButton.pos[0] - 20, spr.leftLightButton.pos[1])
-                    spr.rightDoorButton.pos = (spr.rightDoorButton.pos[0] - 20, spr.rightDoorButton.pos[1])
-                    spr.rightLightButton.pos = (spr.rightLightButton.pos[0] - 20, spr.rightLightButton.pos[1])
-
-                    if spr.officegroup.has(spr.leftDoor):
-                        spr.leftDoor.update()
-                    if spr.officegroup.has(spr.rightDoor):
-                        spr.rightDoor.update()
+                    for s in self.movable:
+                        s.pos = (s.pos[0] - 20, s.pos[1])
+                        s.update()
 
                     self.movingright = True
 
                 if self.mousex in range(1000, 1140) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
-                    spr.bg.pos = (spr.bg.pos[0] - 10, spr.bg.pos[1])
-
-                    spr.rightButton.pos = (spr.rightButton.pos[0] - 10, spr.rightButton.pos[1])
-                    spr.leftButton.pos = (spr.leftButton.pos[0] - 10, spr.leftButton.pos[1])
-
-                    spr.leftDoor.pos = (spr.leftDoor.pos[0] - 10, spr.leftDoor.pos[1])
-                    spr.rightDoor.pos = (spr.rightDoor.pos[0] - 10, spr.rightDoor.pos[1])
-
-                    spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] - 10, spr.leftDoorButton.pos[1])
-                    spr.leftLightButton.pos = (spr.leftLightButton.pos[0] - 10, spr.leftLightButton.pos[1])
-                    spr.rightDoorButton.pos = (spr.rightDoorButton.pos[0] - 10, spr.rightDoorButton.pos[1])
-                    spr.rightLightButton.pos = (spr.rightLightButton.pos[0] - 10, spr.rightLightButton.pos[1])
-
-                    if spr.officegroup.has(spr.leftDoor):
-                        spr.leftDoor.update()
-                    if spr.officegroup.has(spr.rightDoor):
-                        spr.rightDoor.update()
+                    for s in self.movable:
+                        s.pos = (s.pos[0] - 10, s.pos[1])
+                        s.update()
 
                     self.movingright = True
 
                 if self.mousex in range(750, 1000) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
-                    spr.bg.pos = (spr.bg.pos[0] - 5, spr.bg.pos[1])
-
-                    spr.rightButton.pos = (spr.rightButton.pos[0] - 5, spr.rightButton.pos[1])
-                    spr.leftButton.pos = (spr.leftButton.pos[0] - 5, spr.leftButton.pos[1])
-
-                    spr.leftDoor.pos = (spr.leftDoor.pos[0] - 5, spr.leftDoor.pos[1])
-                    spr.rightDoor.pos = (spr.rightDoor.pos[0] - 5, spr.rightDoor.pos[1])
-
-                    spr.leftDoorButton.pos = (spr.leftDoorButton.pos[0] - 5, spr.leftDoorButton.pos[1])
-                    spr.leftLightButton.pos = (spr.leftLightButton.pos[0] - 5, spr.leftLightButton.pos[1])
-                    spr.rightDoorButton.pos = (spr.rightDoorButton.pos[0] - 5, spr.rightDoorButton.pos[1])
-                    spr.rightLightButton.pos = (spr.rightLightButton.pos[0] - 5, spr.rightLightButton.pos[1])
-
-                    if spr.officegroup.has(spr.leftDoor):
-                        spr.leftDoor.update()
-                    if spr.officegroup.has(spr.rightDoor):
-                        spr.rightDoor.update()
+                    for s in self.movable:
+                        s.pos = (s.pos[0] - 5, s.pos[1])
+                        s.update()
 
                     self.movingright = True
 
@@ -1074,7 +943,10 @@ class main(object):
 
                 if not snd.channelOne.get_busy() and not snd.channelThirty.get_busy() and self.powerDownStage == 1:
                     snd.channelThirty.set_volume(0.7, 0.3)
-                    snd.channelThirty.play(snd.musicBox, loops=0, maxtime=random.randint(3000, int(snd.musicBox.get_length() * 1000)))
+                    if random.randint(1, 5) == 1:
+                        snd.channelThirty.play(snd.musicBox, loops=0, maxtime=20000)
+                    else:
+                        snd.channelThirty.play(snd.musicBox, loops=0, maxtime=random.randint(3000, int(snd.musicBox.get_length() * 1000)))
                     self.powerDownStage = 2
 
                 if self.powerDownStage == 2:
@@ -1182,6 +1054,9 @@ class main(object):
 
             if spr.cameraAnim.state == pyganim.STOPPED and not self.cameraAnimReversed:
                 self.scene = "cam"
+                spr.cameraAnim.state = pyganim.PAUSED
+                self.runAtSceneStart = 0
+                self.oldtime = 0
 
             self.screen.blit(self.font.render("%s FPS" % round(self.FPSCLOCK.get_fps()), True, (0,255,0)), (10,10))
 
@@ -1314,6 +1189,7 @@ class main(object):
             return None
 
     def changeScene(self, scene):
+
         if scene == "office":
             if not self.cameraAnimReversed:
                 spr.cameraAnim.reverse()
@@ -1324,9 +1200,12 @@ class main(object):
             for animatronic in Globals.animatronics:
                 animatronic.beingWatched = False
 
-            self.usage -= 1
             snd.putDown.play(0)
             self.scene = "office"
+
+            self.runAtSceneStart = 0
+            self.oldtime = 0
+
             for animatronic in Globals.animatronics:
                 if animatronic.location == "inside":
                     self.scene = "scarejump"
@@ -1337,7 +1216,6 @@ class main(object):
                 self.cameraAnimReversed = False
 
             spr.cameraAnim.play()
-            self.usage += 1
 
             if self.leftlight:
                 self.usage -= 1
@@ -1347,27 +1225,31 @@ class main(object):
                 self.rightlight = False
 
             snd.putDown.play(0)
-            # Scene changes at 1170
 
         elif scene == "powerdown":
             self.scene = "powerdown"
+            self.runAtSceneStart = 0
+            self.oldtime = 0
 
         elif scene == "scarejump":
             self.scene = "scarejump"
+            self.runAtSceneStart = 0
+            self.oldtime = 0
 
         elif scene == "dead":
             self.scene = "dead"
+            self.runAtSceneStart = 0
+            self.oldtime = 0
 
         elif scene == "6am":
             self.scene = "6am"
+            self.runAtSceneStart = 0
+            self.oldtime = 0
 
         elif scene == "end":
             self.scene = "end"
-
-        self.runAtSceneStart = 0
-        self.oldtime = 0
-
-        utils.debugprint("Changed scene to %s" % self.scene)
+            self.runAtSceneStart = 0
+            self.oldtime = 0
 
     def current_Milliseconds(self): return int(round(time.time() * 1000))
 

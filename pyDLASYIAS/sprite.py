@@ -21,6 +21,7 @@ class Sprite(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = tuple(self.pos)
 
+
     def changeImg(self, image):
         self.image = pygame.image.load("images\\" + str(image) + ".png")
         self.image = self.image.convert_alpha()
