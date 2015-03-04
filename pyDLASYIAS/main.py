@@ -127,6 +127,8 @@ class main():
 
                 if self.runAtSceneStart == 0 and not self.power < 0:
                     spr.bg.pos = self.lastBgPos
+                    snd.channelOne.set_volume(1.0)
+                    snd.channelSeven.set_volume(0.0)
                     self.usage -= 1
                     self.runAtSceneStart = 1
 
@@ -251,7 +253,7 @@ class main():
                     self.camButtonCooldown = True
                     self.changeScene("cam")
 
-                if not spr.camButton.rect.collidepoint(Globals.pos):
+                if not spr.camButton.rect.collidepoint(Globals.pos) and not spr.cameraAnim.state == pyganim.PLAYING:
                     self.camButtonCooldown = False
 
                 if self.leftlight and not self.rightlight:
@@ -330,6 +332,8 @@ class main():
                     spr.bg.pos = [0,0]
                     self.changeCamera(self.lastcam)
                     snd.channelSeven.play(snd.cameraSoundTwo, -1)
+                    snd.channelSeven.set_volume(1.0)
+                    snd.channelOne.set_volume(0.01)
                     self.usage += 1
                     self.runAtSceneStart = 1
 
@@ -1035,7 +1039,7 @@ class main():
             if spr.cameraAnim.state == pyganim.PLAYING:
                 spr.cameraAnim.blit(self.screen, (0,0))
 
-            if spr.cameraAnim.state == pyganim.STOPPED and not self.cameraAnimReversed:
+            if spr.cameraAnim.getCurrentFrame() == spr.cameraAnim.getFrame(10) and not self.cameraAnimReversed and self.scene == "office":
                 self.scene = "cam"
                 spr.cameraAnim.state = pyganim.PAUSED
                 self.runAtSceneStart = 0
