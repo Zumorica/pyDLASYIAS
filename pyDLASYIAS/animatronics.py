@@ -11,6 +11,7 @@ class animatronic():
         self.name = name
         self.kind = kind
         self.ailvl = ailvl
+
         self.beingWatched = False
         self.status = 0
 

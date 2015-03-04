@@ -3,7 +3,7 @@ import sys
 import os
 import time
 import random
-import _thread
+import socket
 import threading
 import pygame
 from pygame.locals import *
@@ -13,11 +13,14 @@ import pyDLASYIAS.sprite as sprite
 import pyDLASYIAS.main as main
 import pyDLASYIAS.utils.functions as utils
 import pyDLASYIAS.pyganim as pyganim
+try:
+    import pyDLASYIAS.multiplayer as multiplayer
+except ImportError:
+    print("Could not load multiplayer module!")
 
 def launcher():
     running = True
     screen = pygame.display.set_mode((1280, 720), 0, 32)
-    pygame.display.set_caption("--pyDLASYIAS %s--" % (Globals.version))
     FPSCLOCK = pygame.time.Clock()
 
     scene = "intro"
@@ -116,22 +119,13 @@ def launcher():
         startpos=(1154, 470), image="custom\\buttons\\1")
     foxright.groups = group
 
-    intro = pyganim.PygAnimation([("images\\intro\\0.png", 0.75), ("images\\intro\\1.png", 0.50),
-                                  ("images\\intro\\2.png", 0.75), ("images\\intro\\3.png", 0.35),
-                                  ("images\\intro\\4.png", 1.00), ("images\\intro\\5.png", 0.15),
-                                  ("images\\intro\\6.png", 0.35), ("images\\intro\\7.png", 0.50),
-                                  ("images\\intro\\8.png", 0.80), ("images\\intro\\9.png", 0.20),
-                                  ("images\\intro\\10.png", 0.30), ("images\\intro\\11.png", 0.20),
-                                  ("images\\intro\\12.png", 0.20), ("images\\intro\\13.png", 0.35),
-                                  ("images\\intro\\14.png", 1.00), ("images\\intro\\15.png", 0.35),
-                                  ("images\\intro\\16.png", 0.35), ("images\\intro\\17.png", 1.00),
-                                  ("images\\intro\\18.png", 1.00), ("images\\intro\\19.png", 0.65),
-                                  ("images\\intro\\20.png", 0.75), ("images\\intro\\21.png", 0.35),
-                                  ("images\\intro\\22.png", 0.35), ("images\\intro\\23.png", 0.75),
-                                  ("images\\intro\\24.png", 2.00), ("images\\intro\\25.png", 0.45),
-                                  ("images\\intro\\26.png", 1.50), ("images\\intro\\27.png", 0.25),
-                                  ("images\\intro\\28.png", 0.25), ("images\\intro\\29.png", 0.25),
-                                  ("images\\intro\\30.png", 5.00), ("images\\intro\\31.png", 3.00)], loop=False)
+    intro = pyganim.PygAnimation([("images\\intro\\newspaper-0.png", 1), ("images\\intro\\static-0.png", 0.05),
+                                  ("images\\intro\\static-1.png", 0.05), ("images\\intro\\newspaper-0.png", 0.35),
+                                  ("images\\intro\\static-2.png", 0.05), ("images\\intro\\static-3.png", 0.05),
+                                  ("images\\intro\\b-1.png", 0.35), ("images\\intro\\static-6.png", 0.05),
+                                  ("images\\intro\\itsme-0.png", 0.05), ("images\\intro\\static-4.png", 0.05),
+                                  ("images\\intro\\itsme-1.png", 0.05), ("images\\intro\\b-0.png", 0.50),
+                                  ("images\\intro\\static-6.png", 0.05), ("images\\intro\\static-1.png", 0.05)], loop=False)
 
     musicBox = pygame.mixer.Sound("sounds\\misc\\musicbox.wav")
     musicBox.play(0)
@@ -148,6 +142,7 @@ def launcher():
 
         pos = (mousex, mousey)
         mouseClick = False
+        pygame.display.set_caption("--pyDLASYIAS %s-- -%s FPS-" %(Globals.version, round(FPSCLOCK.get_fps())))
 
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
@@ -199,13 +194,15 @@ def launcher():
             group.draw(screen)
 
         if scene == "multihall":
+            print(dir(multiplayer))
+            print(multiplayer)
             ip = input("IP> ")
-            port = input("PORT> ")
+            port = int(input("PORT> "))
 
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((ip, port))
 
-
+            multiplayer.guard.guardMain(host=ip, port=port)
 
             multigroup.update()
             multigroup.draw(screen)
@@ -326,8 +323,7 @@ def launcher():
             customgroup.update()
             customgroup.draw(screen)
 
-        screen.blit(pygame.font.Font(None, 42).render(
-            "%s FPS" % round(FPSCLOCK.get_fps()), True, (0, 255, 0)), (10, 10))
+        #screen.blit(pygame.font.Font(None, 42).render("%s FPS" % round(FPSCLOCK.get_fps()), True, (0, 255, 0)), (10, 10))
 
         pygame.display.flip()
         pygame.display.update()

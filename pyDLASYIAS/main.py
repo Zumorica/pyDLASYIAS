@@ -14,23 +14,16 @@ import pyDLASYIAS.utils.functions as utils
 import pyDLASYIAS.pyganim as pyganim
 from pygame.locals import *
 
-class main(object):
-    def __init__(self, gmode="custom", power=100, time=0, sectohour=86, width=1280, height=720, fps=40):
+class main():
+    def __init__(self, gmode="custom", power=100, time=0, sectohour=86,
+                 width=1280, height=720, fps=40):
 
         Globals.main = self
 
-        sys.setrecursionlimit(5000)
-        threading.stack_size(128*4096)
+        #sys.setrecursionlimit(5000)
+        #threading.stack_size(128*4096)
 
-        self.animlvlsum = 0
         self.gmode = gmode
-
-        for animatronic in Globals.animatronics:
-            self.animlvlsum += animatronic.ailvl
-            self.ailvl = self.animlvlsum / len(Globals.animatronics)
-
-        del self.animlvlsum
-
         self.leftdoor = False
         self.rightdoor = False
         self.leftlight = False
@@ -42,58 +35,48 @@ class main(object):
         self.usage = 2 # Compensate for runAtSceneStart in office.
         self.scene = "office"
         self.lastcam = "cam1a"
-
-        if self.gmode != "survival":
-            threading.Timer(0.01, self.hourTimer).start()
-
-        threading.Timer(0.01, self.powerTimer).start()
-
         self.width = width
         self.height = height
         self.running = True
         self.fps = fps
-
-        self.screen = pygame.display.set_mode((self.width, self.height), 0, 32)
-
-        pygame.display.set_caption("--pyDLASYIAS %s--" %(Globals.version))
-
-        pygame.init()
         self.FPSCLOCK = pygame.time.Clock()
-
         self.font = pygame.font.Font(None, 30)
-
         self.mousex = 0
         self.mousey = 0
-
         self.runAtSceneStart = 0
         self.runonce = 0
-
         self.oldTime = 0
-
         self.camMovement = "left"
-
         self.powerDownStage = 0
-
-        spr.cameraAnim.state = pyganim.PAUSED
-
-        self.movable = [spr.bg, spr.rightButton, spr.leftButton, spr.leftDoor, spr.rightDoor, spr.leftDoorButton, spr.rightDoorButton, spr.leftLightButton, spr.rightLightButton]
-
         self.camButtonCooldown = False
-
         self.leftDoorReversed = False
         self.rightDoorReversed = False
         self.cameraAnimReversed = False
-
         self.lastBgPos = (0,0)
         self.lastLBPos = (0,0)
         self.lastRBPos = (0,0)
-
         self.fullscreen = False
+        self.rabbit = Globals.animatronics[0]
+        self.chicken = Globals.animatronics[1]
+        self.fox = Globals.animatronics[2]
+        self.bear = Globals.animatronics[3]
+        self.screen = pygame.display.set_mode((self.width, self.height), 0, 32)
+        self.movable = [spr.bg, spr.rightButton, spr.leftButton, spr.leftDoor, \
+                        spr.rightDoor, spr.leftDoorButton, spr.rightDoorButton,\
+                        spr.leftLightButton, spr.rightLightButton]
+        self.mainLoop()
+
+    def mainLoop(self):
+        '''Main game loop.'''
+
+        spr.cameraAnim.state = pyganim.PAUSED
+        pygame.init()
 
         while self.running:
 
             Globals.mouseClick = False
             Globals.pos = self.mousex, self.mousey
+            pygame.display.set_caption("--pyDLASYIAS %s-- -%s FPS-" %(Globals.version, round(self.FPSCLOCK.get_fps())))
 
             for event in pygame.event.get():
 
@@ -106,12 +89,11 @@ class main(object):
                 if event.type == KEYUP and event.key == 292:
                     if not self.fullscreen:
                         self.screen = pygame.display.set_mode((self.width, self.height), FULLSCREEN, 32)
-                        pygame.display.set_caption("--pyDLASYIAS %s--" %(Globals.version))
                         self.fullscreen = True
 
                     if self.fullscreen:
                         self.screen = pygame.display.set_mode((self.width, self.height), 0, 32)
-                        pygame.display.set_caption("--pyDLASYIAS %s--" %(Globals.version))
+                        self.fullscreen = False
 
 
                 elif event.type == MOUSEMOTION:
@@ -124,19 +106,22 @@ class main(object):
             if self.scene == "office":
 
                 if self.runonce == 0:
+
                     pygame.mixer.stop()
                     snd.channelOne.play(snd.fanSound, -1)
                     snd.channelTwo.play(snd.ambience, -1)
                     snd.channelThree.play(snd.lightHum, -1)
                     snd.channelEighteen.play(snd.eerieAmbience, -1)
-
                     snd.channelTwo.set_volume(0.5)
                     snd.channelEighteen.set_volume(0.0)
                     snd.channelTwenty.set_volume(0.1)
                     snd.channelTwentyone.set_volume(0.0)
                     snd.channelTwentytwo.set_volume(0.25)
-
                     snd.channelTwentyone.play(snd.robotVoice, -1)
+
+                    if self.gmode != "survival":
+                        threading.Timer(0.01, self.hourTimer).start()
+                    threading.Timer(0.01, self.powerTimer).start()
 
                     self.runonce = 1
 
@@ -270,14 +255,14 @@ class main(object):
                     self.camButtonCooldown = False
 
                 if self.leftlight and not self.rightlight:
-                    if Globals.animatronics[0].location == "leftdoor":
+                    if self.rabbit.location == "leftdoor":
                         spr.bg.changeImg("office\\r")
 
                     else:
                         spr.bg.changeImg(random.choice(["office\\1", "office\\0"]))
 
                 elif not self.leftlight and self.rightlight:
-                    if Globals.animatronics[1].location == "rightdoor":
+                    if self.chicken.location == "rightdoor":
                         spr.bg.changeImg("office\\c")
 
                     else:
@@ -363,10 +348,10 @@ class main(object):
                 spr.camgroup.add(spr.camButtonSeven)
                 spr.camgroup.add(spr.staticTransparent)
 
-                if Globals.animatronics[2].status != 4:
+                if self.fox.status != 4:
                     spr.camgroup.add(spr.bg)
 
-                if Globals.animatronics[2].status != 4 and spr.camgroup.has(spr.bg):
+                if self.fox.status != 4 and spr.camgroup.has(spr.bg):
                     spr.camgroup.change_layer(spr.bg, 0)
 
                 spr.camgroup.change_layer(spr.map, 8)
@@ -383,11 +368,6 @@ class main(object):
                 spr.camgroup.change_layer(spr.camButtonSeven, 10)
                 spr.camgroup.change_layer(spr.camButton, 10)
                 spr.camgroup.change_layer(spr.staticTransparent, 2)
-
-                spr.staticTransparent.changeImg(random.choice(["cameras\\misc\\static\\transparent\\0", "cameras\\misc\\static\\transparent\\1",
-                                                               "cameras\\misc\\static\\transparent\\2", "cameras\\misc\\static\\transparent\\3",
-                                                               "cameras\\misc\\static\\transparent\\4", "cameras\\misc\\static\\transparent\\5",
-                                                               "cameras\\misc\\static\\transparent\\6", "cameras\\misc\\static\\transparent\\7"]))
 
                 if spr.camButtonOneA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.changeCamera("cam1a")
@@ -436,19 +416,19 @@ class main(object):
                     spr.camButtonSix.changeImg("ui\\button\\cam6")
                     spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
-                    if Globals.animatronics[0].location == "cam1a" and Globals.animatronics[1].location == "cam1a" and Globals.animatronics[3].location == "cam1a":
+                    if self.rabbit.location == "cam1a" and self.chicken.location == "cam1a" and self.bear.location == "cam1a":
                         spr.bg.changeImg("cameras\\cam1a\\brc")
 
-                    elif Globals.animatronics[0].location != "cam1a" and Globals.animatronics[1].location == "cam1a" and Globals.animatronics[3].location == "cam1a":
+                    elif self.rabbit.location != "cam1a" and self.chicken.location == "cam1a" and self.bear.location == "cam1a":
                         spr.bg.changeImg("cameras\\cam1a\\bc")
 
-                    elif Globals.animatronics[0].location == "cam1a" and Globals.animatronics[1].location != "cam1a" and Globals.animatronics[3].location == "cam1a":
+                    elif self.rabbit.location == "cam1a" and self.chicken.location != "cam1a" and self.bear.location == "cam1a":
                         spr.bg.changeImg("cameras\\cam1a\\br")
 
-                    elif Globals.animatronics[0].location != "cam1a" and Globals.animatronics[1].location != "cam1a" and Globals.animatronics[3].location == "cam1a":
+                    elif self.rabbit.location != "cam1a" and self.chicken.location != "cam1a" and self.bear.location == "cam1a":
                         spr.bg.changeImg("cameras\\cam1a\\b")
 
-                    elif Globals.animatronics[0].location != "cam1a" and Globals.animatronics[1].location != "cam1a" and Globals.animatronics[3].location != "cam1a":
+                    elif self.rabbit.location != "cam1a" and self.chicken.location != "cam1a" and self.bear.location != "cam1a":
                         spr.bg.changeImg("cameras\\cam1a\\0")
 
                     else:
@@ -473,19 +453,19 @@ class main(object):
                     spr.camButtonSix.changeImg("ui\\button\\cam6")
                     spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
-                    if Globals.animatronics[0].location == "cam1b" and Globals.animatronics[1].location == "cam1b":
+                    if self.rabbit.location == "cam1b" and self.chicken.location == "cam1b":
                         spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",  "cameras\\misc\\static\\2", "cameras\\misc\\static\\3", "cameras\\misc\\static\\4", "cameras\\misc\\static\\5", "cameras\\misc\\static\\6"]))
 
-                    elif Globals.animatronics[0].location == "cam1b" and Globals.animatronics[1].location != "cam1b":
+                    elif self.rabbit.location == "cam1b" and self.chicken.location != "cam1b":
                         spr.bg.changeImg("cameras\\cam1b\\r")
 
-                    elif Globals.animatronics[0].location != "cam1b" and Globals.animatronics[1].location == "cam1b":
+                    elif self.rabbit.location != "cam1b" and self.chicken.location == "cam1b":
                         spr.bg.changeImg("cameras\\cam1b\\r")
 
-                    elif Globals.animatronics[0].location != "cam1b" and Globals.animatronics[1].location != "cam1b" and Globals.animatronics[3].location == "cam1b":
+                    elif self.rabbit.location != "cam1b" and self.chicken.location != "cam1b" and self.bear.location == "cam1b":
                         spr.bg.changeImg("cameras\\cam1b\\b")
 
-                    elif Globals.animatronics[0].location != "cam1b" and Globals.animatronics[1].location != "cam1b" and Globals.animatronics[3].location != "cam1b":
+                    elif self.rabbit.location != "cam1b" and self.chicken.location != "cam1b" and self.bear.location != "cam1b":
                         spr.bg.changeImg("cameras\\cam1b\\0")
 
                     else:
@@ -509,19 +489,19 @@ class main(object):
                     spr.camButtonSix.changeImg("ui\\button\\cam6")
                     spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
-                    if Globals.animatronics[2].status == 0:
+                    if self.fox.status == 0:
                         spr.bg.changeImg("cameras\\cam1c\\0")
 
-                    elif Globals.animatronics[2].status == 1:
+                    elif self.fox.status == 1:
                         spr.bg.changeImg("cameras\\cam1c\\2")
 
-                    elif Globals.animatronics[2].status == 2:
+                    elif self.fox.status == 2:
                         spr.bg.changeImg("cameras\\cam1c\\3")
 
-                    elif Globals.animatronics[2].status == 3:
+                    elif self.fox.status == 3:
                         spr.bg.changeImg("cameras\\cam1c\\4")
 
-                    elif Globals.animatronics[2].status == 4:
+                    elif self.fox.status == 4:
                         spr.bg.changeImg("cameras\\cam1c\\4")
 
                     else:
@@ -545,11 +525,11 @@ class main(object):
                     spr.camButtonSix.changeImg("ui\\button\\cam6")
                     spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
-                    if Globals.animatronics[2].status != 4:
-                        if Globals.animatronics[0].location == "cam2a":
+                    if self.fox.status != 4:
+                        if self.rabbit.location == "cam2a":
                             spr.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\r"]))
 
-                        elif Globals.animatronics[0].location != "cam2a":
+                        elif self.rabbit.location != "cam2a":
                             spr.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\1"]))
 
                         else:
@@ -581,10 +561,10 @@ class main(object):
                     spr.camButtonSix.changeImg("ui\\button\\cam6")
                     spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
-                    if Globals.animatronics[0].location == "cam2b":
+                    if self.rabbit.location == "cam2b":
                         spr.bg.changeImg(random.choice(["cameras\\cam2b\\r", "cameras\\cam2b\\r-1"]))
 
-                    elif Globals.animatronics[0].location != "cam2b":
+                    elif self.rabbit.location != "cam2b":
                         spr.bg.changeImg("cameras\\cam2b\\0")
 
                     else:
@@ -608,10 +588,10 @@ class main(object):
                     spr.camButtonSix.changeImg("ui\\button\\cam6")
                     spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
-                    if Globals.animatronics[0].location == "cam3":
+                    if self.rabbit.location == "cam3":
                         spr.bg.changeImg("cameras\\cam3\\r")
 
-                    elif Globals.animatronics[0].location != "cam3":
+                    elif self.rabbit.location != "cam3":
                         spr.bg.changeImg("cameras\\cam3\\0")
 
                     else:
@@ -635,13 +615,13 @@ class main(object):
                     spr.camButtonSix.changeImg("ui\\button\\cam6")
                     spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
-                    if Globals.animatronics[1].location == "cam4a":
+                    if self.chicken.location == "cam4a":
                         spr.bg.changeImg("cameras\\cam4a\\c")
 
-                    elif Globals.animatronics[1].location != "cam4a" and Globals.animatronics[3].location == "cam4a":
+                    elif self.chicken.location != "cam4a" and self.bear.location == "cam4a":
                         spr.bg.changeImg("cameras\\cam4a\\b")
 
-                    elif Globals.animatronics[1].location != "cam4a" and Globals.animatronics[3].location != "cam4a":
+                    elif self.chicken.location != "cam4a" and self.bear.location != "cam4a":
                         spr.bg.changeImg("cameras\\cam4a\\0")
 
                     else:
@@ -665,13 +645,13 @@ class main(object):
                     spr.camButtonSix.changeImg("ui\\button\\cam6")
                     spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
-                    if Globals.animatronics[1].location == "cam4b":
+                    if self.chicken.location == "cam4b":
                         spr.bg.changeImg("cameras\\cam4b\\c")
 
-                    elif Globals.animatronics[1].location != "cam4b" and Globals.animatronics[3].location == "cam4b":
+                    elif self.chicken.location != "cam4b" and self.bear.location == "cam4b":
                         spr.bg.changeImg("cameras\\cam4b\\b")
 
-                    elif Globals.animatronics[1].location != "cam4b" and Globals.animatronics[3].location != "cam4b":
+                    elif self.chicken.location != "cam4b" and self.bear.location != "cam4b":
                         spr.bg.changeImg("cameras\\cam4b\\0")
 
                     else:
@@ -696,10 +676,10 @@ class main(object):
                     spr.camButtonSix.changeImg("ui\\button\\cam6")
                     spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
-                    if Globals.animatronics[0].location == "cam5":
+                    if self.rabbit.location == "cam5":
                         spr.bg.changeImg("cameras\\cam5\\r")
 
-                    elif Globals.animatronics[0].location != "cam5":
+                    elif self.rabbit.location != "cam5":
                         spr.bg.changeImg("cameras\\cam5\\0")
 
                     else:
@@ -741,13 +721,13 @@ class main(object):
                     spr.camButtonSix.changeImg("ui\\button\\cam6")
                     spr.camButtonSeven.changeImg("ui\\button\\scam7")
 
-                    if Globals.animatronics[1].location == "cam7" and Globals.animatronics[2].location != "cam7":
+                    if self.chicken.location == "cam7" and self.bear.location != "cam7":
                         spr.bg.changeImg("cameras\\cam7\\c")
 
-                    elif Globals.animatronics[1].location != "cam7" and Globals.animatronics[2].location == "cam7":
+                    elif self.chicken.location != "cam7" and self.bear.location == "cam7":
                         spr.bg.changeImg("cameras\\cam7\\b")
 
-                    elif Globals.animatronics[1].location != "cam7" and Globals.animatronics[2].location != "cam7":
+                    elif self.chicken.location != "cam7" and self.bear.location != "cam7":
                         spr.bg.changeImg("cameras\\cam7\\0")
 
                     else:
@@ -786,7 +766,10 @@ class main(object):
                     else:
                         animatronic.beingWatched = False
 
-
+                spr.staticTransparent.changeImg(random.choice(["cameras\\misc\\static\\transparent\\0", "cameras\\misc\\static\\transparent\\1",
+                                                               "cameras\\misc\\static\\transparent\\2", "cameras\\misc\\static\\transparent\\3",
+                                                               "cameras\\misc\\static\\transparent\\4", "cameras\\misc\\static\\transparent\\5",
+                                                               "cameras\\misc\\static\\transparent\\6", "cameras\\misc\\static\\transparent\\7"]))
                 spr.camgroup.draw(self.screen)
                 spr.camgroup.update()
 
@@ -1009,14 +992,14 @@ class main(object):
                 spr.scaregroup.update()
                 spr.scaregroup.draw(self.screen)
 
-            if Globals.animatronics[2].status == 3 and self.lastcam == "cam2a":
-                Globals.animatronics[2].status = 4
+            if self.fox.status == 3 and self.lastcam == "cam2a":
+                self.fox.status = 4
 
-            if Globals.animatronics[2].status == 4 and not self.leftdoor:
+            if self.fox.status == 4 and not self.leftdoor:
                 self.changeScene("office")
-                Globals.animatronics[2].status = 5
+                self.fox.status = 5
 
-            if self.scene == "office" and not self.leftlight and not self.rightlight and Globals.animatronics[2].status != 5:
+            if self.scene == "office" and not self.leftlight and not self.rightlight and self.fox.status != 5:
                 snd.channelThree.set_volume(0.0)
 
             if self.scene == "office" and self.leftlight:
@@ -1058,7 +1041,7 @@ class main(object):
                 self.runAtSceneStart = 0
                 self.oldtime = 0
 
-            self.screen.blit(self.font.render("%s FPS" % round(self.FPSCLOCK.get_fps()), True, (0,255,0)), (10,10))
+            #self.screen.blit(self.font.render("%s FPS" % round(self.FPSCLOCK.get_fps()), True, (0,255,0)), (10,10))
 
             pygame.display.flip()
 
@@ -1078,8 +1061,8 @@ class main(object):
         snd.channelNine.play(snd.blip, 0)
         spr.camgroup.draw(self.screen)
         spr.camgroup.update()
-        if camera == "cam2a" and Globals.animatronics[2].status == 3:
-            Globals.animatronics[2].status = 4
+        if camera == "cam2a" and self.fox.status == 3:
+            self.fox.status = 4
 
         self.lastcam = camera
 
@@ -1176,7 +1159,7 @@ class main(object):
             return None
 
         if not self.rightlight:
-            if Globals.animatronics[1].location == "rightdoor":
+            if self.chicken.location == "rightdoor":
                 snd.channelNine.play(snd.windowScare, 0)
 
             self.rightlight = True
@@ -1195,6 +1178,7 @@ class main(object):
                 spr.cameraAnim.reverse()
                 self.cameraAnimReversed = True
 
+            spr.cameraAnim.state = pyganim.PLAYING
             spr.cameraAnim.play()
 
             for animatronic in Globals.animatronics:
@@ -1215,6 +1199,7 @@ class main(object):
                 spr.cameraAnim.reverse()
                 self.cameraAnimReversed = False
 
+            spr.cameraAnim.state = pyganim.PLAYING
             spr.cameraAnim.play()
 
             if self.leftlight:
