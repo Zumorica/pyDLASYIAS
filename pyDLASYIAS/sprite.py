@@ -9,9 +9,7 @@ class Sprite(pygame.sprite.Sprite):
     def __init__(self, image, startpos=(0,0), autoupdates=True):
         pygame.sprite.Sprite.__init__(self)
         self.pos = list(startpos)
-        self.image = pygame.image.load("images\\" + str(image) + ".png")
-
-        self.image = self.image.convert_alpha()
+        self.image = pygame.image.load("images\\" + str(image) + ".png").convert_alpha()
 
         self.rect = self.image.get_rect()
         if autoupdates:

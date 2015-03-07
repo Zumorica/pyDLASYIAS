@@ -320,7 +320,8 @@ class main():
 
             elif self.scene == "cam":
 
-                self.notStatic = True
+                self.alphaStatic = True
+                self.static = False
 
                 if self.time >= 6 :
                     self.changeScene("6am")
@@ -337,41 +338,23 @@ class main():
                     self.usage += 1
                     self.runAtSceneStart = 1
 
-                spr.camgroup.add(spr.camButton)
-                spr.camgroup.add(spr.map)
-                spr.camgroup.add(spr.camButtonOneA)
-                spr.camgroup.add(spr.camButtonOneB)
-                spr.camgroup.add(spr.camButtonOneC)
-                spr.camgroup.add(spr.camButtonTwoA)
-                spr.camgroup.add(spr.camButtonTwoB)
-                spr.camgroup.add(spr.camButtonThree)
-                spr.camgroup.add(spr.camButtonFourA)
-                spr.camgroup.add(spr.camButtonFourB)
-                spr.camgroup.add(spr.camButtonFive)
-                spr.camgroup.add(spr.camButtonSix)
-                spr.camgroup.add(spr.camButtonSeven)
-                spr.camgroup.add(spr.staticTransparent)
+                spr.camgroup.add(spr.camButton, layer=10)
+                spr.camgroup.add(spr.map, layer=8)
+                spr.camgroup.add(spr.camButtonOneA, layer=10)
+                spr.camgroup.add(spr.camButtonOneB, layer=10)
+                spr.camgroup.add(spr.camButtonOneC, layer=10)
+                spr.camgroup.add(spr.camButtonTwoA, layer=10)
+                spr.camgroup.add(spr.camButtonTwoB, layer=10)
+                spr.camgroup.add(spr.camButtonThree, layer=10)
+                spr.camgroup.add(spr.camButtonFourA, layer=10)
+                spr.camgroup.add(spr.camButtonFourB, layer=10)
+                spr.camgroup.add(spr.camButtonFive, layer=10)
+                spr.camgroup.add(spr.camButtonSix, layer=10)
+                spr.camgroup.add(spr.camButtonSeven, layer=10)
 
                 if self.fox.status != 4:
-                    spr.camgroup.add(spr.bg)
+                    spr.camgroup.add(spr.bg, layer=0)
 
-                if self.fox.status != 4 and spr.camgroup.has(spr.bg):
-                    spr.camgroup.change_layer(spr.bg, 0)
-
-                spr.camgroup.change_layer(spr.map, 8)
-                spr.camgroup.change_layer(spr.camButtonOneA, 10)
-                spr.camgroup.change_layer(spr.camButtonOneB, 10)
-                spr.camgroup.change_layer(spr.camButtonOneC, 10)
-                spr.camgroup.change_layer(spr.camButtonTwoA, 10)
-                spr.camgroup.change_layer(spr.camButtonTwoB, 10)
-                spr.camgroup.change_layer(spr.camButtonThree, 10)
-                spr.camgroup.change_layer(spr.camButtonFourA, 10)
-                spr.camgroup.change_layer(spr.camButtonFourB, 10)
-                spr.camgroup.change_layer(spr.camButtonFive, 10)
-                spr.camgroup.change_layer(spr.camButtonSix, 10)
-                spr.camgroup.change_layer(spr.camButtonSeven, 10)
-                spr.camgroup.change_layer(spr.camButton, 10)
-                spr.camgroup.change_layer(spr.staticTransparent, 2)
 
                 if spr.camButtonOneA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.changeCamera("cam1a")
@@ -406,19 +389,9 @@ class main():
                 if spr.camButtonSeven.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.changeCamera("cam7")
 
-                if self.lastcam == "cam1a":
 
-                    spr.camButtonOneA.changeImg("ui\\button\\scam1a")
-                    spr.camButtonOneB.changeImg("ui\\button\\cam1b")
-                    spr.camButtonOneC.changeImg("ui\\button\\cam1c")
-                    spr.camButtonTwoA.changeImg("ui\\button\\cam2a")
-                    spr.camButtonTwoB.changeImg("ui\\button\\cam2b")
-                    spr.camButtonThree.changeImg("ui\\button\\cam3")
-                    spr.camButtonFourA.changeImg("ui\\button\\cam4a")
-                    spr.camButtonFourB.changeImg("ui\\button\\cam4b")
-                    spr.camButtonFive.changeImg("ui\\button\\cam5")
-                    spr.camButtonSix.changeImg("ui\\button\\cam6")
-                    spr.camButtonSeven.changeImg("ui\\button\\cam7")
+
+                if self.lastcam == "cam1a":
 
                     if self.rabbit.location == "cam1a" and self.chicken.location == "cam1a" and self.bear.location == "cam1a":
                         spr.bg.changeImg("cameras\\cam1a\\brc")
@@ -436,7 +409,7 @@ class main():
                         spr.bg.changeImg("cameras\\cam1a\\0")
 
                     else:
-                        self.notStatic = False
+                        self.alphaStatic = False
                         spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
                                                          "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
                                                          "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
@@ -445,18 +418,6 @@ class main():
 
                 elif self.lastcam == "cam1b":
 
-                    spr.camButtonOneA.changeImg("ui\\button\\cam1a")
-                    spr.camButtonOneB.changeImg("ui\\button\\scam1b")
-                    spr.camButtonOneC.changeImg("ui\\button\\cam1c")
-                    spr.camButtonTwoA.changeImg("ui\\button\\cam2a")
-                    spr.camButtonTwoB.changeImg("ui\\button\\cam2b")
-                    spr.camButtonThree.changeImg("ui\\button\\cam3")
-                    spr.camButtonFourA.changeImg("ui\\button\\cam4a")
-                    spr.camButtonFourB.changeImg("ui\\button\\cam4b")
-                    spr.camButtonFive.changeImg("ui\\button\\cam5")
-                    spr.camButtonSix.changeImg("ui\\button\\cam6")
-                    spr.camButtonSeven.changeImg("ui\\button\\cam7")
-
                     if self.rabbit.location == "cam1b" and self.chicken.location == "cam1b":
                         spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",  "cameras\\misc\\static\\2", "cameras\\misc\\static\\3", "cameras\\misc\\static\\4", "cameras\\misc\\static\\5", "cameras\\misc\\static\\6"]))
 
@@ -464,7 +425,7 @@ class main():
                         spr.bg.changeImg("cameras\\cam1b\\r")
 
                     elif self.rabbit.location != "cam1b" and self.chicken.location == "cam1b":
-                        spr.bg.changeImg("cameras\\cam1b\\r")
+                        spr.bg.changeImg("cameras\\cam1b\\c")
 
                     elif self.rabbit.location != "cam1b" and self.chicken.location != "cam1b" and self.bear.location == "cam1b":
                         spr.bg.changeImg("cameras\\cam1b\\b")
@@ -473,25 +434,10 @@ class main():
                         spr.bg.changeImg("cameras\\cam1b\\0")
 
                     else:
-                        self.notStatic = False
-                        spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
-                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
+                        self.alphaStatic = False
+                        self.static = True
 
                 elif self.lastcam == "cam1c":
-
-                    spr.camButtonOneA.changeImg("ui\\button\\cam1a")
-                    spr.camButtonOneB.changeImg("ui\\button\\cam1b")
-                    spr.camButtonOneC.changeImg("ui\\button\\scam1c")
-                    spr.camButtonTwoA.changeImg("ui\\button\\cam2a")
-                    spr.camButtonTwoB.changeImg("ui\\button\\cam2b")
-                    spr.camButtonThree.changeImg("ui\\button\\cam3")
-                    spr.camButtonFourA.changeImg("ui\\button\\cam4a")
-                    spr.camButtonFourB.changeImg("ui\\button\\cam4b")
-                    spr.camButtonFive.changeImg("ui\\button\\cam5")
-                    spr.camButtonSix.changeImg("ui\\button\\cam6")
-                    spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
                     if self.fox.status == 0:
                         spr.bg.changeImg("cameras\\cam1c\\0")
@@ -509,25 +455,10 @@ class main():
                         spr.bg.changeImg("cameras\\cam1c\\4")
 
                     else:
-                        self.notStatic = False
-                        spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
-                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
+                        self.alphaStatic = False
+                        self.static = True
 
                 elif self.lastcam == "cam2a":
-
-                    spr.camButtonOneA.changeImg("ui\\button\\cam1a")
-                    spr.camButtonOneB.changeImg("ui\\button\\cam1b")
-                    spr.camButtonOneC.changeImg("ui\\button\\cam1c")
-                    spr.camButtonTwoA.changeImg("ui\\button\\scam2a")
-                    spr.camButtonTwoB.changeImg("ui\\button\\cam2b")
-                    spr.camButtonThree.changeImg("ui\\button\\cam3")
-                    spr.camButtonFourA.changeImg("ui\\button\\cam4a")
-                    spr.camButtonFourB.changeImg("ui\\button\\cam4b")
-                    spr.camButtonFive.changeImg("ui\\button\\cam5")
-                    spr.camButtonSix.changeImg("ui\\button\\cam6")
-                    spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
                     if self.fox.status != 4:
                         if self.rabbit.location == "cam2a":
@@ -537,11 +468,9 @@ class main():
                             spr.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\1"]))
 
                         else:
-                            self.notStatic = False
-                            spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                            "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                            "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
-                                                            "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
+                            self.alphaStatic = False
+                            self.static = True
+
                     else:
                         spr.camgroup.remove(spr.bg)
                         spr.camgroup.add(spr.foxSprinting)
@@ -553,18 +482,6 @@ class main():
 
                 elif self.lastcam == "cam2b":
 
-                    spr.camButtonOneA.changeImg("ui\\button\\cam1a")
-                    spr.camButtonOneB.changeImg("ui\\button\\cam1b")
-                    spr.camButtonOneC.changeImg("ui\\button\\cam1c")
-                    spr.camButtonTwoA.changeImg("ui\\button\\cam2a")
-                    spr.camButtonTwoB.changeImg("ui\\button\\scam2b")
-                    spr.camButtonThree.changeImg("ui\\button\\cam3")
-                    spr.camButtonFourA.changeImg("ui\\button\\cam4a")
-                    spr.camButtonFourB.changeImg("ui\\button\\cam4b")
-                    spr.camButtonFive.changeImg("ui\\button\\cam5")
-                    spr.camButtonSix.changeImg("ui\\button\\cam6")
-                    spr.camButtonSeven.changeImg("ui\\button\\cam7")
-
                     if self.rabbit.location == "cam2b":
                         spr.bg.changeImg(random.choice(["cameras\\cam2b\\r", "cameras\\cam2b\\r-1"]))
 
@@ -572,25 +489,10 @@ class main():
                         spr.bg.changeImg("cameras\\cam2b\\0")
 
                     else:
-                        self.notStatic = False
-                        spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
-                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
+                        self.alphaStatic = False
+                        self.static = True
 
                 elif self.lastcam == "cam3":
-
-                    spr.camButtonOneA.changeImg("ui\\button\\cam1a")
-                    spr.camButtonOneB.changeImg("ui\\button\\cam1b")
-                    spr.camButtonOneC.changeImg("ui\\button\\cam1c")
-                    spr.camButtonTwoA.changeImg("ui\\button\\cam2a")
-                    spr.camButtonTwoB.changeImg("ui\\button\\cam2b")
-                    spr.camButtonThree.changeImg("ui\\button\\scam3")
-                    spr.camButtonFourA.changeImg("ui\\button\\cam4a")
-                    spr.camButtonFourB.changeImg("ui\\button\\cam4b")
-                    spr.camButtonFive.changeImg("ui\\button\\cam5")
-                    spr.camButtonSix.changeImg("ui\\button\\cam6")
-                    spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
                     if self.rabbit.location == "cam3":
                         spr.bg.changeImg("cameras\\cam3\\r")
@@ -599,25 +501,10 @@ class main():
                         spr.bg.changeImg("cameras\\cam3\\0")
 
                     else:
-                        self.notStatic = False
-                        spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
-                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
+                        self.alphaStatic = False
+                        self.static = True
 
                 elif self.lastcam == "cam4a":
-
-                    spr.camButtonOneA.changeImg("ui\\button\\cam1a")
-                    spr.camButtonOneB.changeImg("ui\\button\\cam1b")
-                    spr.camButtonOneC.changeImg("ui\\button\\cam1c")
-                    spr.camButtonTwoA.changeImg("ui\\button\\cam2a")
-                    spr.camButtonTwoB.changeImg("ui\\button\\cam2b")
-                    spr.camButtonThree.changeImg("ui\\button\\cam3")
-                    spr.camButtonFourA.changeImg("ui\\button\\scam4a")
-                    spr.camButtonFourB.changeImg("ui\\button\\cam4b")
-                    spr.camButtonFive.changeImg("ui\\button\\cam5")
-                    spr.camButtonSix.changeImg("ui\\button\\cam6")
-                    spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
                     if self.chicken.location == "cam4a":
                         spr.bg.changeImg("cameras\\cam4a\\c")
@@ -629,25 +516,10 @@ class main():
                         spr.bg.changeImg("cameras\\cam4a\\0")
 
                     else:
-                        self.notStatic = False
-                        spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
-                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
+                        self.alphaStatic = False
+                        self.static = True
 
                 elif self.lastcam == "cam4b":
-
-                    spr.camButtonOneA.changeImg("ui\\button\\cam1a")
-                    spr.camButtonOneB.changeImg("ui\\button\\cam1b")
-                    spr.camButtonOneC.changeImg("ui\\button\\cam1c")
-                    spr.camButtonTwoA.changeImg("ui\\button\\cam2a")
-                    spr.camButtonTwoB.changeImg("ui\\button\\cam2b")
-                    spr.camButtonThree.changeImg("ui\\button\\cam3")
-                    spr.camButtonFourA.changeImg("ui\\button\\cam4a")
-                    spr.camButtonFourB.changeImg("ui\\button\\scam4b")
-                    spr.camButtonFive.changeImg("ui\\button\\cam5")
-                    spr.camButtonSix.changeImg("ui\\button\\cam6")
-                    spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
                     if self.chicken.location == "cam4b":
                         spr.bg.changeImg("cameras\\cam4b\\c")
@@ -659,26 +531,11 @@ class main():
                         spr.bg.changeImg("cameras\\cam4b\\0")
 
                     else:
-                        self.notStatic = False
-                        spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
-                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
+                        self.alphaStatic = False
+                        self.static = True
 
 
                 elif self.lastcam == "cam5":
-
-                    spr.camButtonOneA.changeImg("ui\\button\\cam1a")
-                    spr.camButtonOneB.changeImg("ui\\button\\cam1b")
-                    spr.camButtonOneC.changeImg("ui\\button\\cam1c")
-                    spr.camButtonTwoA.changeImg("ui\\button\\cam2a")
-                    spr.camButtonTwoB.changeImg("ui\\button\\cam2b")
-                    spr.camButtonThree.changeImg("ui\\button\\cam3")
-                    spr.camButtonFourA.changeImg("ui\\button\\cam4a")
-                    spr.camButtonFourB.changeImg("ui\\button\\cam4b")
-                    spr.camButtonFive.changeImg("ui\\button\\scam5")
-                    spr.camButtonSix.changeImg("ui\\button\\cam6")
-                    spr.camButtonSeven.changeImg("ui\\button\\cam7")
 
                     if self.rabbit.location == "cam5":
                         spr.bg.changeImg("cameras\\cam5\\r")
@@ -687,43 +544,17 @@ class main():
                         spr.bg.changeImg("cameras\\cam5\\0")
 
                     else:
-                        self.notStatic = False
-                        spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
-                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
-
+                        self.alphaStatic = False
+                        self.static = True
 
                 elif self.lastcam == "cam6":
 
-                    spr.camButtonOneA.changeImg("ui\\button\\cam1a")
-                    spr.camButtonOneB.changeImg("ui\\button\\cam1b")
-                    spr.camButtonOneC.changeImg("ui\\button\\cam1c")
-                    spr.camButtonTwoA.changeImg("ui\\button\\cam2a")
-                    spr.camButtonTwoB.changeImg("ui\\button\\cam2b")
-                    spr.camButtonThree.changeImg("ui\\button\\cam3")
-                    spr.camButtonFourA.changeImg("ui\\button\\cam4a")
-                    spr.camButtonFourB.changeImg("ui\\button\\cam4b")
-                    spr.camButtonFive.changeImg("ui\\button\\cam5")
-                    spr.camButtonSix.changeImg("ui\\button\\scam6")
-                    spr.camButtonSeven.changeImg("ui\\button\\cam7")
+                    self.alphaStatic = False
+                    self.static = False
 
-                    self.notStatic = False
                     spr.bg.changeImg("cameras\\misc\\black")
 
                 elif self.lastcam == "cam7":
-
-                    spr.camButtonOneA.changeImg("ui\\button\\cam1a")
-                    spr.camButtonOneB.changeImg("ui\\button\\cam1b")
-                    spr.camButtonOneC.changeImg("ui\\button\\cam1c")
-                    spr.camButtonTwoA.changeImg("ui\\button\\cam2a")
-                    spr.camButtonTwoB.changeImg("ui\\button\\cam2b")
-                    spr.camButtonThree.changeImg("ui\\button\\cam3")
-                    spr.camButtonFourA.changeImg("ui\\button\\cam4a")
-                    spr.camButtonFourB.changeImg("ui\\button\\cam4b")
-                    spr.camButtonFive.changeImg("ui\\button\\cam5")
-                    spr.camButtonSix.changeImg("ui\\button\\cam6")
-                    spr.camButtonSeven.changeImg("ui\\button\\scam7")
 
                     if self.chicken.location == "cam7" and self.bear.location != "cam7":
                         spr.bg.changeImg("cameras\\cam7\\c")
@@ -735,11 +566,8 @@ class main():
                         spr.bg.changeImg("cameras\\cam7\\0")
 
                     else:
-                        self.notStatic = False
-                        spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
-                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
+                        self.alphaStatic = False
+                        self.static = True
 
                 if spr.camButton.rect.collidepoint(Globals.pos) and not self.camButtonCooldown:
                     self.camButtonCooldown = True
@@ -748,20 +576,18 @@ class main():
                 if not spr.camButton.rect.collidepoint(Globals.pos):
                     self.camButtonCooldown = False
 
-                if spr.bg.rect.topright[0] == 1280 and self.notStatic:
+                if spr.bg.rect.topright[0] == 1270 and not self.static and self.alphaStatic:
                     self.camMovement = "right"
 
-                if spr.bg.rect.topleft[0] == 0 and self.notStatic:
+                if spr.bg.rect.topleft[0] == 10 and not self.static and self.alphaStatic:
                     self.camMovement = "left"
 
-                if self.camMovement == "right" and self.notStatic:
+                if self.camMovement == "right" and not self.static and self.alphaStatic:
                     spr.bg.pos = (spr.bg.pos[0] + 5, spr.bg.pos[1])
 
-                if self.camMovement == "left" and self.notStatic:
+                if self.camMovement == "left" and not self.static and self.alphaStatic:
                     spr.bg.pos = (spr.bg.pos[0] - 5, spr.bg.pos[1])
 
-                if not self.notStatic:
-                    spr.bg.pos = (0,0)
 
                 for animatronic in Globals.animatronics:
                     if animatronic.location == self.lastcam:
@@ -770,10 +596,24 @@ class main():
                     else:
                         animatronic.beingWatched = False
 
-                spr.staticTransparent.changeImg(random.choice(["cameras\\misc\\static\\transparent\\0", "cameras\\misc\\static\\transparent\\1",
-                                                               "cameras\\misc\\static\\transparent\\2", "cameras\\misc\\static\\transparent\\3",
-                                                               "cameras\\misc\\static\\transparent\\4", "cameras\\misc\\static\\transparent\\5",
-                                                               "cameras\\misc\\static\\transparent\\6", "cameras\\misc\\static\\transparent\\7"]))
+
+                if self.alphaStatic:
+                    spr.camgroup.add(spr.staticTransparent, layer=2)
+                    spr.staticTransparent.changeImg(random.choice(["cameras\\misc\\static\\transparent\\0", "cameras\\misc\\static\\transparent\\1",
+                                                                   "cameras\\misc\\static\\transparent\\2", "cameras\\misc\\static\\transparent\\3",
+                                                                   "cameras\\misc\\static\\transparent\\4", "cameras\\misc\\static\\transparent\\5",
+                                                                   "cameras\\misc\\static\\transparent\\6", "cameras\\misc\\static\\transparent\\7"]))
+                if not self.alphaStatic:
+                    spr.bg.pos = (0,0)
+                    spr.camgroup.remove(spr.staticTransparent)
+
+                if self.static:
+                    spr.bg.pos = (0,0)
+                    spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                    "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                    "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
+                                                    "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
+
                 spr.camgroup.draw(self.screen)
                 spr.camgroup.update()
 
@@ -1062,6 +902,62 @@ class main():
         os.system("exit")
 
     def changeCamera(self, camera):
+
+        if camera == "cam1a":
+            spr.camButtonOneA.changeImg("ui\\button\\scam1a")
+        else:
+            spr.camButtonOneA.changeImg("ui\\button\\cam1a")
+
+        if camera == "cam1b":
+            spr.camButtonOneB.changeImg("ui\\button\\scam1b")
+        else:
+            spr.camButtonOneB.changeImg("ui\\button\\cam1b")
+
+        if camera == "cam1c":
+            spr.camButtonOneC.changeImg("ui\\button\\scam1c")
+        else:
+            spr.camButtonOneC.changeImg("ui\\button\\cam1c")
+
+        if camera == "cam2a":
+            spr.camButtonTwoA.changeImg("ui\\button\\scam2a")
+        else:
+            spr.camButtonTwoA.changeImg("ui\\button\\cam2a")
+
+        if camera == "cam2b":
+            spr.camButtonTwoB.changeImg("ui\\button\\scam2b")
+        else:
+            spr.camButtonTwoB.changeImg("ui\\button\\cam2b")
+
+        if camera == "cam3":
+            spr.camButtonThree.changeImg("ui\\button\\scam3")
+        else:
+            spr.camButtonThree.changeImg("ui\\button\\cam3")
+
+        if camera == "cam4a":
+            spr.camButtonFourA.changeImg("ui\\button\\scam4a")
+        else:
+            spr.camButtonFourA.changeImg("ui\\button\\cam4a")
+
+        if camera == "cam4b":
+            spr.camButtonFourB.changeImg("ui\\button\\scam4b")
+        else:
+            spr.camButtonFourB.changeImg("ui\\button\\cam4b")
+
+        if camera == "cam5":
+            spr.camButtonFive.changeImg("ui\\button\\scam5")
+        else:
+            spr.camButtonFive.changeImg("ui\\button\\cam5")
+
+        if camera == "cam6":
+            spr.camButtonSix.changeImg("ui\\button\\scam6")
+        else:
+            spr.camButtonSix.changeImg("ui\\button\\cam6")
+
+        if camera == "cam7":
+            spr.camButtonSeven.changeImg("ui\\button\\scam7")
+        else:
+            spr.camButtonSeven.changeImg("ui\\button\\cam7")
+
         snd.channelNine.play(snd.blip, 0)
         spr.camgroup.draw(self.screen)
         spr.camgroup.update()
