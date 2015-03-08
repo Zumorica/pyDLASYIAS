@@ -401,10 +401,7 @@ class main():
 
                     else:
                         self.alphaStatic = False
-                        spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                         "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                         "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
-                                                         "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
+                        self.static = True
 
 
                 elif self.lastcam == "cam1b":
@@ -464,12 +461,13 @@ class main():
 
                     else:
                         spr.camgroup.remove(spr.bg)
-                        spr.camgroup.add(spr.foxSprinting)
-                        spr.camgroup.change_layer(spr.foxSprinting, 0)
+                        spr.camgroup.add(spr.foxSprinting, layer=0)
                         if spr.foxSprinting.has_Finished():
+                            self.fox.status = 5
+                            spr.camgroup.remove(spr.foxSprinting)
+                            spr.camgroup.add(spr.bg)
                             self.changeScene("office")
                             self.changeCamera("cam1a")
-                            spr.camgroup.remove(spr.foxSprinting)
 
                 elif self.lastcam == "cam2b":
 
