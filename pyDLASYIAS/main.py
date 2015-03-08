@@ -55,6 +55,8 @@ class main():
         self.lastBgPos = (0,0)
         self.lastLBPos = (0,0)
         self.lastRBPos = (0,0)
+        self.alphaStatic = True
+        self.static = False
         self.fullscreen = False
         self.rabbit = Globals.animatronics[0]
         self.chicken = Globals.animatronics[1]
@@ -142,52 +144,39 @@ class main():
                 spr.officegroup.change_layer(spr.bg, 0)
 
                 if spr.leftButton.rect.colliderect(self.screen.get_rect()):
-                    spr.officegroup.add(spr.leftButton)
-                    spr.officegroup.change_layer(spr.leftButton, 1)
-
-                    spr.officegroup.add(spr.leftDoorButton)
-                    spr.officegroup.change_layer(spr.leftDoorButton, 2)
-
-                    spr.officegroup.add(spr.leftLightButton)
-                    spr.officegroup.change_layer(spr.leftLightButton, 2)
+                    spr.officegroup.add(spr.leftButton, layer=1)
+                    spr.officegroup.add(spr.leftDoorButton, layer=2)
+                    spr.officegroup.add(spr.leftLightButton, layer=2)
 
                 elif spr.officegroup.has(spr.leftButton):
                     spr.officegroup.remove(spr.leftButton)
 
 
                 if spr.rightButton.rect.colliderect(self.screen.get_rect()):
-                    spr.officegroup.add(spr.rightButton)
-                    spr.officegroup.change_layer(spr.rightButton, 1)
-
-                    spr.officegroup.add(spr.rightDoorButton)
-                    spr.officegroup.change_layer(spr.rightDoorButton, 2)
-
-                    spr.officegroup.add(spr.rightLightButton)
-                    spr.officegroup.change_layer(spr.rightLightButton, 2)
+                    spr.officegroup.add(spr.rightButton, layer=1)
+                    spr.officegroup.add(spr.rightDoorButton, layer=2)
+                    spr.officegroup.add(spr.rightLightButton, layer=2)
 
                 elif spr.officegroup.has(spr.rightButton):
                     spr.officegroup.remove(spr.rightButton)
 
 
                 if spr.camButton.rect.colliderect(self.screen.get_rect()):
-                    spr.officegroup.add(spr.camButton)
-                    spr.officegroup.change_layer(spr.camButton, 4)
+                    spr.officegroup.add(spr.camButton, layer=4)
 
                 elif spr.officegroup.has(spr.camButton):
                     spr.officegroup.remove(spr.camButton)
 
 
                 if spr.leftDoor.rect.colliderect(self.screen.get_rect()):
-                    spr.officegroup.add(spr.leftDoor)
-                    spr.officegroup.change_layer(spr.leftDoor, 3)
+                    spr.officegroup.add(spr.leftDoor, layer=3)
 
                 elif spr.officegroup.has(spr.leftDoor):
                     spr.officegroup.remove(spr.leftDoor)
 
 
                 if spr.rightDoor.rect.colliderect(self.screen.get_rect()):
-                    spr.officegroup.add(spr.rightDoor)
-                    spr.officegroup.change_layer(spr.rightDoor, 3)
+                    spr.officegroup.add(spr.rightDoor, layer=3)
 
                 elif spr.officegroup.has(spr.rightDoor):
                     spr.officegroup.remove(spr.rightDoor)
@@ -237,6 +226,7 @@ class main():
 
                     self.movingright = True
 
+
                 if spr.leftLightButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.leftLight()
 
@@ -248,6 +238,7 @@ class main():
 
                 if spr.rightDoorButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
                     self.rightDoor()
+
 
                 if spr.camButton.rect.collidepoint(Globals.pos) and not self.camButtonCooldown:
                     self.camButtonCooldown = True
@@ -549,6 +540,7 @@ class main():
 
                 elif self.lastcam == "cam6":
 
+                    spr.bg.pos = (0,0)
                     self.alphaStatic = False
                     self.static = False
 
@@ -604,11 +596,9 @@ class main():
                                                                    "cameras\\misc\\static\\transparent\\4", "cameras\\misc\\static\\transparent\\5",
                                                                    "cameras\\misc\\static\\transparent\\6", "cameras\\misc\\static\\transparent\\7"]))
                 if not self.alphaStatic:
-                    spr.bg.pos = (0,0)
                     spr.camgroup.remove(spr.staticTransparent)
 
                 if self.static:
-                    spr.bg.pos = (0,0)
                     spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
                                                     "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
                                                     "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
@@ -820,6 +810,7 @@ class main():
 
                 if self.runAtSceneStart == 0:
                     pygame.mixer.stop()
+                    spr.bg.pos = (0,0)
                     snd.channelOne.set_volume(1.0)
                     snd.channelOne.play(snd.musicBox, loops=-1)
                     self.runAtSceneStart = 1

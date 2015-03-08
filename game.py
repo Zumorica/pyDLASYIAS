@@ -277,7 +277,7 @@ def launcher():
             if timeleft.rect.collidepoint(pos) and mouseClick and time != 0:
                 time -= 1
 
-            if timeright.rect.collidepoint(pos) and mouseClick and time != 6:
+            if timeright.rect.collidepoint(pos) and mouseClick and time != 5:
                 time += 1
 
             if powerleft.rect.collidepoint(pos) and mouseClick:
