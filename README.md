@@ -26,104 +26,104 @@ Roadmap:
 Current objective: More performance, better AI
 Optional objective: Multiplayer game (Server is 57 %!)
 
--Animatronics' AI
+    -Animatronics' AI
+    
+        +Bear        75 %
+    
+        +Rabbit     100 %
+    
+        +Chicken    100 %
+    
+        +Fox         58 %
+    
+    -Sprites
 
-    +Bear        75 %
+        +Custom sprite class      100 %
     
-    +Rabbit     100 %
+        +Animations (Not pyganim) 100 % (Could be better, tho...)
     
-    +Chicken    100 %
+        +Sprites (Images)         100 %
     
-    +Fox         58 %
-    
--Sprites
+    -Sounds
 
-    +Custom sprite class      100 %
+        +Channels              59 %
     
-    +Animations (Not pyganim) 100 % (Could be better, tho...)
+        +Sounds (Sounds)      100 % (Some of them aren't implemented yet.)
     
-    +Sprites (Images)         100 %
-    
--Sounds
+    -Gameplay
 
-    +Channels              59 %
+        +Office scene
+        
+            *Left Button
+        
+                /Left Door Button    100 %
+            
+                /Left Light Button   100 %
+            
+            *Right Button
+        
+                /Right Door Button   100 %
+            
+                /Right Light Button  100 %
+        
+            *Camera Button            89 % (Sometimes has a few bugs...) 
+            
+            *Indicators
+        
+                /Time indicator      100 %
+            
+                /Power indicator     100 %
+            
+                /Usage indicator     100 % (But could use images instead)
+            
+            *Animations
+        
+                /Left Door animation  65 % (Has some bugs, lags the whole scene)
+            
+                /Right Door animation 65 % (Has some bugs, lags the whole scene)
+            
+        +Camera scene
     
-    +Sounds (Sounds)      100 % (Some of them aren't implemented yet.)
+            *Cameras showing animatronics       87 % (I think there are some bugs, but I'm not sure.)
+        
+            *Changing camera                    93 % (Needs a static that stays for a few moments when changing     cameras...)
+        
+            *Static                           100 % (Could also be better...)
+        
+            *Alpha static                       ? % (LAGS THE WHOLE SCENE.)
+        
+            *Fox animation                    100 % (A little slow, but works well.)
+        
+        +Jumpscare scene
     
--Gameplay
-
-    +Office scene
+            *Bear Scarejump (Normal)          100 % (Scared me a few times!)
         
-        *Left Button
+            *Bear Scarejump (Powerdown)       100 %
         
-            /Left Door Button    100 %
-            
-            /Left Light Button   100 %
-            
-        *Right Button
+            *Rabbit Scarejump                 100 %
         
-            /Right Door Button   100 %
-            
-            /Right Light Button  100 %
+            *Chicken Scarejump                100 %
         
-        *Camera Button            89 % (Sometimes has a few bugs...) 
-            
-        *Indicators
+            *Fox Scarejump                    100 %
         
-            /Time indicator      100 %
-            
-            /Power indicator     100 %
-            
-            /Usage indicator     100 % (But could use images instead)
-            
-        *Animations
-        
-            /Left Door animation  65 % (Has some bugs, lags the whole scene)
-            
-            /Right Door animation 65 % (Has some bugs, lags the whole scene)
-            
-    +Camera scene
+        +Powerdown scene
     
-        *Cameras showing animatronics       87 % (I think there are some bugs, but I'm not sure.)
-        
-        *Changing camera                    93 % (Needs a static that stays for a few moments when changing cameras...)
-        
-        *Static                           100 % (Could also be better...)
-        
-        *Alpha static                       ? % (LAGS THE WHOLE SCENE.)
-        
-        *Fox animation                    100 % (A little slow, but works well.)
-        
-    +Jumpscare scene
-    
-        *Bear Scarejump (Normal)          100 % (Scared me a few times!)
-        
-        *Bear Scarejump (Powerdown)       100 %
-        
-        *Rabbit Scarejump                 100 %
-        
-        *Chicken Scarejump                100 %
-        
-        *Fox Scarejump                    100 %
-        
-    +Powerdown scene
-    
-        *Stages
+            *Stages
             
-            /Power goes down                        100 %
+                /Power goes down                        100 %
             
-            /Freddy at the door playing his song    100 %
+                /Freddy at the door playing his song    100 %
             
-            /Everything is black now...             100 %
+               /Everything is black now...             100 %
             
-    +6AM Scene
+       +6AM Scene
     
-        *5AM to 6AM     100 %
+          *5AM to 6AM     100 %
         
-    +End scene  (Should return to menu instead of looping endlessly.)
+        +End scene  (Should return to menu instead of looping endlessly.)
     
-        *Image          100 %
+          *Image          100 %
         
-        *Music box      100 %
+         *Music box      100 %
             
     
