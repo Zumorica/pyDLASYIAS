@@ -196,7 +196,7 @@ if __name__ == "__main__":
     threading.Timer(86, hourTimer).start()
     threading.Thread(target=cmd).start()
     threading.Thread(target=sendData).start()
-    server = socketserver.ThreadingTCPServer(('localhost', 1987), requestHandler)
+    server = socketserver.ThreadingTCPServer(('', 1987), requestHandler)
     server.serve_forever()
 
 else:

@@ -241,7 +241,7 @@ def launcher():
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((ip, port))
 
-            multiplayer.guard.guardMain(host=ip, port=port)
+            multiplayer.chicken.chickenMain(host=ip, port=port)
 
             multigroup.update()
             multigroup.draw(screen)

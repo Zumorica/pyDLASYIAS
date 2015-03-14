@@ -3,6 +3,7 @@ import pyDLASYIAS.pyganim as pyganim
 import pygame
 from pygame.locals import *
 
+
 def init():
     global allgroup, officegroup, camgroup, scaregroup, animationgroup
 
