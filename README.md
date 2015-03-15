@@ -30,19 +30,19 @@ I don't own Pyganim neither. Here is their webpage! http://inventwithpython.com/
 
 Roadmap:
 
-    Current objective: Tweak EVERYTHING! / Foxkind.
+    Current objective: ...
     
     Optional objective: Multiplayer game (Server is 57 %!)
 
     -Animatronics' AI
     
-        +Bear        75 %
+        +Bear       100 %
     
         +Rabbit     100 %
     
         +Chicken    100 %
     
-        +Fox         58 %
+        +Fox        100 %
     
     -Sprites
 
@@ -52,11 +52,11 @@ Roadmap:
     
         +Sprites (Images)         100 %
         
-        +Placeholders              40 %
+        +Placeholders               ? %
     
     -Sounds
 
-        +Channels              72 %
+        +Channels             100 %
     
         +Sounds (Sounds)      100 % (Some of them aren't implemented yet.)
     
@@ -76,9 +76,9 @@ Roadmap:
             
                 /Right Light Button  100 %
         
-            *Camera Button            89 % (Sometimes has a few bugs...) 
+            *Camera Button           100 %
             
-            *Honk!                     1 %
+            *Honk!                     0 %
             
             *Indicators
         
@@ -90,25 +90,25 @@ Roadmap:
             
             *Animations
         
-                /Left Door animation  65 % (Has some bugs, lags the whole scene)
+                /Left Door animation  100 %
             
-                /Right Door animation 65 % (Has some bugs, lags the whole scene)
+                /Right Door animation 10 %
             
         +Camera scene
     
-            *Cameras showing animatronics       95 % (I think there are some bugs, but I'm not sure.)
+            *Cameras showing animatronics      100 %
         
             *Changing camera                   100 %
         
-            *Static                            100 % (Could also be better...)
+            *Static                            100 %
         
-            *Alpha static                        ? % (LAGS THE WHOLE SCENE.)
+            *Alpha static                      100 %
         
-            *Fox animation                     100 % (A little slow, but works well...)
+            *Fox animation                     100 %
         
         +Jumpscare scene
     
-            *Bear Scarejump (Normal)          100 % (Scared me a few times!)
+            *Bear Scarejump (Normal)          100 %
         
             *Bear Scarejump (Powerdown)       100 %
         
