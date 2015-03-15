@@ -30,7 +30,7 @@ I don't own Pyganim neither. Here is their webpage! http://inventwithpython.com/
 
 Roadmap:
 
-Current objective: More performance, better AI
+Current objective: Tweak EVERYTHING! / Foxkind.
 Optional objective: Multiplayer game (Server is 57 %!)
 
     -Animatronics' AI
@@ -50,10 +50,12 @@ Optional objective: Multiplayer game (Server is 57 %!)
         +Animations (Not pyganim) 100 % (Could be better, tho...)
     
         +Sprites (Images)         100 %
+        
+        +Placeholders              40 %
     
     -Sounds
 
-        +Channels              59 %
+        +Channels              72 %
     
         +Sounds (Sounds)      100 % (Some of them aren't implemented yet.)
     
@@ -75,6 +77,8 @@ Optional objective: Multiplayer game (Server is 57 %!)
         
             *Camera Button            89 % (Sometimes has a few bugs...) 
             
+            *Honk!                     1 %
+            
             *Indicators
         
                 /Time indicator      100 %
@@ -91,15 +95,15 @@ Optional objective: Multiplayer game (Server is 57 %!)
             
         +Camera scene
     
-            *Cameras showing animatronics       87 % (I think there are some bugs, but I'm not sure.)
+            *Cameras showing animatronics       95 % (I think there are some bugs, but I'm not sure.)
         
-            *Changing camera                    93 % (Needs a static that stays for a few moments when changing     cameras...)
+            *Changing camera                   100 %
         
-            *Static                           100 % (Could also be better...)
+            *Static                            100 % (Could also be better...)
         
-            *Alpha static                       ? % (LAGS THE WHOLE SCENE.)
+            *Alpha static                        ? % (LAGS THE WHOLE SCENE.)
         
-            *Fox animation                    100 % (A little slow, but works well.)
+            *Fox animation                     100 % (A little slow, but works well...)
         
         +Jumpscare scene
     
