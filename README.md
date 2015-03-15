@@ -30,8 +30,9 @@ I don't own Pyganim neither. Here is their webpage! http://inventwithpython.com/
 
 Roadmap:
 
-Current objective: Tweak EVERYTHING! / Foxkind.
-Optional objective: Multiplayer game (Server is 57 %!)
+    Current objective: Tweak EVERYTHING! / Foxkind.
+    
+    Optional objective: Multiplayer game (Server is 57 %!)
 
     -Animatronics' AI
     
