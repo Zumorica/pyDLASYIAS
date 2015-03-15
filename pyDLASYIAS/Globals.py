@@ -9,7 +9,7 @@ def init():
 
     version = "v1.0.0"
 
-    debug = False
+    debug = True
 
     animatronics = []
 

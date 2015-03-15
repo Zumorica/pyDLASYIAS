@@ -123,6 +123,7 @@ class main():
                     snd.channelTwentytwo.set_volume(0.25)
                     snd.channelEleven.set_volume(0.05)
                     snd.channelTen.set_volume(0.0)
+                    snd.channelFour.set_volume(0.5)
 
                     if self.gmode != "survival":
                         threading.Timer(0.01, self.hourTimer).start()
@@ -132,6 +133,7 @@ class main():
                 if self.runAtSceneStart == 0 and not self.power < 0:
                     spr.bg.pos = self.lastBgPos
                     snd.channelOne.set_volume(float(round(((-spr.bg.rect.topleft[0] / 1000) + 0.3), 3)), float(round((0.7 + (spr.bg.rect.topleft[0] / 1000)), 3)))
+                    snd.channelEleven.set_volume(0.05)
                     snd.channelSeven.set_volume(0.0)
                     snd.channelTwentyone.set_volume(0.0)
                     snd.channelTen.set_volume(0.0)
@@ -315,10 +317,12 @@ class main():
                 self.static = False
                 snd.channelTen.set_volume(0.0)
 
+                if self.static:
+                    spr.bg.pos = [0, 0]
+
                 if self.staticTime:
                     self.static = True
                     self.alphaStatic = False
-                    spr.bg.pos = [0, 0]
                     self.staticTime -= 1
                     snd.channelTen.set_volume(0.5)
 
@@ -554,7 +558,7 @@ class main():
                         snd.channelEleven.queue(random.choice([snd.pots, snd.potsTwo, snd.potsThree, snd.potsFour]))
 
                     if self.bear.location == "cam6":
-                        snd.channelEleven.play(snd.musicbox)
+                        snd.channelEleven.queue(snd.musicBox)
 
                     snd.channelEleven.set_volume(random.uniform(0.6, 0.8))
 
@@ -742,6 +746,7 @@ class main():
                     spr.bg.changeImg("office\\powerdown\\0")
                     snd.channelOne.set_volume(1.0)
                     snd.channelTwo.set_volume(0.5)
+                    snd.channelFour.set_volume(1.0)
 
                     if self.leftdoor:
                         if not self.leftDoorReversed:
@@ -792,7 +797,7 @@ class main():
                 spr.scaregroup.draw(self.screen)
 
             elif self.scene == "6am":
-                if self.runAtSceneStart == 1:
+                if self.runAtSceneStart == 0:
                     pygame.mixer.stop()
                     self.screen.fill((0, 0, 0))
                     self.screen.blit(pygame.font.Font(None, 80).render("5 AM", True, (255, 255, 255)), (544, 298))
@@ -906,7 +911,7 @@ class main():
     def changeCamera(self, camera):
 
         snd.channelTwentyone.set_volume(0.0)
-        snd.channelEleven.set_volume(0.05)
+        snd.channelEleven.set_volume(0.1)
 
         if camera == "cam1a":
             spr.camButtonOneA.changeImg("ui\\button\\scam1a")
