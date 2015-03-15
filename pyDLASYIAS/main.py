@@ -131,12 +131,11 @@ class main():
                     if self.gmode != "survival":
                         threading.Timer(0.01, self.hourTimer).start()
                     threading.Timer(0.01, self.powerTimer).start()
-
                     self.runonce = 1
 
                 if self.runAtSceneStart == 0 and not self.power < 0:
                     spr.bg.pos = self.lastBgPos
-                    snd.channelOne.set_volume(1.0)
+                    snd.channelOne.set_volume(float(round(((-spr.bg.rect.topleft[0] / 1000) + 0.3), 3)), float(round((0.7 + (spr.bg.rect.topleft[0] / 1000)), 3)))
                     snd.channelSeven.set_volume(0.0)
                     snd.channelTwentyone.set_volume(0.0)
                     snd.channelTen.set_volume(0.0)
@@ -189,21 +188,21 @@ class main():
                 self.movingleft = False
                 self.movingright = False
 
-                if self.mousex in range(0, 150) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
+                if self.mousex in range(0, 150) and spr.bg.rect.topleft[0] in range(-400, -5) and not self.movingright:
                     for s in self.movable:
                         s.pos = (s.pos[0] + 20, s.pos[1])
                         s.update()
 
                     self.movingleft = True
 
-                if self.mousex in range(150, 315) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
+                if self.mousex in range(150, 315) and spr.bg.rect.topleft[0] in range(-400, -5) and not self.movingright:
                     for s in self.movable:
                         s.pos = (s.pos[0] + 10, s.pos[1])
                         s.update()
 
                     self.movingleft = True
 
-                if self.mousex in range(315, 540) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
+                if self.mousex in range(315, 540) and spr.bg.rect.topleft[0] in range(-400, -5) and not self.movingright:
                     for s in self.movable:
                         s.pos = (s.pos[0] + 5, s.pos[1])
                         s.update()
@@ -292,6 +291,8 @@ class main():
                     spr.rightButton.changeImg("office\\button\\right\\d")
 
                 self.lastBgPos = spr.bg.pos
+
+                snd.channelOne.set_volume(float(round(((-spr.bg.rect.topleft[0] / 1000) + 0.3), 3)), float(round((0.7 + (spr.bg.rect.topleft[0] / 1000)), 3)))
 
                 spr.officegroup.draw(self.screen)
                 spr.officegroup.update()
