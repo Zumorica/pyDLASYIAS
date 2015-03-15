@@ -104,3 +104,9 @@ def init():
     eerieAmbience = pygame.mixer.Sound("sounds\\ambience\\eerieambience.wav")
 
     fanSound = pygame.mixer.Sound("sounds\\ambience\\fan.wav")
+
+if __name__ == "__main__":
+    try:
+        raise Warning
+    except Warning:
+        print("You must execute game.py")

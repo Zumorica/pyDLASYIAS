@@ -209,19 +209,19 @@ def launcher():
 
             group.add(title)
             group.add(customNightButton)
-            group.add(multiplayerButton)
+            # group.add(multiplayerButton)
 
             if customNightButton.rect.collidepoint(pos) and mouseClick:
                 scene = "custom"
 
-            if multiplayerButton.rect.collidepoint(pos) and mouseClick:
-                scene = "multihall"
-
-            if multiplayerButton.rect.collidepoint(pos):
-                multiplayerButton.changeImg("menu\\multiplayer-1")
-
-            if not multiplayerButton.rect.collidepoint(pos):
-                multiplayerButton.changeImg("menu\\multiplayer-0")
+            # if multiplayerButton.rect.collidepoint(pos) and mouseClick:
+            #     scene = "multihall"
+            #
+            # if multiplayerButton.rect.collidepoint(pos):
+            #     multiplayerButton.changeImg("menu\\multiplayer-1")
+            #
+            # if not multiplayerButton.rect.collidepoint(pos):
+            #     multiplayerButton.changeImg("menu\\multiplayer-0")
 
             if customNightButton.rect.collidepoint(pos):
                 customNightButton.changeImg("menu\\custom-1")

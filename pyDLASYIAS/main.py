@@ -21,10 +21,6 @@ class main():
                  width=1280, height=720, fps=40):
 
         Globals.main = self
-
-        # sys.setrecursionlimit(5000)
-        # threading.stack_size(128*4096)
-
         self.gmode = gmode
         self.leftdoor = False
         self.rightdoor = False
@@ -93,7 +89,7 @@ class main():
                     pygame.quit()
                     self.shutdown()
 
-                if event.type == KEYUP and event.key == 292:
+                if event.type == KEYUP and event.key == K_F11:
                     if not self.fullscreen:
                         self.screen = pygame.display.set_mode((self.width, self.height), FULLSCREEN, 32)
                         self.fullscreen = True
@@ -190,7 +186,7 @@ class main():
 
                 if self.mousex in range(0, 150) and spr.bg.rect.topleft[0] in range(-400, -5) and not self.movingright:
                     for s in self.movable:
-                        s.pos = (s.pos[0] + 20, s.pos[1])
+                        s.pos = (s.pos[0] + 15, s.pos[1])
                         s.update()
 
                     self.movingleft = True
@@ -211,7 +207,7 @@ class main():
 
                 if self.mousex in range(1140, 1280) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
                     for s in self.movable:
-                        s.pos = (s.pos[0] - 20, s.pos[1])
+                        s.pos = (s.pos[0] - 15, s.pos[1])
                         s.update()
 
                     self.movingright = True
@@ -593,10 +589,10 @@ class main():
                     self.camMovement = "left"
 
                 if self.camMovement == "right" and not self.static and self.alphaStatic:
-                    spr.bg.pos = (spr.bg.pos[0] + 5, spr.bg.pos[1])
+                    spr.bg.pos = (spr.bg.pos[0] + 2, spr.bg.pos[1])
 
                 if self.camMovement == "left" and not self.static and self.alphaStatic:
-                    spr.bg.pos = (spr.bg.pos[0] - 5, spr.bg.pos[1])
+                    spr.bg.pos = (spr.bg.pos[0] - 2, spr.bg.pos[1])
 
                 for animatronic in Globals.animatronics:
                     if animatronic.location == self.lastcam:
@@ -701,7 +697,7 @@ class main():
 
                 if self.mousex in range(0, 150) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
                     for s in self.movable:
-                        s.pos = (s.pos[0] + 20, s.pos[1])
+                        s.pos = (s.pos[0] + 15, s.pos[1])
                         s.update()
 
                     self.movingleft = True
@@ -722,7 +718,7 @@ class main():
 
                 if self.mousex in range(1140, 1280) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
                     for s in self.movable:
-                        s.pos = (s.pos[0] - 20, s.pos[1])
+                        s.pos = (s.pos[0] - 15, s.pos[1])
                         s.update()
 
                     self.movingright = True
@@ -846,6 +842,9 @@ class main():
                 self.changeScene("office")
                 self.fox.status = 5
 
+            if self.fox.cooldown and self.fox.location != "off":
+                self.fox.cooldown -= 1
+
             if self.scene == "office" and not self.leftlight and not self.rightlight and self.fox.status != 5:
                 snd.channelThree.set_volume(0.0)
 
@@ -855,7 +854,7 @@ class main():
             if self.scene == "office" and self.rightlight:
                 snd.channelThree.set_volume(0.3, 0.7)
 
-            if spr.leftDoorAnim.state == pyganim.STOPPED and self.leftdoor:
+            if spr.leftDoorAnim.getCurrentFrame() == spr.leftDoorAnim.getFrame(15) and self.leftdoor:
                 spr.leftDoor.changeImg("office\\doors\\left\\15")
 
             if spr.leftDoorAnim.state == pyganim.PLAYING:
@@ -867,7 +866,7 @@ class main():
                 self.screen.blit(self.usageLabel, (50, 550))
                 self.screen.blit(spr.camButton.image, tuple(spr.camButton.pos))
 
-            if spr.rightDoorAnim.state == pyganim.STOPPED and self.rightdoor:
+            if spr.rightDoorAnim.getCurrentFrame() == spr.rightDoorAnim.getFrame(15) and self.rightdoor:
                 spr.rightDoor.changeImg("office\\doors\\right\\15")
 
             if spr.rightDoorAnim.state == pyganim.PLAYING:
@@ -890,7 +889,7 @@ class main():
 
             # self.screen.blit(self.font.render("%s FPS" % round(self.FPSCLOCK.get_fps()), True, (0,255,0)), (10,10))
 
-            pygame.display.flip()
+            pygame.display.update(spr.bg.rect)
 
             self.FPSCLOCK.tick(self.fps)
 
@@ -1086,6 +1085,8 @@ class main():
 
             spr.cameraAnim.state = pyganim.PLAYING
             spr.cameraAnim.play()
+
+            self.fox.cooldown = random.randint(100, 300)
 
             for animatronic in Globals.animatronics:
                 animatronic.beingWatched = False

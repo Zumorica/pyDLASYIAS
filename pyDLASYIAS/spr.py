@@ -214,3 +214,9 @@ def init():
     allgroup.add(staticTransparent)
     allgroup.add(leftDoor)
     allgroup.add(rightDoor)
+
+if __name__ == "__main__":
+    try:
+        raise Warning
+    except Warning:
+        print("You must execute game.py")

@@ -61,3 +61,9 @@ class Animated(pygame.sprite.Sprite):
 
         else:
             return False
+
+if __name__ == "__main__":
+    try:
+        raise Warning
+    except Warning:
+        raise Warning("You must execute game.py")

@@ -22,6 +22,7 @@ class animatronic():
 
         if self.kind == "fox":
             self.location = "cam1c"
+            self.cooldown = 0
 
         else:
             self.location = "cam1a"
@@ -47,10 +48,18 @@ class animatronic():
     def randomMove(self, cam):
         '''Moves the animatronic to a random location in a list of cameras.'''
         if random.randint(1, 20) <= self.ailvl:
-            if self.location == "leftdoor" or self.location == "rightdoor":
+            selectedLocation = random.choice(list(cam))
+            if (self.location == "leftdoor" or self.location == "rightdoor") and selectedLocation != self.location:
                 Globals.main.leftDiscovered = False
                 Globals.main.rightDiscovered = False
-            self.location = random.choice(list(cam))
+            if selectedLocation != self.location:
+                try:
+                    if not Globals.main.staticTime and self.beingWatched:
+                        Globals.main.staticTime = random.randint(15, 60)
+                except:
+                    pass
+
+            self.location = selectedLocation
             utils.debugprint("%s randomly moved to %s" % (self.name, self.location), self)
 
     def think(self):
@@ -67,43 +76,18 @@ class animatronic():
 
                 if self.location == "cam1a" and not self.beingWatched:
                     self.move("cam1b")
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "cam1b" and not self.beingWatched:
                     self.randomMove(["cam7", "cam6"])
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "cam4a" and not self.beingWatched:
                     self.randomMove(["cam1b", "cam4b"])
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "cam4b" and not self.beingWatched:
                     self.randomMove(["cam4a", "rightdoor"])
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "cam6" and not self.beingWatched:
                     self.randomMove(["cam7", "cam4a"])
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "cam7" and not self.beingWatched:
                     self.randomMove(["cam6", "cam4a"])
@@ -126,51 +110,21 @@ class animatronic():
 
                 if self.location == "cam1a":
                     self.randomMove(["cam5", "cam1b"])
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "cam1b":
                     self.randomMove(["cam5", "cam2a"])
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "cam2a":
                     self.randomMove(["cam3", "cam2b"])
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "cam2b":
                     self.randomMove(["cam3", "leftdoor"])
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "cam3":
                     self.randomMove(["leftdoor", "cam2a"])
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "cam5":
                     self.randomMove(["cam1b", "cam2a"])
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "leftdoor":
                     if Globals.main.leftdoor:
@@ -182,22 +136,12 @@ class animatronic():
                 time.sleep(4)
 
             if self.kind == "fox":
-                if self.status < 3 and not self.beingWatched:
+                if self.status < 3 and not self.beingWatched and self.ailvl != 0 and not self.cooldown:
                     if random.randint(0, 20) <= self.ailvl:
                         self.status += 1
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.status == 5 and Globals.main.leftdoor:
                     self.status = random.randint(1, 2)
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 time.sleep(5)
 
@@ -205,51 +149,21 @@ class animatronic():
                 if self.location == "cam1a" and Globals.animatronics[0].location != "cam1a" \
                                             and Globals.animatronics[1].location != "cam1a" and not self.beingWatched:
                     self.move("cam1b")
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "cam1b" and not self.beingWatched:
                     self.move("cam7")
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "cam7" and not self.beingWatched:
                     self.move("cam6")
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "cam6" and not self.beingWatched:
                     self.move("cam4a")
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "cam4a" and not self.beingWatched:
                     self.move("cam4b")
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 if self.location == "cam4b" and not self.beingWatched and not Globals.main.rightdoor:
                     self.randomMove(["inside", "cam4a"])
-                    try:
-                        if not Globals.main.staticTime and self.beingWatched:
-                            Globals.main.staticTime = random.randint(15, 60)
-                    except:
-                        pass
 
                 time.sleep(3)
 
