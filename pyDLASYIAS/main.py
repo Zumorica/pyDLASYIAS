@@ -63,6 +63,8 @@ class main():
         self.bear = Globals.animatronics[3]
         self.leftDiscovered = False
         self.rightDiscovered = False
+        self.movingleft = False
+        self.movingright = False
         self.screen = pygame.display.set_mode((self.width, self.height), 0, 32)
         self.movable = [spr.bg, spr.rightButton, spr.leftButton, spr.leftDoor, \
                         spr.rightDoor, spr.leftDoorButton, spr.rightDoorButton,\
@@ -139,6 +141,12 @@ class main():
                     snd.channelTen.set_volume(0.0)
                     self.usage -= 1
                     self.runAtSceneStart = 1
+
+                if self.movingright and self.bear.location == "inside":
+                    self.changeScene("scarejump")
+
+                if self.fox.status == 5 and self.leftdoor != False:
+                    self.changeScene("scarejump")
 
                 if self.time >= 6:
                     self.changeScene("6am")
