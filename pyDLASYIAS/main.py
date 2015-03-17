@@ -145,7 +145,7 @@ class main():
                 if self.movingright and self.bear.location == "inside":
                     self.changeScene("scarejump")
 
-                if self.fox.status == 5 and self.leftdoor != False:
+                if self.fox.status == 5 and self.leftdoor != True:
                     self.changeScene("scarejump")
 
                 if self.time >= 6:
@@ -664,7 +664,7 @@ class main():
                         self.shutdown()
 
                 for animatronic in Globals.animatronics:
-                    if animatronic.location == "inside" and self.power > 0:
+                    if (animatronic.location == "inside" or animatronic.status == 5) and (self.power > 0 and not self.killed):
                         if self.runAtSceneStart == 0:
                             snd.channelNine.play(snd.xscream, 0)
                             spr.chickenScarejump.play()
@@ -847,13 +847,6 @@ class main():
 
                 spr.scaregroup.update()
                 spr.scaregroup.draw(self.screen)
-
-            if self.fox.status == 3 and self.lastcam == "cam2a":
-                self.fox.status = 4
-
-            if self.fox.status == 4 and not self.leftdoor:
-                self.changeScene("office")
-                self.fox.status = 5
 
             if self.fox.cooldown and self.fox.location != "off":
                 self.fox.cooldown -= 1

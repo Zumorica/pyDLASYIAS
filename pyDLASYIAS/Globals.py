@@ -7,9 +7,9 @@ def init():
 
     mouseClick = False
 
-    version = "v1.0.0"
+    version = "v1.0.2"
 
-    debug = True
+    debug = False
 
     animatronics = []
 
