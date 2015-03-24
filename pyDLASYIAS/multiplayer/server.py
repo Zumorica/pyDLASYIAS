@@ -2,6 +2,8 @@ import socketserver
 import threading
 import time
 
+from socketserver import *
+
 global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
 
 clients = []
@@ -28,7 +30,9 @@ class requestHandler(socketserver.BaseRequestHandler):
 
         global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
 
+        print()
         print(self.client_address, 'connected!')
+        print()
 
         self.request.send(bytes("time -> %s" % (time), "utf-8"))
 
@@ -40,7 +44,6 @@ class requestHandler(socketserver.BaseRequestHandler):
         while 1:
             if self.request not in clients:
                 clients.append(self.request)
-                print(clients)
 
             data = self.request.recv(1024)
 
@@ -168,7 +171,12 @@ def cmd():
 
     global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
 
+    print()
+    print("Power left: %s, Usage: %s" % (power,usage))
+    print("Time %s" % (time))
+    print()
     command = input("> ")
+    print()
 
     if command.lower() == "power":
 
@@ -189,14 +197,24 @@ def cmd():
         print("Left Light: %s" % (leftlight))
         print("Right Light: %s" % (rightlight))
 
+    if command.lower() == "clients":
+        print(clients)
+
+    if command.lower() == "send":
+        toSend = input("Send> ")
+        for client in clients:
+            client.send(bytes(toSend, "utf-8"))
+
     cmd()
+
+class pyDLASYIAS_Server(ThreadingMixIn, TCPServer): pass
 
 if __name__ == "__main__":
     threading.Timer(0.1, powerTimer).start()
     threading.Timer(86, hourTimer).start()
     threading.Thread(target=cmd).start()
     threading.Thread(target=sendData).start()
-    server = socketserver.ThreadingTCPServer(('', 1987), requestHandler)
+    server = pyDLASYIAS_Server(('localhost', 1987), requestHandler)
     server.serve_forever()
 
 else:

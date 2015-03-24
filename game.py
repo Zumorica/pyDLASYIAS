@@ -12,6 +12,7 @@ import pyDLASYIAS.animatronics as animatronics
 import pyDLASYIAS.sprite as sprite
 import pyDLASYIAS.main as main
 import pyDLASYIAS.utils.functions as utils
+import pyDLASYIAS.utils.inputbox as inputbox
 import pyDLASYIAS.pyganim as pyganim
 try:
     import pyDLASYIAS.multiplayer as multiplayer
@@ -209,19 +210,19 @@ def launcher():
 
             group.add(title)
             group.add(customNightButton)
-            # group.add(multiplayerButton)
+            group.add(multiplayerButton)
 
             if customNightButton.rect.collidepoint(pos) and mouseClick:
                 scene = "custom"
 
-            # if multiplayerButton.rect.collidepoint(pos) and mouseClick:
-            #     scene = "multihall"
-            #
-            # if multiplayerButton.rect.collidepoint(pos):
-            #     multiplayerButton.changeImg("menu\\multiplayer-1")
-            #
-            # if not multiplayerButton.rect.collidepoint(pos):
-            #     multiplayerButton.changeImg("menu\\multiplayer-0")
+            if multiplayerButton.rect.collidepoint(pos) and mouseClick:
+                scene = "address"
+
+            if multiplayerButton.rect.collidepoint(pos):
+                multiplayerButton.changeImg("menu\\multiplayer-1")
+
+            if not multiplayerButton.rect.collidepoint(pos):
+                multiplayerButton.changeImg("menu\\multiplayer-0")
 
             if customNightButton.rect.collidepoint(pos):
                 customNightButton.changeImg("menu\\custom-1")
@@ -232,16 +233,42 @@ def launcher():
             group.update()
             group.draw(screen)
 
+        if scene == "address":
+
+            screen.fill((0,0,0))
+
+            ip = inputbox.ask(screen, "IP (Blank for 127.0.0.1)")
+            port = inputbox.ask(screen, "PORT (Blank for 1987)")
+
+            print(ip, port)
+
+            if ip == "":
+                ip = "127.0.0.1"
+
+            if port == "":
+                port = 1987
+
+            try:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.connect((ip, int(port)))
+
+            except OSError:
+                print("Looks like something failed. Try again please!")
+                pygame.time.delay(200)
+                pygame.quit()
+                raise
+
+            thread = threading.Thread(group=None, target=receiveData, name="ReceiveData", args=(sock))
+            thread.setDaemon(True)
+            thread.start()
+
+            scene = "multihall"
+
+
         if scene == "multihall":
-            print(dir(multiplayer))
-            print(multiplayer)
-            ip = input("IP> ")
-            port = int(input("PORT> "))
+            screen.fill((0,0,0))
 
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((ip, port))
 
-            multiplayer.chicken.chickenMain(host=ip, port=port)
 
             multigroup.update()
             multigroup.draw(screen)
@@ -367,6 +394,11 @@ def launcher():
         pygame.display.flip()
         pygame.display.update()
         FPSCLOCK.tick(30)
+
+def receiveData(socket):
+    global data
+    data = socket.recv(1024)
+    return data
 
 try:
     if __name__ == '__main__':

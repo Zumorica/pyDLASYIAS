@@ -4,7 +4,8 @@ import threading
 
 HOST, PORT = "localhost", 1987
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock = socket.socket()
+
 
 try:
     sock.connect((HOST, PORT))

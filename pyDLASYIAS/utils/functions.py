@@ -2,7 +2,10 @@ import random
 import sys
 import os
 import time
+import pygame
 import pyDLASYIAS.Globals as Globals
+
+pygame.init()
 
 Globals.log = open("log.txt", "a")
 Globals.log.write(time.strftime("\n %d/%m/%Y - %H:%M:%S \n"))
@@ -44,6 +47,7 @@ def run_once(f):
             return f(*args, **kwargs)
     wrapper.has_run = False
     return wrapper
+
 
 if __name__ == "__main__":
     try:
