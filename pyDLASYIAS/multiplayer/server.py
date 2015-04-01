@@ -4,7 +4,7 @@ import time
 
 from socketserver import *
 
-global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
+global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power, guardSelected, bearSelected, rabbitSelected, chickenSelected, foxSelected
 
 clients = []
 
@@ -23,28 +23,47 @@ rightlight = False
 
 guardScene = "office"
 
+guardSelected = False
+bearSelected = False
+rabbitSelected = False
+chickenSelected = False
+foxSelected = False
+
+class client():
+    '''Class for the client.'''
+    def __init__(self, request, client_address):
+        self.request = request
+        self.client_address = client_address
+        self.character = "None"
+
+    def __str__(self):
+        return "(%s, %s)" %(self.client_address, self.character)
+
+    def __repr__(self):
+        return "(%s, %s)" %(self.client_address, self.character)
+
+    def kick(self):
+        self.request.close()
+
+    def send(self, data):
+        self.request.send(bytes(str(data), "utf-8"))
+
 class requestHandler(socketserver.BaseRequestHandler):
     '''Handles the requests.'''
     def setup(self):
         '''When a new client connects to the server, this function gets called.'''
 
-        global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
+        global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power, guardSelected, bearSelected, rabbitSelected, chickenSelected, foxSelected
 
-        print()
-        print(self.client_address, 'connected!')
-        print()
+        clients.append(client(self.request, self.client_address))
 
-        self.request.send(bytes("time -> %s" % (time), "utf-8"))
 
     def handle(self):
         '''Handles requests.'''
 
-        global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
+        global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power, guardSelected, bearSelected, rabbitSelected, chickenSelected, foxSelected
 
         while 1:
-            if self.request not in clients:
-                clients.append(self.request)
-
             data = self.request.recv(1024)
 
             if str(data) == "guard -> leftdoor true":
@@ -107,6 +126,21 @@ class requestHandler(socketserver.BaseRequestHandler):
                 guardScene = "end"
                 sendToAll("server -> shutdown")
 
+            if str(data) == "bear selected" and not bearSelected:
+                bearSelected = True
+
+            if str(data) == "rabbit selected" and not rabbitSelected:
+                rabbitSelected = True
+
+            if str(data) == "chicken selected" and not chickenSelected:
+                chickenSelected = True
+
+            if str(data) == "fox selected" and not foxSelected:
+                foxSelected = True
+
+            if str(data) == "guard selected" and not guardSelected:
+                guardSelected = True
+
             print(str(data) + ' ' + str(self.client_address) + '\n')
 
     def finish(self):
@@ -134,7 +168,7 @@ def sendToAll(text):
     global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
 
     for client in clients:
-        client.send(bytes(text, "utf-8"))
+        client.send(text)
 
 def powerTimer():
     global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
@@ -198,20 +232,24 @@ def cmd():
         print("Right Light: %s" % (rightlight))
 
     if command.lower() == "clients":
-        print(clients)
+        for client in clients:
+            print(str(client))
 
     if command.lower() == "send":
         toSend = input("Send> ")
         for client in clients:
             client.send(bytes(toSend, "utf-8"))
 
+    if command.lower() == "exec":
+        exec(input("Exec> "))
+
     cmd()
 
 class pyDLASYIAS_Server(ThreadingMixIn, TCPServer): pass
 
 if __name__ == "__main__":
-    threading.Timer(0.1, powerTimer).start()
-    threading.Timer(86, hourTimer).start()
+    #threading.Timer(0.1, powerTimer).start()
+    #threading.Timer(86, hourTimer).start()
     threading.Thread(target=cmd).start()
     threading.Thread(target=sendData).start()
     server = pyDLASYIAS_Server(('localhost', 1987), requestHandler)

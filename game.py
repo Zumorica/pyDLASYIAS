@@ -19,7 +19,12 @@ try:
 except ImportError:
     print("Could not load multiplayer module!")
 
+data = b''
+
 def launcher():
+
+    global data
+
     running = True
     screen = pygame.display.set_mode((1280, 720), 0, 32)
     FPSCLOCK = pygame.time.Clock()
@@ -63,8 +68,8 @@ def launcher():
         startpos=(593, 560), image="custom\\buttons\\1")
     powerright.groups = group
 
-    ready = sprite.Sprite(startpos=(1044, 603), image="custom\\buttons\\2")
-    ready.groups = group
+    readyspr = sprite.Sprite(startpos=(1044, 603), image="custom\\buttons\\2")
+    readyspr.groups = group
 
     bearspr = sprite.Sprite(
         startpos=(118, 187), image="custom\\animatronics\\b")
@@ -119,6 +124,12 @@ def launcher():
     foxright = sprite.Sprite(
         startpos=(1154, 470), image="custom\\buttons\\1")
     foxright.groups = group
+
+    guardspr = sprite.Sprite(
+        startpos=(550, 260), image="multiplayer\\g")
+    guardspr.groups = group
+
+
 
     intro = pyganim.PygAnimation([("images\\intro\\newspaper-0.png", 1), ("images\\intro\\static-0.png", 0.05),
                                   ("images\\intro\\static-1.png", 0.05), ("images\\intro\\newspaper-0.png", 0.35),
@@ -175,6 +186,9 @@ def launcher():
     bearAvailable = True
     foxAvailable = True
     guardAvailable = True
+    selectedCharacter = "None"
+    locked = False
+    cooldown = 0
 
     intro.play()
 
@@ -185,6 +199,7 @@ def launcher():
         pygame.display.set_caption("--pyDLASYIAS %s-- -%s FPS-" %(Globals.version, round(FPSCLOCK.get_fps())))
 
         for event in pygame.event.get():
+            print(event)
             if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit(0)
@@ -235,6 +250,8 @@ def launcher():
 
         if scene == "address":
 
+            global sock
+
             screen.fill((0,0,0))
 
             ip = inputbox.ask(screen, "IP (Blank for 127.0.0.1)")
@@ -251,6 +268,7 @@ def launcher():
             try:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.connect((ip, int(port)))
+                threading.Thread(target=receiveData).start()
 
             except OSError:
                 print("Looks like something failed. Try again please!")
@@ -258,7 +276,7 @@ def launcher():
                 pygame.quit()
                 raise
 
-            thread = threading.Thread(group=None, target=receiveData, name="ReceiveData", args=(sock))
+            thread = threading.Thread(group=None, target=receiveData, name="ReceiveData")
             thread.setDaemon(True)
             thread.start()
 
@@ -268,25 +286,116 @@ def launcher():
         if scene == "multihall":
             screen.fill((0,0,0))
 
+            if data == b"bear selected":
+                bearAvailable = False
 
+            if data == b"rabbit selected":
+                rabbitAvailable = False
+
+            if data == b"chicken selected":
+                chickenAvailable = False
+
+            if data == b"fox selected":
+                foxAvailable = False
+
+            if data == b"guard selected":
+                guardAvailable = False
+
+            screen.blit(font.render("Data received: %s, F: %s, B: %s, C: %s, FX: %s, G: %s" %(data, bearAvailable, rabbitAvailable, chickenAvailable, foxAvailable, guardAvailable), True, (255, 255, 255)), (50, 450))
+
+            if cooldown:
+                screen.blit(font.render("That character is not available!", True, (255, 255, 255)), (50, 500))
+                cooldown -= 1
+
+            bearspr.pos = (list(bearspr.pos)[0], 30)
+            rabbitspr.pos = (list(rabbitspr.pos)[0], 30)
+            chickenspr.pos = (list(chickenspr.pos)[0], 30)
+            foxspr.pos = (list(foxspr.pos)[0], 30)
+
+            if bearspr.rect.collidepoint(pos) and mouseClick and bearAvailable and not locked:
+                selectedCharacter = "Freddy"
+
+            elif not bearAvailable:
+                cooldown = 100
+
+            if rabbitspr.rect.collidepoint(pos) and mouseClick and rabbitAvailable and not locked:
+                selectedCharacter = "Bonnie"
+
+            elif not rabbitAvailable:
+                cooldown = 100
+
+            if chickenspr.rect.collidepoint(pos) and mouseClick and chickenAvailable and not locked:
+                selectedCharacter = "Chica"
+
+            elif not chickenAvailable:
+                cooldown = 100
+
+            if foxspr.rect.collidepoint(pos) and mouseClick and foxAvailable and not locked:
+                selectedCharacter = "Foxy"
+
+            elif not foxAvailable:
+                cooldown = 100
+
+            if guardspr.rect.collidepoint(pos) and mouseClick and guardAvailable and not locked:
+                selectedCharacter = "Guard"
+
+            if readyspr.rect.collidepoint(pos) and mouseClick and not locked:
+                if selectedCharacter == "Freddy" and bearAvailable:
+                    sock.send(b"bear selected")
+                    locked = True
+                    cooldown = 0
+
+                elif selectedCharacter == "Freddy" and not bearAvailable:
+                    cooldown = 100
+
+                if selectedCharacter == "Bonnie" and rabbitAvailable:
+                    sock.send(b"rabbit selected")
+                    locked = True
+                    cooldown = 0
+
+                elif selectedCharacter == "Bonnie" and not rabbitAvailable:
+                    cooldown = 100
+
+                if selectedCharacter == "Chica" and chickenAvailable:
+                    sock.send(b"chicken selected")
+                    locked = True
+                    cooldown = 0
+
+                elif selectedCharacter == "Chica" and not chickenAvailable:
+                    cooldown = 100
+
+                if selectedCharacter == "Foxy" and foxAvailable:
+                    sock.send(b"fox selected")
+                    locked = True
+                    cooldown = 0
+
+                elif selectedCharacter == "Foxy" and not foxAvailable:
+                    cooldown = 100
+
+                if selectedCharacter == "Guard" and guardAvailable:
+                    sock.send(b"guard selected")
+                    locked = True
+                    cooldown = 0
+
+                elif selectedCharacter == "Guard" and not guardAvailable:
+                    cooldown = 100
+
+            multigroup.add(bearspr)
+            multigroup.add(rabbitspr)
+            multigroup.add(chickenspr)
+            multigroup.add(foxspr)
+            multigroup.add(guardspr)
+            multigroup.add(readyspr)
+
+            screen.blit(font.render("Your character: %s" %(selectedCharacter), True, (255, 255, 255)), (50, 550))
+
+            if not locked:
+                screen.blit(font.render("Select a character and click 'ready' to lock it.", True, (255, 255, 255)), (50, 600))
+            else:
+                screen.blit(font.render("Waiting for other players...", True, (255, 255, 255)), (50, 600))
 
             multigroup.update()
             multigroup.draw(screen)
-
-            # char = input("1 Guard / 2 Rabbit / 3 Chicken / 4 Fox (Doesn't work) / 5 Bear (Doesn't work)")
-            #
-            # if char == "1":
-            #     import pyDLASYIAS.multiplayer.guard as guard
-            #     guard.guardMain(host=ip, port=int(port))
-            #
-            # if char == "2":
-            #     import pyDLASYIAS.multiplayer.rabbit as rabbit
-            #     rabbit.rabbitMain(host=ip, port=int(port))
-            #
-            # if char == "3":
-            #     import pyDLASYIAS.multiplayer.chicken as chicken
-            #     chicken.chickenMain(host=ip, port=int(port))
-
 
         if scene == "custom":
 
@@ -298,7 +407,7 @@ def launcher():
             customgroup.add(powerleft)
             customgroup.add(powerright)
 
-            customgroup.add(ready)
+            customgroup.add(readyspr)
 
             customgroup.add(bearspr)
             customgroup.add(bearleft)
@@ -358,7 +467,7 @@ def launcher():
                 else:
                     power += 1
 
-            if ready.rect.collidepoint(pos) and mouseClick:
+            if readyspr.rect.collidepoint(pos) and mouseClick:
                 rabbit = animatronics.animatronic("Rabbit", "rabbit", rabbitai)
                 chicken = animatronics.animatronic("Chicken", "chicken", chickenai)
                 fox = animatronics.animatronic("Fox", "fox", foxai)
@@ -395,10 +504,10 @@ def launcher():
         pygame.display.update()
         FPSCLOCK.tick(30)
 
-def receiveData(socket):
-    global data
-    data = socket.recv(1024)
-    return data
+def receiveData():
+    global data, sock
+    while 1:
+        data = sock.recv(1024)
 
 try:
     if __name__ == '__main__':

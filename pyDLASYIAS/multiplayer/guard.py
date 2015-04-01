@@ -75,6 +75,7 @@ class guardMain():
         self.rightDiscovered = False
         self.movingleft = False
         self.movingright = False
+        self.socket = socket
         self.screen = pygame.display.set_mode((self.width, self.height), 0, 32)
         self.movable = [spr.bg, spr.rightButton, spr.leftButton, spr.leftDoor, \
                         spr.rightDoor, spr.leftDoorButton, spr.rightDoorButton,\
