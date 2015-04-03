@@ -1,40 +1,27 @@
 import socketserver
+import socket
 import threading
 import time
-
 from socketserver import *
-
-global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power, guardSelected, bearSelected, rabbitSelected, chickenSelected, foxSelected
-
-clients = []
-
-data = None
-
-time = 0
-
-power = 100
-usage = 1
-
-leftdoor = False
-rightdoor = False
-
-leftlight = False
-rightlight = False
-
-guardScene = "office"
-
-guardSelected = False
-bearSelected = False
-rabbitSelected = False
-chickenSelected = False
-foxSelected = False
 
 class client():
     '''Class for the client.'''
     def __init__(self, request, client_address):
         self.request = request
         self.client_address = client_address
+
+        self.isClosed = False
+        self.data = b''
+
         self.character = "None"
+        self.location = "None"
+        self.lastcam = "None"
+        self.scene = "None"
+        self.status = 0
+
+        self.isReady = False
+
+        threading.Thread(target=self.update).start()
 
     def __str__(self):
         return "(%s, %s)" %(self.client_address, self.character)
@@ -42,218 +29,406 @@ class client():
     def __repr__(self):
         return "(%s, %s)" %(self.client_address, self.character)
 
-    def kick(self):
-        self.request.close()
+    def setup(self):
+        if self.character != "guard":
+            if self.character != "fox":
+                self.location = "cam1a"
+                del self.status
+            else:
+                self.location = "cam1c"
+                self.status = 1
+                del self.lastcam
+                del self.scene
+        else:
+            self.lastcam = "cam1a"
+            self.scene = "office"
+            del self.location
+            del self.status
+
+    def receive(self):
+        if not self.isClosed:
+            return self.request.recv(1024)
 
     def send(self, data):
-        self.request.send(bytes(str(data), "utf-8"))
+        if not self.isClosed:
+            self.request.send(bytes(str(data), "utf-8"))
+
+    def update(self):
+        try:
+            self.data = self.receive()
+        except:
+            self.kick()
+        self.update()
+
+    def kick(self):
+        self.request.close()
+        self.isClosed = True
 
 class requestHandler(socketserver.BaseRequestHandler):
     '''Handles the requests.'''
     def setup(self):
         '''When a new client connects to the server, this function gets called.'''
-
-        global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power, guardSelected, bearSelected, rabbitSelected, chickenSelected, foxSelected
-
-        clients.append(client(self.request, self.client_address))
+        self.server.clients.append(client(self.request, self.client_address))
 
 
     def handle(self):
         '''Handles requests.'''
-
-        global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power, guardSelected, bearSelected, rabbitSelected, chickenSelected, foxSelected
-
         while 1:
-            data = self.request.recv(1024)
-
-            if str(data) == "guard -> leftdoor true":
-                leftdoor = True
-                print("leftdoor %s" % (leftdoor))
-                usage += 1
-
-            if str(data) == "guard -> leftdoor false":
-                leftdoor = False
-                usage -= 1
-
-            if str(data) == "guard -> rightdoor true":
-                rightdoor = True
-                usage += 1
-
-            if str(data) == "guard -> rightdoor false":
-                rightdoor = False
-                usage -= 1
-
-
-            if str(data) == "guard -> leftlight false":
-                leftlight = False
-                usage -= 1
-
-            if str(data) == "guard -> leftlight true":
-                leftlight = True
-                usage += 1
-
-                if rightlight:
-                    rightlight = False
-                    usage -= 1
-
-            if str(data) == "guard -> rightlight false":
-                rightlight = False
-                usage -= 1
-
-            if str(data) == "guard -> rightlight true":
-                rightlight = True
-                usage += 1
-
-                if leftlight:
-                    leftlight = False
-                    usage -= 1
-
-
-            if str(data) == "guard -> cam":
-                if guardScene == "office":
-                    guardScene == "cam"
-                    usage += 1
-
-            if str(data) == "guard -> office":
-                if guardScene == "cam":
-                    guardScene = "office"
-                    usage -= 1
-
-            if str(data) == "guard -> 6AM":
-                guardScene == "6AM"
-
-            if str(data) == "guard -> end":
-                guardScene = "end"
-                sendToAll("server -> shutdown")
-
-            if str(data) == "bear selected" and not bearSelected:
-                bearSelected = True
-
-            if str(data) == "rabbit selected" and not rabbitSelected:
-                rabbitSelected = True
-
-            if str(data) == "chicken selected" and not chickenSelected:
-                chickenSelected = True
-
-            if str(data) == "fox selected" and not foxSelected:
-                foxSelected = True
-
-            if str(data) == "guard selected" and not guardSelected:
-                guardSelected = True
-
-            print(str(data) + ' ' + str(self.client_address) + '\n')
+            pass
 
     def finish(self):
         '''When a clients disconnects this function gets called.'''
-
-        clients.remove(self.request)
         print(self.client_address, 'disconnected!')
 
-def sendData():
-    '''Sends received data to all connected clients.'''
+class pyDLASYIAS_Server(ThreadingMixIn, TCPServer):
 
-    global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
+    def __init__(self, server_Address, request_Handler):
 
-    while 1:
-        if data != None and data != b'':
-            for client in clients:
-                client.send(bytes(data))
-                print("Sent " + str(data) + " to %s" % (client))
+        super(pyDLASYIAS_Server, self).__init__(server_Address, request_Handler)
 
-            data = None
+        self.clients = []
 
-def sendToAll(text):
-    '''Send text to all connected clients.'''
+        self.time = 0
+        self.power = 100
+        self.usage = 1
 
-    global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
+        self.leftdoor = False
+        self.rightdoor = False
 
-    for client in clients:
-        client.send(text)
+        self.leftlight = False
+        self.rightlight = False
 
-def powerTimer():
-    global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
+        self.bearSelected = False
+        self.rabbitSelected = False
+        self.chickenSelected = False
+        self.foxSelected = False
+        self.guardSelected = False
 
-    if len(clients) > 2:
-        power -= 1
+        self.bear = None
+        self.rabbit = None
+        self.chicken = None
+        self.fox = None
+        self.guard = None
 
-    sendToAll("server -> power - 1")
+        self.stage = "multihall"
 
-    if usage == 1:
-        threading.Timer(9.6, powerTimer).start()
+        self.cmdThread = threading.Thread(target=self.cmd)
+        self.updateThread = threading.Thread(target=self.update)
+        self.timeThread = threading.Thread(target=self.timeUpdate)
+        self.powerThread = threading.Thread(target=self.powerUpdate)
 
-    elif usage == 2:
-        threading.Timer(4.8, powerTimer).start()
+        self.cmdThread.setDaemon(True)
+        self.updateThread.setDaemon(True)
+        self.timeThread.setDaemon(True)
+        self.powerThread.setDaemon(True)
 
-    elif usage == 3:
-        threading.Timer(random.choice([2.8, 2.9, 3.9]), powerTimer).start()
+        self.cmdThread.start()
+        self.updateThread.start()
 
-    elif usage >= 4:
-        threading.Timer(random.choice([1.9, 2.9]), powerTimer).start()
+    def update(self):
+        for client in self.clients:
+            try:
+                client.send("Server -> Socket: Are you still alive?")
+            except:
+                client.isClosed = True
+                self.clients.remove(client)
+                continue
 
-def hourTimer():
+            if self.stage == "multihall":
+                if client.data == b"bear selected" and not self.bearSelected:
+                    client.character = "bear"
+                    self.bearSelected = True
+                    self.bear = client
+                    self.bear.isReady = True
+                    self.broadcast("bear selected")
 
-    global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
+                if client.data == b"rabbit selected" and not self.rabbitSelected:
+                    client.character = "rabbit"
+                    self.rabbitSelected = True
+                    self.rabbit = client
+                    self.rabbit.isReady = True
+                    self.broadcast("rabbit selected")
 
-    time += 1
+                if client.data == b"chicken selected" and not self.chickenSelected:
+                    client.character = "chicken"
+                    self.chickenSelected = True
+                    self.chicken = client
+                    self.chicken.isReady = True
+                    self.broadcast("chicken selected")
 
-    sendToAll("time -> %s" %(time))
+                if client.data == b"fox selected" and not self.foxSelected:
+                    client.character = "fox"
+                    self.foxSelected = True
+                    self.fox = client
+                    self.fox.isReady = True
+                    self.broadcast("fox selected")
 
-    threading.Timer(86, hourTimer).start()
+                if client.data == b"guard selected" and not self.guardSelected:
+                    client.character = "guard"
+                    self.guardSelected = True
+                    self.guard = client
+                    self.guard.isReady = True
+                    self.broadcast("guard selected")
+
+                try:
+                    if self.bear.isReady and self.rabbit.isReady and self.chicken.isReady and self.fox.isReady and self.guard.isReady:
+                        self.stage = "game"
+                        self.broadcast("game start")
+
+                        self.timeThread.start()
+                        self.powerThread.start()
+
+                except:
+                    pass
+
+            if self.stage == "game":
+                for client in self.clients:
+                    data = str(client.data()).split()
+
+                    if client.character == "bear":
+                        pass
+
+                    if client.character == "rabbit":
+                        pass
+
+                    if client.character == "chicken":
+                        pass
+
+                    if client.character == "fox":
+
+                        if data[0] == "status":
+
+                            if data[1] == "up":
+                                client.status += 1
+                                self.broadcast("fox status %s" %(client.status))
+
+                            if data[1] == "down":
+                                client.status -= 1
+                                self.broadcast("fox status %s" %(client.status))
+
+                            if data[1] == "0":
+                                client.status = 0
+                                self.broadcast("fox status %s" %(client.status))
+
+                            if data[1] == "1":
+                                client.status = 1
+                                self.broadcast("fox status %s" %(client.status))
+
+                            if data[1] == "2":
+                                client.status = 2
+                                self.broadcast("fox status %s" %(client.status))
+
+                            if data[1] == "3":
+                                client.status = 3
+                                self.broadcast("fox status %s" %(client.status))
+
+                            if data[1] == "4":
+                                client.status = 4
+                                self.broadcast("fox status %s" %(client.status))
+
+                            if data[1] == "5":
+                                client.status = 5
+                                self.broadcast("fox status %s" %(client.status))
+
+                    if client.character == "guard":
+
+                        if data[0] == "scene":
+
+                            if data[1] == "office":
+                                client.scene = "office"
+                                self.broadcast("guard scene office")
+
+                            if data[1] == "cam":
+                                client.scene = "cam"
+                                self.broadcast("guard scene cam")
+
+                        if data[0] == "check":
+
+                            if data[1] in ["cam1a", "cam1b", "cam1c", "cam2a",
+                                           "cam2b", "cam3", "cam4a", "cam4b",
+                                           "cam5", "cam6", "cam7"]:
+                                client.lastcam = data[1]
+                                self.broadcast("guard check %s" %(client.lastcam))
+
+                        if data[0] == "leftdoor":
+
+                            if data[1] == "true":
+                                if not self.leftdoor:
+                                    self.leftdoor = True
+                                    self.usage += 1
+                                    self.broadcast("guard leftdoor true")
+
+                            if data[1] == "false":
+                                if self.leftdoor:
+                                    self.leftdoor = False
+                                    self.usage += 1
+                                    self.broadcast("guard leftdoor false")
+
+                        if data[0] == "rightdoor":
+
+                            if data[1] == "true":
+                                if not self.rightdoor:
+                                    self.rightdoor = True
+                                    self.usage += 1
+                                    self.broadcast("guard rightdoor true")
+
+                            if data[1] == "false":
+                                if self.rightdoor:
+                                    self.rightdoor = False
+                                    self.usage -= 1
+                                    self.broadcast("guard rightdoor false")
+
+                        if data[0] == "leftlight":
+
+                            if data[1] == "true":
+                                if not self.leftlight:
+                                    if self.rightlight:
+
+                                        self.rightlight = False
+                                        self.leftlight = True
+
+                                        self.broadcast("guard rightlight false")
+                                        self.broadcast("guard leftlight true")
+
+                                        self.usage += 1
+                                        self.usage -= 1
+                                    else:
+                                        self.leftlight = True
+                                        self.usage += 1
+                                        self.broadcast("guard leftlight true")
+
+                            if data[1] == "false":
+                                if self.leftlight:
+                                    self.leftlight = False
+                                    self.usage -= 1
+                                    self.broadcast("guard leftlight false")
+
+                        if data[0] == "rightlight":
+
+                            if data[1] == "true":
+                                if not self.rightlight:
+                                    if self.rightlight:
+                                        self.leftlight = False
+                                        self.rightlight = True
+
+                                        self.broadcast("guard rightlight true")
+                                        self.broadcast("guard leftlight false")
+
+                                        self.usage += 1
+                                        self.usage -= 1
+
+                                    else:
+                                        self.rightlight = True
+                                        self.usage += 1
+
+                                        self.broadcast("guard rightlight true")
+
+                            if data[1] == "false":
+                                if self.rightlight:
+                                    self.rightlight = False
+                                    self.usage -= 1
+
+                                    self.broadcast("guard rightlight false")
+
+                        if data[0] == "scene":
+
+                            if data[1] == "office":
+                                client.scene = "office"
+                                self.broadcast("guard scene office")
+
+                            if data[1] == "cam":
+                                client.scene = "cam"
+                                self.broadcast("guard scene cam")
 
 
-def cmd():
 
-    global data, clients, usage, leftdoor, rightdoor, leftlight, rightlight, guardScene, time, power
 
-    print()
-    print("Power left: %s, Usage: %s" % (power,usage))
-    print("Time %s" % (time))
-    print()
-    command = input("> ")
-    print()
 
-    if command.lower() == "power":
 
-        power += 0
-        usage += 0
 
-        print("Power left: %s, Usage: %s" % (power,usage))
+        time.sleep(1.987)
+        self.update()
 
-    if command.lower() == "time":
+    def broadcast(self, data, exclude=[]):
+        for client in self.clients:
+            if client not in exclude:
+                client.send(data)
 
-        time += 0
 
-        print("Time: %s" % (time))
+    def cmd(self):
 
-    if command.lower() == "state":
-        print("Left Door: %s" % (leftdoor))
-        print("Right Door: %s" % (rightdoor))
-        print("Left Light: %s" % (leftlight))
-        print("Right Light: %s" % (rightlight))
+        print()
 
-    if command.lower() == "clients":
-        for client in clients:
-            print(str(client))
+        print("Power left: %s, Usage: %s" % (self.power, self.usage))
+        print("Time %s" % (self.time))
 
-    if command.lower() == "send":
-        toSend = input("Send> ")
-        for client in clients:
-            client.send(bytes(toSend, "utf-8"))
+        print()
 
-    if command.lower() == "exec":
-        exec(input("Exec> "))
+        command = input("> ").lower()
 
-    cmd()
+        print()
 
-class pyDLASYIAS_Server(ThreadingMixIn, TCPServer): pass
+        if command == "state":
+            print("Left Door: %s" % (self.leftdoor))
+            print("Right Door: %s" % (self.rightdoor))
+            print("Left Light: %s" % (self.leftlight))
+            print("Right Light: %s" % (self.rightlight))
+            print("Freddy selected: %s" %(self.bearSelected))
+            print("Bonnie selected: %s" %(self.rabbitSelected))
+            print("Chica selected: %s" %(self.chickenSelected))
+            print("Foxy selected: %s" %(self.foxSelected))
+            print("Guard selected: %s" %(self.guardSelected))
+            print("Power: %s" %(self.power))
+            print("Usage: %s" %(self.usage))
+            print("Time: %s" %(self.time))
+            print("Stage: %s" %(self.stage))
+
+        if command == "clients":
+            for client in self.clients:
+                print(str(client))
+
+        if command == "send":
+            send = input("Send> ")
+            for client in self.clients:
+                client.send(send)
+
+        if command == "exec":
+            print("BE CAREFUL AROUND THIS ONE! You could break the server...")
+            print()
+            exec(input("Exec> "))
+
+        self.cmd()
+
+    def powerUpdate(self):
+
+        if self.stage == "game":
+            self.power -= 1
+            if self.usage == 1:
+                time.sleep(9.6)
+
+            elif self.usage == 2:
+                time.sleep(4.8)
+
+            elif self.usage == 3:
+                time.sleep(random.choice([2.8, 2.9, 3.9]))
+
+            elif self.usage >= 4:
+                time.sleep(random.choice([1.9, 2.9]))
+
+        self.powerUpdate()
+
+
+    def timeUpdate(self):
+
+        time += 1
+
+        time.sleep(86)
+
+        self.hourUpdate()
+
 
 if __name__ == "__main__":
-    #threading.Timer(0.1, powerTimer).start()
-    #threading.Timer(86, hourTimer).start()
-    threading.Thread(target=cmd).start()
-    threading.Thread(target=sendData).start()
-    server = pyDLASYIAS_Server(('localhost', 1987), requestHandler)
-    server.serve_forever()
+    server = pyDLASYIAS_Server(('localhost', 1987), requestHandler).serve_forever()
 
 else:
     print("Server.py must be executed...")
