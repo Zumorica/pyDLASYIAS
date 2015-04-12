@@ -15,7 +15,7 @@ pyDLASYIAS is a "Five Nights at Freddy's 1" open-sourced clone.
 
 Its objective is to recreate the original game in Python 3 with PyGame. 
 
-Requires pygame and numpy to work!
+Requires pygame to work!
 
 "Five Nights at Freddy's" is a game made by Scott Cawthon. I don't own any of the sound nor the images.
 
@@ -134,7 +134,6 @@ Roadmap:
           *Image          100 %
         
           *Music box      100 %
-         
-        +Perspective                                    0 %
+        
             
     
