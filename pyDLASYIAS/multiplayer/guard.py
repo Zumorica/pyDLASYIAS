@@ -17,18 +17,19 @@ from pygame.locals import *
 class animatronic():
     '''Class for the other players.'''
     def __init__(self, name, kind):
+        Globals.animatronics.append(self)
         self.name = name
         self.kind = kind
+        self.status = 1
         if self.kind != "fox":
             self.location = "cam1a"
         else:
             self.location = "cam1c"
-            self.status = 1
 
 class guardMain():
     '''Class for the guard game.'''
-    def __init__(self, gmode="custom", power=100, time=0, sectohour=86,
-                 width=1280, height=720, fps=40, socket=None):
+    def __init__(self, socket, gmode="custom", power=100, time=0, sectohour=86,
+                 width=1280, height=720, fps=40):
 
         Globals.main = self
         self.gmode = gmode
@@ -76,10 +77,14 @@ class guardMain():
         self.movingleft = False
         self.movingright = False
         self.socket = socket
+        self.data = ""
         self.screen = pygame.display.set_mode((self.width, self.height), 0, 32)
         self.movable = [spr.bg, spr.rightButton, spr.leftButton, spr.leftDoor, \
                         spr.rightDoor, spr.leftDoorButton, spr.rightDoorButton,\
                         spr.leftLightButton, spr.rightLightButton]
+        self.updateThread = threading.Thread(target=self.update)
+        self.updateThread.setDaemon(True)
+        self.updateThread.start()
         self.mainLoop()
 
     def mainLoop(self):
@@ -88,6 +93,8 @@ class guardMain():
         spr.cameraAnim.state = pyganim.PAUSED
         pygame.init()
 
+        time.sleep(5)
+
         while self.running:
 
             Globals.mouseClick = False
@@ -95,8 +102,6 @@ class guardMain():
             pygame.display.set_caption("--pyDLASYIAS %s-- -%s FPS-" %(Globals.version, round(self.FPSCLOCK.get_fps())))
 
             for event in pygame.event.get():
-
-                # utils.debugprint(event, writetolog=False)
 
                 if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
                     pygame.quit()
@@ -859,9 +864,6 @@ class guardMain():
                 spr.scaregroup.update()
                 spr.scaregroup.draw(self.screen)
 
-            if self.fox.cooldown and self.fox.location != "off":
-                self.fox.cooldown -= 1
-
             if self.scene == "office" and not self.leftlight and not self.rightlight and self.fox.status != 5:
                 snd.channelThree.set_volume(0.0)
 
@@ -903,8 +905,6 @@ class guardMain():
                 spr.cameraAnim.state = pyganim.PAUSED
                 self.runAtSceneStart = 0
                 self.oldtime = 0
-
-            # self.screen.blit(self.font.render("%s FPS" % round(self.FPSCLOCK.get_fps()), True, (0,255,0)), (10,10))
 
             pygame.display.update(spr.bg.rect)
 
@@ -1103,8 +1103,6 @@ class guardMain():
             spr.cameraAnim.state = pyganim.PLAYING
             spr.cameraAnim.play()
 
-            self.fox.cooldown = random.randint(100, 300)
-
             for animatronic in Globals.animatronics:
                 animatronic.beingWatched = False
 
@@ -1161,6 +1159,61 @@ class guardMain():
             self.oldtime = 0
 
     def current_Milliseconds(self): return int(round(time.time() * 1000))
+
+    def send(self, data): self.socket.send(bytes(data, "utf-8"))
+
+    def update(self):
+        self.data = self.socket.recv(1024)
+        print(self.data)
+        # if len(self.data) > 0:
+        #     data = str(self.data, "utf-8").split()
+        #     print(data)
+        #     if data[0] == "bear":
+        #
+        #         if data[1] == "goto":
+        #
+        #             if data[2] in ["cam1a", "cam1b", "cam4a", "cam4b", "cam6", "cam7", "rightdoor", "inside"]:
+        #                 self.bear.location = data[2]
+        #
+        #     if data[0] == "rabbit":
+        #
+        #         if data[1] == "goto":
+        #
+        #             if data[2] in ["cam1a", "cam1b", "cam2a", "cam2b", "cam3", "cam5", "leftdoor", "inside"]:
+        #                 self.rabbit.location = data[2]
+        #
+        #     if data[0] == "chicken":
+        #
+        #         if data[1] == "goto":
+        #
+        #             if data[2] in ["cam1a", "cam1b", "cam4a", "cam4b", "cam6", "cam7", "rightdoor", "inside"]:
+        #                 self.chicken.location = data[2]
+        #
+        #     if data[0] == "fox":
+        #
+        #         if data[1] == "status":
+        #
+        #             if data[2].isdigit():
+        #                 self.fox.status = int(data[2])
+        #
+        #     if data[0] == "event":
+        #
+        #         if data[1] == "time":
+        #
+        #             if data[2].isdigit():
+        #                 self.time = int(data[2])
+        #
+        #         if data[1] == "power":
+        #
+        #             if data[2].isdigit():
+        #                 self.power = int(data[2])
+        #
+        #         if data[1] == "usage":
+        #
+        #             if data[2].isdigit():
+        #                 self.usage = int(data[2])
+
+        self.update()
 
 if __name__ == "__main__":
     try:

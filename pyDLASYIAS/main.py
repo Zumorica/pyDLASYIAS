@@ -474,6 +474,8 @@ class main():
                             spr.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\1"]))
 
                         else:
+                            spr.bg.pos = [0,0]
+                            spr.bg.update()
                             self.alphaStatic = False
                             self.static = True
 
@@ -848,7 +850,7 @@ class main():
                 spr.scaregroup.update()
                 spr.scaregroup.draw(self.screen)
 
-            if self.fox.cooldown and self.fox.location != "off":
+            if self.fox.cooldown and self.fox.location != "off" and self.scene != "cam":
                 self.fox.cooldown -= 1
 
             if self.scene == "office" and not self.leftlight and not self.rightlight and self.fox.status != 5:
@@ -863,7 +865,7 @@ class main():
             if spr.leftDoorAnim.getCurrentFrame() == spr.leftDoorAnim.getFrame(15) and self.leftdoor:
                 spr.leftDoor.changeImg("office\\doors\\left\\15")
 
-            if spr.leftDoorAnim.state == pyganim.PLAYING:
+            if spr.leftDoorAnim.state == pyganim.PLAYING and not self.scene == "cam":
                 if not self.leftdoor:
                     spr.leftDoor.changeImg("office\\doors\\left\\0")
 
@@ -875,7 +877,7 @@ class main():
             if spr.rightDoorAnim.getCurrentFrame() == spr.rightDoorAnim.getFrame(15) and self.rightdoor:
                 spr.rightDoor.changeImg("office\\doors\\right\\15")
 
-            if spr.rightDoorAnim.state == pyganim.PLAYING:
+            if spr.rightDoorAnim.state == pyganim.PLAYING and not self.scene == "cam":
                 if not self.rightdoor:
                     spr.rightDoor.changeImg("office\\doors\\right\\0")
 

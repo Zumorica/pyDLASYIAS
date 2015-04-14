@@ -2,13 +2,17 @@ import socketserver
 import socket
 import threading
 import time
+import sys
+import random
 from socketserver import *
 
 class client():
     '''Class for the client.'''
-    def __init__(self, request, client_address):
+    def __init__(self, request, client_address, server):
         self.request = request
         self.client_address = client_address
+
+        self.server = server
 
         self.isClosed = False
         self.data = b''
@@ -58,7 +62,9 @@ class client():
             self.data = self.receive()
         except:
             self.kick()
-        self.update()
+
+        if not self.isClosed and self.server.isRunning:
+            self.update()
 
     def kick(self):
         self.request.close()
@@ -68,12 +74,12 @@ class requestHandler(socketserver.BaseRequestHandler):
     '''Handles the requests.'''
     def setup(self):
         '''When a new client connects to the server, this function gets called.'''
-        self.server.clients.append(client(self.request, self.client_address))
+        self.server.clients.append(client(self.request, self.client_address, self.server))
 
 
     def handle(self):
         '''Handles requests.'''
-        while 1:
+        while self.server.isRunning:
             pass
 
     def finish(self):
@@ -112,6 +118,8 @@ class pyDLASYIAS_Server(ThreadingMixIn, TCPServer):
 
         self.stage = "multihall"
 
+        self.isRunning = True
+
         self.cmdThread = threading.Thread(target=self.cmd)
         self.updateThread = threading.Thread(target=self.update)
         self.timeThread = threading.Thread(target=self.timeUpdate)
@@ -127,12 +135,6 @@ class pyDLASYIAS_Server(ThreadingMixIn, TCPServer):
 
     def update(self):
         for client in self.clients:
-            try:
-                client.send("Server -> Socket: Are you still alive?")
-            except:
-                client.isClosed = True
-                self.clients.remove(client)
-                continue
 
             if self.stage == "multihall":
                 if client.data == b"bear selected" and not self.bearSelected:
@@ -183,7 +185,7 @@ class pyDLASYIAS_Server(ThreadingMixIn, TCPServer):
 
             if self.stage == "game":
                 for client in self.clients:
-                    data = str(client.data()).split()
+                    data = str(client.data(), "utf-8").split()
 
                     if client.character == "bear":
                         pass
@@ -192,7 +194,31 @@ class pyDLASYIAS_Server(ThreadingMixIn, TCPServer):
                         pass
 
                     if client.character == "chicken":
-                        pass
+                        if data[0] == "goto":
+
+                            if data[1] == "cam1b" and self.chicken.location in ["cam1a", "cam7", "cam6"]:
+                                self.chicken.location = "cam1b"
+                                self.broadcast("chicken goto cam1b")
+
+                            if data[1] == "cam4a" and self.chicken.location in ["cam6", "cam7"]:
+                                self.chicken.location = "cam4a"
+                                self.broadcast("chicken goto cam4a")
+
+                            if data[1] == "cam4b" and self.chicken.location in ["cam4a"]:
+                                self.chicken.location = "cam4b"
+                                self.broadcast("chicken goto cam4b")
+
+                            if data[1] == "cam6" and self.chicken.location in ["cam1b", "cam7"]:
+                                self.chicken.location = "cam6"
+                                self.broadcast("chicken goto cam6")
+
+                            if data[1] == "cam7" and self.chicken.location in ["cam1b", "cam6"]:
+                                self.chicken.location = "cam7"
+                                self.broadcast("chicken goto cam7")
+
+                            if data[1] == "rightdoor" and self.chicken.location in ["cam4b"]:
+                                self.chicken.location = "rightdoor"
+                                self.broadcast("chicken goto rightdoor")
 
                     if client.character == "fox":
 
@@ -347,7 +373,8 @@ class pyDLASYIAS_Server(ThreadingMixIn, TCPServer):
 
 
         time.sleep(1.987)
-        self.update()
+        if self.isRunning:
+            self.update()
 
     def broadcast(self, data, exclude=[]):
         for client in self.clients:
@@ -388,14 +415,20 @@ class pyDLASYIAS_Server(ThreadingMixIn, TCPServer):
                 print(str(client))
 
         if command == "send":
-            send = input("Send> ")
-            for client in self.clients:
-                client.send(send)
+            self.broadcast(input("Send> "))
 
         if command == "exec":
             print("BE CAREFUL AROUND THIS ONE! You could break the server...")
             print()
             exec(input("Exec> "))
+
+        if command == "close":
+            print("Closing down...")
+            time.sleep(1)
+            for client in self.clients:
+                client.kick()
+            self.isRunning = False
+            sys.exit(0)
 
         self.cmd()
 

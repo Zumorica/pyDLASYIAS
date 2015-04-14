@@ -17,7 +17,7 @@ About received data on the server and what it does...
         +Bear, Rabbit and Chicken (AKA Freddy, Bonnie and Chica):
 
             First Words:
-                'goto', '', '', '', ''.
+                'goto', '', '', '', ''
 
             Second Words:
                 *all of the cameras*, 'leftdoor', 'rightdoor', 'inside'
@@ -38,3 +38,23 @@ About received data on the server and what it does...
 
             Second Words:
                 'office', 'cam', 'true', 'false', *all of the cameras*
+
+About data sent from the server and what it does...
+
+    Let's look at these examples
+
+        b'event time 3'
+        b'chicken goto cam6'
+
+    The client should "transform" the data into a string and then split the
+    string into a list. Finally it should check the words in the list.
+
+    Valid words:
+
+        First Words:
+
+            'bear', 'rabbit', 'chicken', 'fox', 'guard', 'event'
+
+        Second Words:
+
+            'goto', 'time', 'power', 'usage', '', ''

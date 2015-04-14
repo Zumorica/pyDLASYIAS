@@ -199,7 +199,6 @@ def launcher():
         pygame.display.set_caption("--pyDLASYIAS %s-- -%s FPS-" %(Globals.version, round(FPSCLOCK.get_fps())))
 
         for event in pygame.event.get():
-            print(event)
             if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit(0)
@@ -300,6 +299,10 @@ def launcher():
 
             if data == b"guard selected":
                 guardAvailable = False
+
+            if data == b"game start":
+                del thread
+                multiplayer.guard.guardMain(socket=sock)
 
             screen.blit(font.render("Data received: %s, F: %s, B: %s, C: %s, FX: %s, G: %s" %(data, bearAvailable, rabbitAvailable, chickenAvailable, foxAvailable, guardAvailable), True, (255, 255, 255)), (50, 450))
 
@@ -506,8 +509,14 @@ def launcher():
 
 def receiveData():
     global data, sock
-    while 1:
-        data = sock.recv(1024)
+    gameStarted = False
+    while not gameStarted:
+        if not gameStarted:
+            data = sock.recv(1024)
+        if data == b"game start":
+            gameStarted = True
+            break
+    utils.debugprint("Finished while loop [Game.py]")
 
 try:
     if __name__ == '__main__':
