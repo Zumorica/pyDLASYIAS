@@ -14,10 +14,12 @@ import pyDLASYIAS.main as main
 import pyDLASYIAS.utils.functions as utils
 import pyDLASYIAS.utils.inputbox as inputbox
 import pyDLASYIAS.pyganim as pyganim
-try:
-    import pyDLASYIAS.multiplayer as multiplayer
-except ImportError:
-    print("Could not load multiplayer module!")
+import pyDLASYIAS.multiplayer as multiplayer
+import pyDLASYIAS.multiplayer.guard
+import pyDLASYIAS.multiplayer.chicken
+import pyDLASYIAS.multiplayer.fox
+import pyDLASYIAS.multiplayer.bear
+import pyDLASYIAS.multiplayer.common
 
 data = b''
 
@@ -302,7 +304,7 @@ def launcher():
 
             if data == b"game start":
                 del thread
-                multiplayer.guard.guardMain(socket=sock)
+                multiplayer.chicken.chickenMain(sock)
 
             screen.blit(font.render("Data received: %s, F: %s, B: %s, C: %s, FX: %s, G: %s" %(data, bearAvailable, rabbitAvailable, chickenAvailable, foxAvailable, guardAvailable), True, (255, 255, 255)), (50, 450))
 

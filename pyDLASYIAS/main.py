@@ -18,7 +18,7 @@ from pygame.locals import *
 class main():
     '''Class for the main game.'''
     def __init__(self, gmode="custom", power=100, time=0, sectohour=86,
-                 width=1280, height=720, fps=40):
+                 width=1280, height=720, fps=59):
 
         Globals.main = self
         self.gmode = gmode
@@ -69,9 +69,38 @@ class main():
         self.movable = [spr.bg, spr.rightButton, spr.leftButton, spr.leftDoor, \
                         spr.rightDoor, spr.leftDoorButton, spr.rightDoorButton,\
                         spr.leftLightButton, spr.rightLightButton]
-        self.mainLoop()
+        self.main_loop()
 
-    def mainLoop(self):
+    def handle_events(self):
+        for event in pygame.event.get():
+
+            # utils.debugprint(event, writetolog=False)
+
+            if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
+                pygame.quit()
+                self.shutdown()
+                return False
+
+            if event.type == KEYUP and event.key == K_F11:
+                if not self.fullscreen:
+                    self.screen = pygame.display.set_mode((self.width, self.height), FULLSCREEN, 32)
+                    self.fullscreen = True
+
+                if self.fullscreen:
+                    self.screen = pygame.display.set_mode((self.width, self.height), 0, 32)
+                    self.fullscreen = False
+
+            elif event.type == MOUSEMOTION:
+                self.mousex, self.mousey = event.pos
+
+            elif event.type == MOUSEBUTTONUP:
+                self.mousex, self.mousey = event.pos
+                Globals.mouseClick = True
+
+        return True
+
+
+    def main_loop(self):
         '''Main game loop.'''
 
         spr.cameraAnim.state = pyganim.PAUSED
@@ -83,823 +112,801 @@ class main():
             Globals.pos = self.mousex, self.mousey
             pygame.display.set_caption("--pyDLASYIAS %s-- -%s FPS-" %(Globals.version, round(self.FPSCLOCK.get_fps())))
 
-            for event in pygame.event.get():
-
-                # utils.debugprint(event, writetolog=False)
+            if self.handle_events():
 
-                if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
-                    pygame.quit()
-                    self.shutdown()
+                if self.scene == "office":
 
-                if event.type == KEYUP and event.key == K_F11:
-                    if not self.fullscreen:
-                        self.screen = pygame.display.set_mode((self.width, self.height), FULLSCREEN, 32)
-                        self.fullscreen = True
+                    if self.runonce == 0:
 
-                    if self.fullscreen:
-                        self.screen = pygame.display.set_mode((self.width, self.height), 0, 32)
-                        self.fullscreen = False
+                        pygame.mixer.stop()
+                        snd.channelOne.play(snd.fanSound, -1)
+                        snd.channelTwo.play(snd.ambience, -1)
+                        snd.channelThree.play(snd.lightHum, -1)
+                        snd.channelEighteen.play(snd.eerieAmbience, -1)
+                        snd.channelTwentyone.play(snd.robotVoice, -1)
 
-                elif event.type == MOUSEMOTION:
-                    self.mousex, self.mousey = event.pos
+                        snd.channelTwo.set_volume(0.5)
+                        snd.channelEighteen.set_volume(0.0)
+                        snd.channelTwenty.set_volume(0.1)
+                        snd.channelTwentyone.set_volume(0.0)
+                        snd.channelTwentytwo.set_volume(0.25)
+                        snd.channelEleven.set_volume(0.05)
+                        snd.channelTen.set_volume(0.0)
+                        snd.channelFour.set_volume(0.5)
 
-                elif event.type == MOUSEBUTTONUP:
-                    self.mousex, self.mousey = event.pos
-                    Globals.mouseClick = True
+                        if self.gmode != "survival":
+                            threading.Timer(0.01, self.hourTimer).start()
+                        threading.Timer(0.01, self.powerTimer).start()
+                        self.runonce = 1
 
-            if self.scene == "office":
+                    if self.runAtSceneStart == 0 and not self.power < 0:
+                        spr.bg.pos = self.lastBgPos
+                        snd.channelOne.set_volume(float(round(((-spr.bg.rect.topleft[0] / 1000) + 0.3), 3)), float(round((0.7 + (spr.bg.rect.topleft[0] / 1000)), 3)))
+                        snd.channelEleven.set_volume(0.05)
+                        snd.channelSeven.set_volume(0.0)
+                        snd.channelTwentyone.set_volume(0.0)
+                        snd.channelTen.set_volume(0.0)
+                        self.usage -= 1
+                        self.runAtSceneStart = 1
 
-                if self.runonce == 0:
+                    if self.movingright and self.bear.location == "inside":
+                        self.changeScene("scarejump")
 
-                    pygame.mixer.stop()
-                    snd.channelOne.play(snd.fanSound, -1)
-                    snd.channelTwo.play(snd.ambience, -1)
-                    snd.channelThree.play(snd.lightHum, -1)
-                    snd.channelEighteen.play(snd.eerieAmbience, -1)
-                    snd.channelTwentyone.play(snd.robotVoice, -1)
+                    if self.fox.status == 5 and self.leftdoor != True:
+                        self.changeScene("scarejump")
 
-                    snd.channelTwo.set_volume(0.5)
-                    snd.channelEighteen.set_volume(0.0)
-                    snd.channelTwenty.set_volume(0.1)
-                    snd.channelTwentyone.set_volume(0.0)
-                    snd.channelTwentytwo.set_volume(0.25)
-                    snd.channelEleven.set_volume(0.05)
-                    snd.channelTen.set_volume(0.0)
-                    snd.channelFour.set_volume(0.5)
+                    if self.time >= 6:
+                        self.changeScene("6am")
 
-                    if self.gmode != "survival":
-                        threading.Timer(0.01, self.hourTimer).start()
-                    threading.Timer(0.01, self.powerTimer).start()
-                    self.runonce = 1
+                    if self.power < 0:
+                        self.changeScene("powerdown")
 
-                if self.runAtSceneStart == 0 and not self.power < 0:
-                    spr.bg.pos = self.lastBgPos
-                    snd.channelOne.set_volume(float(round(((-spr.bg.rect.topleft[0] / 1000) + 0.3), 3)), float(round((0.7 + (spr.bg.rect.topleft[0] / 1000)), 3)))
-                    snd.channelEleven.set_volume(0.05)
-                    snd.channelSeven.set_volume(0.0)
-                    snd.channelTwentyone.set_volume(0.0)
-                    snd.channelTen.set_volume(0.0)
-                    self.usage -= 1
-                    self.runAtSceneStart = 1
+                    spr.officegroup.add(spr.bg)
+                    spr.officegroup.change_layer(spr.bg, 0)
 
-                if self.movingright and self.bear.location == "inside":
-                    self.changeScene("scarejump")
+                    if spr.leftButton.rect.colliderect(self.screen.get_rect()):
+                        spr.officegroup.add(spr.leftButton, layer=1)
+                        spr.officegroup.add(spr.leftDoorButton, layer=2)
+                        spr.officegroup.add(spr.leftLightButton, layer=2)
 
-                if self.fox.status == 5 and self.leftdoor != True:
-                    self.changeScene("scarejump")
+                    elif spr.officegroup.has(spr.leftButton):
+                        spr.officegroup.remove(spr.leftButton)
 
-                if self.time >= 6:
-                    self.changeScene("6am")
+                    if spr.rightButton.rect.colliderect(self.screen.get_rect()):
+                        spr.officegroup.add(spr.rightButton, layer=1)
+                        spr.officegroup.add(spr.rightDoorButton, layer=2)
+                        spr.officegroup.add(spr.rightLightButton, layer=2)
 
-                if self.power < 0:
-                    self.changeScene("powerdown")
+                    elif spr.officegroup.has(spr.rightButton):
+                        spr.officegroup.remove(spr.rightButton)
 
-                spr.officegroup.add(spr.bg)
-                spr.officegroup.change_layer(spr.bg, 0)
+                    if spr.camButton.rect.colliderect(self.screen.get_rect()):
+                        spr.officegroup.add(spr.camButton, layer=4)
 
-                if spr.leftButton.rect.colliderect(self.screen.get_rect()):
-                    spr.officegroup.add(spr.leftButton, layer=1)
-                    spr.officegroup.add(spr.leftDoorButton, layer=2)
-                    spr.officegroup.add(spr.leftLightButton, layer=2)
+                    elif spr.officegroup.has(spr.camButton):
+                        spr.officegroup.remove(spr.camButton)
 
-                elif spr.officegroup.has(spr.leftButton):
-                    spr.officegroup.remove(spr.leftButton)
+                    if spr.leftDoor.rect.colliderect(self.screen.get_rect()):
+                        spr.officegroup.add(spr.leftDoor, layer=3)
 
-                if spr.rightButton.rect.colliderect(self.screen.get_rect()):
-                    spr.officegroup.add(spr.rightButton, layer=1)
-                    spr.officegroup.add(spr.rightDoorButton, layer=2)
-                    spr.officegroup.add(spr.rightLightButton, layer=2)
+                    elif spr.officegroup.has(spr.leftDoor):
+                        spr.officegroup.remove(spr.leftDoor)
 
-                elif spr.officegroup.has(spr.rightButton):
-                    spr.officegroup.remove(spr.rightButton)
+                    if spr.rightDoor.rect.colliderect(self.screen.get_rect()):
+                        spr.officegroup.add(spr.rightDoor, layer=3)
 
-                if spr.camButton.rect.colliderect(self.screen.get_rect()):
-                    spr.officegroup.add(spr.camButton, layer=4)
+                    elif spr.officegroup.has(spr.rightDoor):
+                        spr.officegroup.remove(spr.rightDoor)
 
-                elif spr.officegroup.has(spr.camButton):
-                    spr.officegroup.remove(spr.camButton)
+                    self.movingleft = False
+                    self.movingright = False
 
-                if spr.leftDoor.rect.colliderect(self.screen.get_rect()):
-                    spr.officegroup.add(spr.leftDoor, layer=3)
+                    if self.mousex in range(0, 150) and spr.bg.rect.topleft[0] in range(-400, -5) and not self.movingright:
+                        for s in self.movable:
+                            s.pos = (s.pos[0] + 15, s.pos[1])
+                            s.update()
 
-                elif spr.officegroup.has(spr.leftDoor):
-                    spr.officegroup.remove(spr.leftDoor)
+                        self.movingleft = True
 
-                if spr.rightDoor.rect.colliderect(self.screen.get_rect()):
-                    spr.officegroup.add(spr.rightDoor, layer=3)
+                    if self.mousex in range(150, 315) and spr.bg.rect.topleft[0] in range(-400, -5) and not self.movingright:
+                        for s in self.movable:
+                            s.pos = (s.pos[0] + 10, s.pos[1])
+                            s.update()
 
-                elif spr.officegroup.has(spr.rightDoor):
-                    spr.officegroup.remove(spr.rightDoor)
+                        self.movingleft = True
 
-                self.movingleft = False
-                self.movingright = False
+                    if self.mousex in range(315, 540) and spr.bg.rect.topleft[0] in range(-400, -5) and not self.movingright:
+                        for s in self.movable:
+                            s.pos = (s.pos[0] + 5, s.pos[1])
+                            s.update()
 
-                if self.mousex in range(0, 150) and spr.bg.rect.topleft[0] in range(-400, -5) and not self.movingright:
-                    for s in self.movable:
-                        s.pos = (s.pos[0] + 15, s.pos[1])
-                        s.update()
+                        self.movingleft = True
 
-                    self.movingleft = True
+                    if self.mousex in range(1140, 1280) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
+                        for s in self.movable:
+                            s.pos = (s.pos[0] - 15, s.pos[1])
+                            s.update()
 
-                if self.mousex in range(150, 315) and spr.bg.rect.topleft[0] in range(-400, -5) and not self.movingright:
-                    for s in self.movable:
-                        s.pos = (s.pos[0] + 10, s.pos[1])
-                        s.update()
+                        self.movingright = True
 
-                    self.movingleft = True
+                    if self.mousex in range(1000, 1140) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
+                        for s in self.movable:
+                            s.pos = (s.pos[0] - 10, s.pos[1])
+                            s.update()
 
-                if self.mousex in range(315, 540) and spr.bg.rect.topleft[0] in range(-400, -5) and not self.movingright:
-                    for s in self.movable:
-                        s.pos = (s.pos[0] + 5, s.pos[1])
-                        s.update()
+                        self.movingright = True
 
-                    self.movingleft = True
+                    if self.mousex in range(750, 1000) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
+                        for s in self.movable:
+                            s.pos = (s.pos[0] - 5, s.pos[1])
+                            s.update()
 
-                if self.mousex in range(1140, 1280) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
-                    for s in self.movable:
-                        s.pos = (s.pos[0] - 15, s.pos[1])
-                        s.update()
+                        self.movingright = True
 
-                    self.movingright = True
+                    if spr.leftLightButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                        self.leftLight()
 
-                if self.mousex in range(1000, 1140) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
-                    for s in self.movable:
-                        s.pos = (s.pos[0] - 10, s.pos[1])
-                        s.update()
+                    if spr.leftDoorButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                        self.leftDoor()
 
-                    self.movingright = True
+                    if spr.rightLightButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                        self.rightLight()
 
-                if self.mousex in range(750, 1000) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
-                    for s in self.movable:
-                        s.pos = (s.pos[0] - 5, s.pos[1])
-                        s.update()
+                    if spr.rightDoorButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                        self.rightDoor()
 
-                    self.movingright = True
+                    if spr.camButton.rect.collidepoint(Globals.pos) and not self.camButtonCooldown:
+                        self.camButtonCooldown = True
+                        self.changeScene("cam")
 
-                if spr.leftLightButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.leftLight()
+                    if not spr.camButton.rect.collidepoint(Globals.pos) and not spr.cameraAnim.state == pyganim.PLAYING:
+                        self.camButtonCooldown = False
 
-                if spr.leftDoorButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.leftDoor()
-
-                if spr.rightLightButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.rightLight()
-
-                if spr.rightDoorButton.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.rightDoor()
-
-                if spr.camButton.rect.collidepoint(Globals.pos) and not self.camButtonCooldown:
-                    self.camButtonCooldown = True
-                    self.changeScene("cam")
-
-                if not spr.camButton.rect.collidepoint(Globals.pos) and not spr.cameraAnim.state == pyganim.PLAYING:
-                    self.camButtonCooldown = False
-
-                if self.leftlight and not self.rightlight:
-                    if self.rabbit.location == "leftdoor":
-                        spr.bg.changeImg("office\\r")
-
-                    else:
-                        spr.bg.changeImg(random.choice(["office\\1", "office\\0"]))
-
-                elif not self.leftlight and self.rightlight:
-                    if self.chicken.location == "rightdoor":
-                        spr.bg.changeImg("office\\c")
-
-                    else:
-                        spr.bg.changeImg(random.choice(["office\\2", "office\\0"]))
-
-                elif not self.leftlight and not self.rightlight:
-                    spr.bg.changeImg("office\\0")
-
-                if not self.leftlight and not self.leftdoor:
-                    spr.leftButton.changeImg("office\\button\\left\\0")
-
-                elif self.leftlight and self.leftdoor:
-                    spr.leftButton.changeImg("office\\button\\left\\dl")
-
-                elif self.leftlight and not self.leftdoor:
-                    spr.leftButton.changeImg("office\\button\\left\\l")
-
-                elif not self.leftlight and self.leftdoor:
-                    spr.leftButton.changeImg("office\\button\\left\\d")
-
-                if not self.rightlight and not self.rightdoor:
-                    spr.rightButton.changeImg("office\\button\\right\\0")
-
-                elif self.rightlight and self.rightdoor:
-                    spr.rightButton.changeImg("office\\button\\right\\dl")
-
-                elif self.rightlight and not self.rightdoor:
-                    spr.rightButton.changeImg("office\\button\\right\\l")
-
-                elif not self.rightlight and self.rightdoor:
-                    spr.rightButton.changeImg("office\\button\\right\\d")
-
-                self.lastBgPos = spr.bg.pos
-
-                snd.channelOne.set_volume(float(round(((-spr.bg.rect.topleft[0] / 1000) + 0.3), 3)), float(round((0.7 + (spr.bg.rect.topleft[0] / 1000)), 3)))
-
-                spr.officegroup.draw(self.screen)
-                spr.officegroup.update()
-
-                for animatronic in Globals.animatronics:
-                    animatronic.beingWatched = False
-
-                if self.time == 0:
-                    self.timeLabel = self.font.render("12 PM", True, (255, 255, 255))
-                    self.screen.blit(self.timeLabel, (1040, 60))
-                else:
-                    self.timeLabel = self.font.render("%s AM" % (self.time), True, (255, 255, 255))
-                    self.screen.blit(self.timeLabel, (1040, 60))
-
-                self.powerLabel = self.font.render("Power left: %s" %(self.power), True, (255, 255, 255))
-                self.usageLabel = self.font.render("Usage: %s" %(self.usage), True, (255, 255, 255))
-
-                self.screen.blit(self.powerLabel, (50, 520))
-                self.screen.blit(self.usageLabel, (50, 550))
-
-            elif self.scene == "cam":
-
-                self.alphaStatic = True
-                self.static = False
-                snd.channelTen.set_volume(0.0)
-
-                if self.static:
-                    spr.bg.pos = [0, 0]
-
-                if self.staticTime:
-                    self.static = True
-                    self.alphaStatic = False
-                    self.staticTime -= 1
-                    snd.channelTen.set_volume(0.5)
-
-                if self.time >= 6:
-                    self.changeScene("6am")
-
-                if self.power < 0:
-                    self.changeScene("office")
-
-                if self.runAtSceneStart == 0 and not self.power < 0:
-                    spr.bg.pos = [0, 0]
-                    snd.channelSeven.play(snd.cameraSoundTwo, -1)
-                    snd.channelTen.play(random.choice([snd.garble, snd.garbleTwo, snd.garbleThree]), -1)
-                    snd.channelSeven.set_volume(1.0)
-                    snd.channelOne.set_volume(0.03, 0.07)
-                    self.changeCamera(self.lastcam)
-                    self.usage += 1
-                    self.runAtSceneStart = 1
-
-                spr.camgroup.add(spr.camButton, layer=10)
-                spr.camgroup.add(spr.map, layer=8)
-                spr.camgroup.add(spr.camButtonOneA, layer=10)
-                spr.camgroup.add(spr.camButtonOneB, layer=10)
-                spr.camgroup.add(spr.camButtonOneC, layer=10)
-                spr.camgroup.add(spr.camButtonTwoA, layer=10)
-                spr.camgroup.add(spr.camButtonTwoB, layer=10)
-                spr.camgroup.add(spr.camButtonThree, layer=10)
-                spr.camgroup.add(spr.camButtonFourA, layer=10)
-                spr.camgroup.add(spr.camButtonFourB, layer=10)
-                spr.camgroup.add(spr.camButtonFive, layer=10)
-                spr.camgroup.add(spr.camButtonSix, layer=10)
-                spr.camgroup.add(spr.camButtonSeven, layer=10)
-
-                if self.fox.status != 4:
-                    spr.camgroup.add(spr.bg, layer=0)
-
-
-                if spr.camButtonOneA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.changeCamera("cam1a")
-
-                if spr.camButtonOneB.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.changeCamera("cam1b")
-
-                if spr.camButtonOneC.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.changeCamera("cam1c")
-
-                if spr.camButtonTwoA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.changeCamera("cam2a")
-
-                if spr.camButtonTwoB.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.changeCamera("cam2b")
-
-                if spr.camButtonThree.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.changeCamera("cam3")
-
-                if spr.camButtonFourA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.changeCamera("cam4a")
-
-                if spr.camButtonFourB.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.changeCamera("cam4b")
-
-                if spr.camButtonFive.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.changeCamera("cam5")
-
-                if spr.camButtonSix.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.changeCamera("cam6")
-
-                if spr.camButtonSeven.rect.collidepoint(Globals.pos) and Globals.mouseClick:
-                    self.changeCamera("cam7")
-
-                if self.lastcam == "cam1a":
-
-                    if self.rabbit.location == "cam1a" and self.chicken.location == "cam1a" and self.bear.location == "cam1a":
-                        spr.bg.changeImg("cameras\\cam1a\\brc")
-
-                    elif self.rabbit.location != "cam1a" and self.chicken.location == "cam1a" and self.bear.location == "cam1a":
-                        spr.bg.changeImg("cameras\\cam1a\\bc")
-
-                    elif self.rabbit.location == "cam1a" and self.chicken.location != "cam1a" and self.bear.location == "cam1a":
-                        spr.bg.changeImg("cameras\\cam1a\\br")
-
-                    elif self.rabbit.location != "cam1a" and self.chicken.location != "cam1a" and self.bear.location == "cam1a":
-                        spr.bg.changeImg("cameras\\cam1a\\b")
-
-                    elif self.rabbit.location != "cam1a" and self.chicken.location != "cam1a" and self.bear.location != "cam1a":
-                        spr.bg.changeImg("cameras\\cam1a\\0")
-
-                    else:
-                        self.alphaStatic = False
-                        self.static = True
-
-                elif self.lastcam == "cam1b":
-
-                    if self.rabbit.location == "cam1b" and self.chicken.location == "cam1b":
-                        spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",  "cameras\\misc\\static\\2", "cameras\\misc\\static\\3", "cameras\\misc\\static\\4", "cameras\\misc\\static\\5", "cameras\\misc\\static\\6"]))
-
-                    elif self.rabbit.location == "cam1b" and self.chicken.location != "cam1b":
-                        spr.bg.changeImg("cameras\\cam1b\\r")
-
-                    elif self.rabbit.location != "cam1b" and self.chicken.location == "cam1b":
-                        spr.bg.changeImg("cameras\\cam1b\\c")
-
-                    elif self.rabbit.location != "cam1b" and self.chicken.location != "cam1b" and self.bear.location == "cam1b":
-                        spr.bg.changeImg("cameras\\cam1b\\b")
-
-                    elif self.rabbit.location != "cam1b" and self.chicken.location != "cam1b" and self.bear.location != "cam1b":
-                        spr.bg.changeImg("cameras\\cam1b\\0")
-
-                    else:
-                        self.alphaStatic = False
-                        self.static = True
-
-                elif self.lastcam == "cam1c":
-
-                    if self.fox.status == 0:
-                        spr.bg.changeImg("cameras\\cam1c\\0")
-
-                    elif self.fox.status == 1:
-                        spr.bg.changeImg("cameras\\cam1c\\2")
-
-                    elif self.fox.status == 2:
-                        spr.bg.changeImg("cameras\\cam1c\\3")
-
-                    elif self.fox.status == 3:
-                        spr.bg.changeImg("cameras\\cam1c\\4")
-
-                    elif self.fox.status == 4:
-                        spr.bg.changeImg("cameras\\cam1c\\4")
-
-                    else:
-                        self.alphaStatic = False
-                        self.static = True
-
-                elif self.lastcam == "cam2a":
-
-                    if self.fox.status != 4:
-                        if self.rabbit.location == "cam2a":
-                            spr.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\r"]))
-
-                        elif self.rabbit.location != "cam2a":
-                            spr.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\1"]))
+                    if self.leftlight and not self.rightlight:
+                        if self.rabbit.location == "leftdoor":
+                            spr.bg.changeImg("office\\r")
 
                         else:
-                            spr.bg.pos = [0,0]
-                            spr.bg.update()
+                            spr.bg.changeImg(random.choice(["office\\1", "office\\0"]))
+
+                    elif not self.leftlight and self.rightlight:
+                        if self.chicken.location == "rightdoor":
+                            spr.bg.changeImg("office\\c")
+
+                        else:
+                            spr.bg.changeImg(random.choice(["office\\2", "office\\0"]))
+
+                    elif not self.leftlight and not self.rightlight:
+                        spr.bg.changeImg("office\\0")
+
+                    if not self.leftlight and not self.leftdoor:
+                        spr.leftButton.changeImg("office\\button\\left\\0")
+
+                    elif self.leftlight and self.leftdoor:
+                        spr.leftButton.changeImg("office\\button\\left\\dl")
+
+                    elif self.leftlight and not self.leftdoor:
+                        spr.leftButton.changeImg("office\\button\\left\\l")
+
+                    elif not self.leftlight and self.leftdoor:
+                        spr.leftButton.changeImg("office\\button\\left\\d")
+
+                    if not self.rightlight and not self.rightdoor:
+                        spr.rightButton.changeImg("office\\button\\right\\0")
+
+                    elif self.rightlight and self.rightdoor:
+                        spr.rightButton.changeImg("office\\button\\right\\dl")
+
+                    elif self.rightlight and not self.rightdoor:
+                        spr.rightButton.changeImg("office\\button\\right\\l")
+
+                    elif not self.rightlight and self.rightdoor:
+                        spr.rightButton.changeImg("office\\button\\right\\d")
+
+                    self.lastBgPos = spr.bg.pos
+
+                    snd.channelOne.set_volume(float(round(((-spr.bg.rect.topleft[0] / 1000) + 0.3), 3)), float(round((0.7 + (spr.bg.rect.topleft[0] / 1000)), 3)))
+
+                    spr.officegroup.draw(self.screen)
+                    spr.officegroup.update()
+
+                    for animatronic in Globals.animatronics:
+                        animatronic.beingWatched = False
+
+                    if self.time == 0:
+                        self.timeLabel = self.font.render("12 PM", True, (255, 255, 255))
+                        self.screen.blit(self.timeLabel, (1040, 60))
+                    else:
+                        self.timeLabel = self.font.render("%s AM" % (self.time), True, (255, 255, 255))
+                        self.screen.blit(self.timeLabel, (1040, 60))
+
+                    self.powerLabel = self.font.render("Power left: %s" %(self.power), True, (255, 255, 255))
+                    self.usageLabel = self.font.render("Usage: %s" %(self.usage), True, (255, 255, 255))
+
+                    self.screen.blit(self.powerLabel, (50, 520))
+                    self.screen.blit(self.usageLabel, (50, 550))
+
+                elif self.scene == "cam":
+
+                    self.alphaStatic = True
+                    self.static = False
+                    snd.channelTen.set_volume(0.0)
+
+                    if self.static:
+                        spr.bg.pos = [0, 0]
+
+                    if self.staticTime:
+                        self.static = True
+                        self.alphaStatic = False
+                        self.staticTime -= 1
+                        snd.channelTen.set_volume(0.5)
+
+                    if self.time >= 6:
+                        self.changeScene("6am")
+
+                    if self.power < 0:
+                        self.changeScene("office")
+
+                    if self.runAtSceneStart == 0 and not self.power < 0:
+                        spr.bg.pos = [0, 0]
+                        snd.channelSeven.play(snd.cameraSoundTwo, -1)
+                        snd.channelTen.play(random.choice([snd.garble, snd.garbleTwo, snd.garbleThree]), -1)
+                        snd.channelSeven.set_volume(1.0)
+                        snd.channelOne.set_volume(0.03, 0.07)
+                        self.changeCamera(self.lastcam)
+                        self.usage += 1
+                        self.runAtSceneStart = 1
+
+                    spr.camgroup.add(spr.camButton, layer=10)
+                    spr.camgroup.add(spr.map, layer=8)
+                    spr.camgroup.add(spr.camButtonOneA, layer=10)
+                    spr.camgroup.add(spr.camButtonOneB, layer=10)
+                    spr.camgroup.add(spr.camButtonOneC, layer=10)
+                    spr.camgroup.add(spr.camButtonTwoA, layer=10)
+                    spr.camgroup.add(spr.camButtonTwoB, layer=10)
+                    spr.camgroup.add(spr.camButtonThree, layer=10)
+                    spr.camgroup.add(spr.camButtonFourA, layer=10)
+                    spr.camgroup.add(spr.camButtonFourB, layer=10)
+                    spr.camgroup.add(spr.camButtonFive, layer=10)
+                    spr.camgroup.add(spr.camButtonSix, layer=10)
+                    spr.camgroup.add(spr.camButtonSeven, layer=10)
+
+                    if self.fox.status != 4:
+                        spr.camgroup.add(spr.bg, layer=0)
+
+
+                    if spr.camButtonOneA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                        self.changeCamera("cam1a")
+
+                    if spr.camButtonOneB.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                        self.changeCamera("cam1b")
+
+                    if spr.camButtonOneC.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                        self.changeCamera("cam1c")
+
+                    if spr.camButtonTwoA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                        self.changeCamera("cam2a")
+
+                    if spr.camButtonTwoB.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                        self.changeCamera("cam2b")
+
+                    if spr.camButtonThree.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                        self.changeCamera("cam3")
+
+                    if spr.camButtonFourA.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                        self.changeCamera("cam4a")
+
+                    if spr.camButtonFourB.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                        self.changeCamera("cam4b")
+
+                    if spr.camButtonFive.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                        self.changeCamera("cam5")
+
+                    if spr.camButtonSix.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                        self.changeCamera("cam6")
+
+                    if spr.camButtonSeven.rect.collidepoint(Globals.pos) and Globals.mouseClick:
+                        self.changeCamera("cam7")
+
+                    if self.lastcam == "cam1a":
+
+                        if self.rabbit.location == "cam1a" and self.chicken.location == "cam1a" and self.bear.location == "cam1a":
+                            spr.bg.changeImg("cameras\\cam1a\\brc")
+
+                        elif self.rabbit.location != "cam1a" and self.chicken.location == "cam1a" and self.bear.location == "cam1a":
+                            spr.bg.changeImg("cameras\\cam1a\\bc")
+
+                        elif self.rabbit.location == "cam1a" and self.chicken.location != "cam1a" and self.bear.location == "cam1a":
+                            spr.bg.changeImg("cameras\\cam1a\\br")
+
+                        elif self.rabbit.location != "cam1a" and self.chicken.location != "cam1a" and self.bear.location == "cam1a":
+                            spr.bg.changeImg("cameras\\cam1a\\b")
+
+                        elif self.rabbit.location != "cam1a" and self.chicken.location != "cam1a" and self.bear.location != "cam1a":
+                            spr.bg.changeImg("cameras\\cam1a\\0")
+
+                        else:
                             self.alphaStatic = False
                             self.static = True
 
-                    else:
-                        spr.camgroup.remove(spr.bg)
-                        spr.camgroup.add(spr.foxSprinting, layer=0)
-                        if spr.foxSprinting.has_Finished():
-                            self.fox.status = 5
-                            spr.camgroup.remove(spr.foxSprinting)
-                            spr.camgroup.add(spr.bg)
-                            self.changeScene("office")
-                            self.changeCamera("cam1a")
+                    elif self.lastcam == "cam1b":
 
-                elif self.lastcam == "cam2b":
+                        if self.rabbit.location == "cam1b" and self.chicken.location == "cam1b":
+                            spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",  "cameras\\misc\\static\\2", "cameras\\misc\\static\\3", "cameras\\misc\\static\\4", "cameras\\misc\\static\\5", "cameras\\misc\\static\\6"]))
 
-                    if self.rabbit.location == "cam2b":
-                        snd.channelTwentyone.set_volume(random.uniform(0.1, 1.0))
-                        spr.bg.changeImg(random.choice(["cameras\\cam2b\\r", "cameras\\cam2b\\r-1"]))
+                        elif self.rabbit.location == "cam1b" and self.chicken.location != "cam1b":
+                            spr.bg.changeImg("cameras\\cam1b\\r")
 
-                    elif self.rabbit.location != "cam2b":
-                        spr.bg.changeImg("cameras\\cam2b\\0")
+                        elif self.rabbit.location != "cam1b" and self.chicken.location == "cam1b":
+                            spr.bg.changeImg("cameras\\cam1b\\c")
 
-                    else:
+                        elif self.rabbit.location != "cam1b" and self.chicken.location != "cam1b" and self.bear.location == "cam1b":
+                            spr.bg.changeImg("cameras\\cam1b\\b")
+
+                        elif self.rabbit.location != "cam1b" and self.chicken.location != "cam1b" and self.bear.location != "cam1b":
+                            spr.bg.changeImg("cameras\\cam1b\\0")
+
+                        else:
+                            self.alphaStatic = False
+                            self.static = True
+
+                    elif self.lastcam == "cam1c":
+
+                        if self.fox.status == 0:
+                            spr.bg.changeImg("cameras\\cam1c\\0")
+
+                        elif self.fox.status == 1:
+                            spr.bg.changeImg("cameras\\cam1c\\2")
+
+                        elif self.fox.status == 2:
+                            spr.bg.changeImg("cameras\\cam1c\\3")
+
+                        elif self.fox.status == 3:
+                            spr.bg.changeImg("cameras\\cam1c\\4")
+
+                        elif self.fox.status == 4:
+                            spr.bg.changeImg("cameras\\cam1c\\4")
+
+                        else:
+                            self.alphaStatic = False
+                            self.static = True
+
+                    elif self.lastcam == "cam2a":
+
+                        if self.fox.status != 4:
+                            if self.rabbit.location == "cam2a":
+                                spr.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\r"]))
+
+                            elif self.rabbit.location != "cam2a":
+                                spr.bg.changeImg(random.choice(["cameras\\cam2a\\0", "cameras\\cam2a\\1"]))
+
+                            else:
+                                spr.bg.pos = [0,0]
+                                spr.bg.update()
+                                self.alphaStatic = False
+                                self.static = True
+
+                        else:
+                            spr.camgroup.remove(spr.bg)
+                            spr.camgroup.add(spr.foxSprinting, layer=0)
+                            if spr.foxSprinting.has_Finished():
+                                self.fox.status = 5
+                                spr.camgroup.remove(spr.foxSprinting)
+                                spr.camgroup.add(spr.bg)
+                                self.changeScene("office")
+                                self.changeCamera("cam1a")
+
+                    elif self.lastcam == "cam2b":
+
+                        if self.rabbit.location == "cam2b":
+                            snd.channelTwentyone.set_volume(random.uniform(0.1, 1.0))
+                            spr.bg.changeImg(random.choice(["cameras\\cam2b\\r", "cameras\\cam2b\\r-1"]))
+
+                        elif self.rabbit.location != "cam2b":
+                            spr.bg.changeImg("cameras\\cam2b\\0")
+
+                        else:
+                            self.alphaStatic = False
+                            self.static = True
+
+                    elif self.lastcam == "cam3":
+
+                        if self.rabbit.location == "cam3":
+                            spr.bg.changeImg("cameras\\cam3\\r")
+
+                        elif self.rabbit.location != "cam3":
+                            spr.bg.changeImg("cameras\\cam3\\0")
+
+                        else:
+                            self.alphaStatic = False
+                            self.static = True
+
+                    elif self.lastcam == "cam4a":
+
+                        if self.chicken.location == "cam4a":
+                            spr.bg.changeImg("cameras\\cam4a\\c")
+
+                        elif self.chicken.location != "cam4a" and self.bear.location == "cam4a":
+                            spr.bg.changeImg("cameras\\cam4a\\b")
+
+                        elif self.chicken.location != "cam4a" and self.bear.location != "cam4a":
+                            spr.bg.changeImg("cameras\\cam4a\\0")
+
+                        else:
+                            self.alphaStatic = False
+                            self.static = True
+
+                    elif self.lastcam == "cam4b":
+
+                        if self.chicken.location == "cam4b":
+                            snd.channelTwentyone.set_volume(random.uniform(0.1, 1.0))
+                            spr.bg.changeImg(random.choice(["cameras\\cam4b\\c", "cameras\\cam4b\\c-1", "cameras\\cam4b\\c-2"]))
+
+                        elif self.chicken.location != "cam4b" and self.bear.location == "cam4b":
+                            snd.channelTwentyone.set_volume(random.uniform(0.1, 1.0))
+                            spr.bg.changeImg("cameras\\cam4b\\b")
+
+                        elif self.chicken.location != "cam4b" and self.bear.location != "cam4b":
+                            spr.bg.changeImg("cameras\\cam4b\\0")
+
+                        else:
+                            self.alphaStatic = False
+                            self.static = True
+
+                    elif self.lastcam == "cam5":
+
+                        if self.rabbit.location == "cam5":
+                            spr.bg.changeImg("cameras\\cam5\\r")
+
+                        elif self.rabbit.location != "cam5":
+                            spr.bg.changeImg("cameras\\cam5\\0")
+
+                        else:
+                            self.alphaStatic = False
+                            self.static = True
+
+                    elif self.lastcam == "cam6":
+
+                        spr.bg.pos = [0,0]
                         self.alphaStatic = False
-                        self.static = True
+                        self.static = False
 
-                elif self.lastcam == "cam3":
+                        if self.chicken.location == "cam6":
+                            snd.channelEleven.queue(random.choice([snd.pots, snd.potsTwo, snd.potsThree, snd.potsFour]))
 
-                    if self.rabbit.location == "cam3":
-                        spr.bg.changeImg("cameras\\cam3\\r")
+                        if self.bear.location == "cam6":
+                            snd.channelEleven.queue(snd.musicBox)
 
-                    elif self.rabbit.location != "cam3":
-                        spr.bg.changeImg("cameras\\cam3\\0")
+                        snd.channelEleven.set_volume(random.uniform(0.6, 0.8))
 
+                        spr.bg.changeImg("cameras\\misc\\black")
+
+                    elif self.lastcam == "cam7":
+
+                        if self.chicken.location == "cam7" and self.bear.location != "cam7":
+                            spr.bg.changeImg("cameras\\cam7\\c")
+
+                        elif self.chicken.location != "cam7" and self.bear.location == "cam7":
+                            spr.bg.changeImg("cameras\\cam7\\b")
+
+                        elif self.chicken.location != "cam7" and self.bear.location != "cam7":
+                            spr.bg.changeImg("cameras\\cam7\\0")
+
+                        else:
+                            self.alphaStatic = False
+                            self.static = True
+
+                    if spr.camButton.rect.collidepoint(Globals.pos) and not self.camButtonCooldown:
+                        self.camButtonCooldown = True
+                        self.changeScene("office")
+
+                    if not spr.camButton.rect.collidepoint(Globals.pos):
+                        self.camButtonCooldown = False
+
+                    if spr.bg.rect.topright[0] == 1270 and not self.static and self.alphaStatic:
+                        self.camMovement = "right"
+
+                    if spr.bg.rect.topleft[0] == 10 and not self.static and self.alphaStatic:
+                        self.camMovement = "left"
+
+                    if self.camMovement == "right" and not self.static and self.alphaStatic:
+                        spr.bg.pos = (spr.bg.pos[0] + 2, spr.bg.pos[1])
+
+                    if self.camMovement == "left" and not self.static and self.alphaStatic:
+                        spr.bg.pos = (spr.bg.pos[0] - 2, spr.bg.pos[1])
+
+                    for animatronic in Globals.animatronics:
+                        if animatronic.location == self.lastcam:
+                            animatronic.beingWatched = True
+
+                        else:
+                            animatronic.beingWatched = False
+
+                    if self.alphaStatic:
+                        spr.camgroup.add(spr.staticTransparent, layer=2)
+                        spr.staticTransparent.changeImg(random.choice(["cameras\\misc\\static\\transparent\\0", "cameras\\misc\\static\\transparent\\1",
+                                                                       "cameras\\misc\\static\\transparent\\2", "cameras\\misc\\static\\transparent\\3",
+                                                                       "cameras\\misc\\static\\transparent\\4", "cameras\\misc\\static\\transparent\\5",
+                                                                       "cameras\\misc\\static\\transparent\\6", "cameras\\misc\\static\\transparent\\7"]))
+                    if not self.alphaStatic:
+                        spr.camgroup.remove(spr.staticTransparent)
+
+                    if self.static:
+                        spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
+                                                        "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
+                                                        "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
+                                                        "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
+
+                    spr.camgroup.draw(self.screen)
+                    spr.camgroup.update()
+
+                    if self.time == 0:
+                        self.timeLabel = self.font.render("12 PM", True, (255, 255, 255))
+                        self.screen.blit(self.timeLabel, (1040, 60))
                     else:
-                        self.alphaStatic = False
-                        self.static = True
+                        self.timeLabel = self.font.render("%s AM" % (self.time), True, (255, 255, 255))
+                        self.screen.blit(self.timeLabel, (1040, 60))
 
-                elif self.lastcam == "cam4a":
+                    self.powerLabel = self.font.render("Power left: %s" %(self.power), True, (255, 255, 255))
+                    self.usageLabel = self.font.render("Usage: %s" %(self.usage), True, (255, 255, 255))
 
-                    if self.chicken.location == "cam4a":
-                        spr.bg.changeImg("cameras\\cam4a\\c")
+                    self.screen.blit(self.powerLabel, (50, 520))
+                    self.screen.blit(self.usageLabel, (50, 550))
+                    self.screen.blit(self.font.render(Globals.camdic[self.lastcam], True, (255,255,255)), (832,292))
 
-                    elif self.chicken.location != "cam4a" and self.bear.location == "cam4a":
-                        spr.bg.changeImg("cameras\\cam4a\\b")
+                elif self.scene == "scarejump":
 
-                    elif self.chicken.location != "cam4a" and self.bear.location != "cam4a":
-                        spr.bg.changeImg("cameras\\cam4a\\0")
+                    if self.time >= 6:
+                        self.changeScene("6am")
 
-                    else:
-                        self.alphaStatic = False
-                        self.static = True
-
-                elif self.lastcam == "cam4b":
-
-                    if self.chicken.location == "cam4b":
-                        snd.channelTwentyone.set_volume(random.uniform(0.1, 1.0))
-                        spr.bg.changeImg(random.choice(["cameras\\cam4b\\c", "cameras\\cam4b\\c-1", "cameras\\cam4b\\c-2"]))
-
-                    elif self.chicken.location != "cam4b" and self.bear.location == "cam4b":
-                        snd.channelTwentyone.set_volume(random.uniform(0.1, 1.0))
-                        spr.bg.changeImg("cameras\\cam4b\\b")
-
-                    elif self.chicken.location != "cam4b" and self.bear.location != "cam4b":
-                        spr.bg.changeImg("cameras\\cam4b\\0")
-
-                    else:
-                        self.alphaStatic = False
-                        self.static = True
-
-                elif self.lastcam == "cam5":
-
-                    if self.rabbit.location == "cam5":
-                        spr.bg.changeImg("cameras\\cam5\\r")
-
-                    elif self.rabbit.location != "cam5":
-                        spr.bg.changeImg("cameras\\cam5\\0")
-
-                    else:
-                        self.alphaStatic = False
-                        self.static = True
-
-                elif self.lastcam == "cam6":
-
-                    spr.bg.pos = [0,0]
-                    self.alphaStatic = False
-                    self.static = False
-
-                    if self.chicken.location == "cam6":
-                        snd.channelEleven.queue(random.choice([snd.pots, snd.potsTwo, snd.potsThree, snd.potsFour]))
-
-                    if self.bear.location == "cam6":
-                        snd.channelEleven.queue(snd.musicBox)
-
-                    snd.channelEleven.set_volume(random.uniform(0.6, 0.8))
-
-                    spr.bg.changeImg("cameras\\misc\\black")
-
-                elif self.lastcam == "cam7":
-
-                    if self.chicken.location == "cam7" and self.bear.location != "cam7":
-                        spr.bg.changeImg("cameras\\cam7\\c")
-
-                    elif self.chicken.location != "cam7" and self.bear.location == "cam7":
-                        spr.bg.changeImg("cameras\\cam7\\b")
-
-                    elif self.chicken.location != "cam7" and self.bear.location != "cam7":
-                        spr.bg.changeImg("cameras\\cam7\\0")
-
-                    else:
-                        self.alphaStatic = False
-                        self.static = True
-
-                if spr.camButton.rect.collidepoint(Globals.pos) and not self.camButtonCooldown:
-                    self.camButtonCooldown = True
-                    self.changeScene("office")
-
-                if not spr.camButton.rect.collidepoint(Globals.pos):
-                    self.camButtonCooldown = False
-
-                if spr.bg.rect.topright[0] == 1270 and not self.static and self.alphaStatic:
-                    self.camMovement = "right"
-
-                if spr.bg.rect.topleft[0] == 10 and not self.static and self.alphaStatic:
-                    self.camMovement = "left"
-
-                if self.camMovement == "right" and not self.static and self.alphaStatic:
-                    spr.bg.pos = (spr.bg.pos[0] + 2, spr.bg.pos[1])
-
-                if self.camMovement == "left" and not self.static and self.alphaStatic:
-                    spr.bg.pos = (spr.bg.pos[0] - 2, spr.bg.pos[1])
-
-                for animatronic in Globals.animatronics:
-                    if animatronic.location == self.lastcam:
-                        animatronic.beingWatched = True
-
-                    else:
-                        animatronic.beingWatched = False
-
-                if self.alphaStatic:
-                    spr.camgroup.add(spr.staticTransparent, layer=2)
-                    spr.staticTransparent.changeImg(random.choice(["cameras\\misc\\static\\transparent\\0", "cameras\\misc\\static\\transparent\\1",
-                                                                   "cameras\\misc\\static\\transparent\\2", "cameras\\misc\\static\\transparent\\3",
-                                                                   "cameras\\misc\\static\\transparent\\4", "cameras\\misc\\static\\transparent\\5",
-                                                                   "cameras\\misc\\static\\transparent\\6", "cameras\\misc\\static\\transparent\\7"]))
-                if not self.alphaStatic:
-                    spr.camgroup.remove(spr.staticTransparent)
-
-                if self.static:
-                    spr.bg.changeImg(random.choice(["cameras\\misc\\static\\0", "cameras\\misc\\static\\1",
-                                                    "cameras\\misc\\static\\2", "cameras\\misc\\static\\3",
-                                                    "cameras\\misc\\static\\4", "cameras\\misc\\static\\5",
-                                                    "cameras\\misc\\static\\6", "cameras\\misc\\static\\7"]))
-
-                spr.camgroup.draw(self.screen)
-                spr.camgroup.update()
-
-                if self.time == 0:
-                    self.timeLabel = self.font.render("12 PM", True, (255, 255, 255))
-                    self.screen.blit(self.timeLabel, (1040, 60))
-                else:
-                    self.timeLabel = self.font.render("%s AM" % (self.time), True, (255, 255, 255))
-                    self.screen.blit(self.timeLabel, (1040, 60))
-
-                self.powerLabel = self.font.render("Power left: %s" %(self.power), True, (255, 255, 255))
-                self.usageLabel = self.font.render("Usage: %s" %(self.usage), True, (255, 255, 255))
-
-                self.screen.blit(self.powerLabel, (50, 520))
-                self.screen.blit(self.usageLabel, (50, 550))
-                self.screen.blit(self.font.render(Globals.camdic[self.lastcam], True, (255,255,255)), (832,292))
-
-            elif self.scene == "scarejump":
-
-                if self.time >= 6:
-                    self.changeScene("6am")
-
-                if self.powerDownStage == 4:
-                    if self.runAtSceneStart == 0:
-                        pygame.mixer.stop()
-                        spr.bearPowerdownScarejump.play()
-                        snd.channelNine.play(snd.xscream, 0)
-                        self.runAtSceneStart = 1
-
-                    spr.bearPowerdownScarejump.blit(self.screen, (0,0))
-
-                    if spr.bearPowerdownScarejump.isFinished():
-                        self.killed = True
-                        self.shutdown()
-
-                for animatronic in Globals.animatronics:
-                    if (animatronic.location == "inside" or animatronic.status == 5) and (self.power > 0 and not self.killed):
+                    if self.powerDownStage == 4:
                         if self.runAtSceneStart == 0:
+                            pygame.mixer.stop()
+                            spr.bearPowerdownScarejump.play()
                             snd.channelNine.play(snd.xscream, 0)
-                            spr.chickenScarejump.play()
-                            spr.rabbitScarejump.play()
-                            spr.bearNormalScarejump.play()
-                            spr.foxScarejump.play()
                             self.runAtSceneStart = 1
 
-                        if animatronic.kind == "chicken":
-                            spr.chickenScarejump.blit(self.screen, (0, 0))
-                            if spr.chickenScarejump.isFinished():
-                                self.killed = True
-                                self.shutdown()
+                        spr.bearPowerdownScarejump.blit(self.screen, (0,0))
 
-                        if animatronic.kind == "rabbit":
-                            spr.rabbitScarejump.blit(self.screen, (0, 0))
-                            if spr.rabbitScarejump.isFinished():
-                                self.killed = True
-                                self.shutdown()
+                        if spr.bearPowerdownScarejump.isFinished():
+                            self.killed = True
+                            self.shutdown()
 
-                        if animatronic.kind == "bear":
-                            spr.bearNormalScarejump.blit(self.screen, (0, 0))
-                            if spr.bearNormalScarejump.isFinished():
-                                self.killed = True
-                                self.shutdown()
+                    for animatronic in Globals.animatronics:
+                        if (animatronic.location == "inside" or animatronic.status == 5) and (self.power > 0 and not self.killed):
+                            if self.runAtSceneStart == 0:
+                                snd.channelNine.play(snd.xscream, 0)
+                                spr.chickenScarejump.play()
+                                spr.rabbitScarejump.play()
+                                spr.bearNormalScarejump.play()
+                                spr.foxScarejump.play()
+                                self.runAtSceneStart = 1
 
-                        if animatronic.kind == "fox":
-                            spr.foxScarejump.blit(self.screen, (0, 0))
-                            if spr.foxScarejump.isFinished():
-                                self.killed = True
-                                self.shutdown()
+                            if animatronic.kind == "chicken":
+                                spr.chickenScarejump.blit(self.screen, (0, 0))
+                                if spr.chickenScarejump.isFinished():
+                                    self.killed = True
+                                    self.shutdown()
 
-            elif self.scene == "powerdown":
+                            if animatronic.kind == "rabbit":
+                                spr.rabbitScarejump.blit(self.screen, (0, 0))
+                                if spr.rabbitScarejump.isFinished():
+                                    self.killed = True
+                                    self.shutdown()
 
-                spr.scaregroup.add(spr.bg)
+                            if animatronic.kind == "bear":
+                                spr.bearNormalScarejump.blit(self.screen, (0, 0))
+                                if spr.bearNormalScarejump.isFinished():
+                                    self.killed = True
+                                    self.shutdown()
 
-                if self.time >= 6:
-                    self.changeScene("6am")
+                            if animatronic.kind == "fox":
+                                spr.foxScarejump.blit(self.screen, (0, 0))
+                                if spr.foxScarejump.isFinished():
+                                    self.killed = True
+                                    self.shutdown()
 
-                self.movingleft = False
-                self.movingright = False
+                elif self.scene == "powerdown":
 
-                if self.mousex in range(0, 150) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
-                    for s in self.movable:
-                        s.pos = (s.pos[0] + 15, s.pos[1])
-                        s.update()
+                    spr.scaregroup.add(spr.bg)
 
-                    self.movingleft = True
+                    if self.time >= 6:
+                        self.changeScene("6am")
 
-                if self.mousex in range(150, 315) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
-                    for s in self.movable:
-                        s.pos = (s.pos[0] + 10, s.pos[1])
-                        s.update()
+                    self.movingleft = False
+                    self.movingright = False
 
-                    self.movingleft = True
+                    if self.mousex in range(0, 150) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
+                        for s in self.movable:
+                            s.pos = (s.pos[0] + 15, s.pos[1])
+                            s.update()
 
-                if self.mousex in range(315, 540) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
-                    for s in self.movable:
-                        s.pos = (s.pos[0] + 5, s.pos[1])
-                        s.update()
+                        self.movingleft = True
 
-                    self.movingleft = True
+                    if self.mousex in range(150, 315) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
+                        for s in self.movable:
+                            s.pos = (s.pos[0] + 10, s.pos[1])
+                            s.update()
 
-                if self.mousex in range(1140, 1280) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
-                    for s in self.movable:
-                        s.pos = (s.pos[0] - 15, s.pos[1])
-                        s.update()
+                        self.movingleft = True
 
-                    self.movingright = True
+                    if self.mousex in range(315, 540) and spr.bg.rect.topleft[0] in range(-400, -10) and not self.movingright:
+                        for s in self.movable:
+                            s.pos = (s.pos[0] + 5, s.pos[1])
+                            s.update()
 
-                if self.mousex in range(1000, 1140) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
-                    for s in self.movable:
-                        s.pos = (s.pos[0] - 10, s.pos[1])
-                        s.update()
+                        self.movingleft = True
 
-                    self.movingright = True
+                    if self.mousex in range(1140, 1280) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
+                        for s in self.movable:
+                            s.pos = (s.pos[0] - 15, s.pos[1])
+                            s.update()
 
-                if self.mousex in range(750, 1000) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
-                    for s in self.movable:
-                        s.pos = (s.pos[0] - 5, s.pos[1])
-                        s.update()
+                        self.movingright = True
 
-                    self.movingright = True
+                    if self.mousex in range(1000, 1140) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
+                        for s in self.movable:
+                            s.pos = (s.pos[0] - 10, s.pos[1])
+                            s.update()
 
-                if self.runAtSceneStart == 0:
-                    pygame.mixer.stop()
-                    spr.bg.changeImg("office\\powerdown\\0")
-                    snd.channelOne.set_volume(1.0)
-                    snd.channelTwo.set_volume(0.5)
-                    snd.channelFour.set_volume(1.0)
+                        self.movingright = True
 
-                    if self.leftdoor:
-                        if not self.leftDoorReversed:
-                            spr.leftDoorAnim.reverse()
-                            self.leftDoorReversed = True
-                        spr.leftDoorAnim.play()
-                        snd.channelFour.play(snd.doorSound, 0)
-                        self.leftdoor = False
+                    if self.mousex in range(750, 1000) and not spr.bg.rect.topright[0] < 1300 and not self.movingleft:
+                        for s in self.movable:
+                            s.pos = (s.pos[0] - 5, s.pos[1])
+                            s.update()
 
-                    if self.rightdoor:
-                        if not self.rightDoorReversed:
-                            spr.rightDoorAnim.reverse()
-                            self.rightDoorReversed = True
-                        spr.rightDoorAnim.play()
-                        snd.channelFour.play(snd.doorSound, 0)
-                        self.rightdoor = False
+                        self.movingright = True
 
-                    snd.channelOne.play(snd.powerDown, loops=0)
-                    snd.channelOne.fadeout(random.randint(5000, 15000))
+                    if self.runAtSceneStart == 0:
+                        pygame.mixer.stop()
+                        spr.bg.changeImg("office\\powerdown\\0")
+                        snd.channelOne.set_volume(1.0)
+                        snd.channelTwo.set_volume(0.5)
+                        snd.channelFour.set_volume(1.0)
 
-                    snd.channelTwo.play(snd.ambienceTwo, loops=0)
-                    self.powerDownStage = 1
-                    self.runAtSceneStart = 1
+                        if self.leftdoor:
+                            if not self.leftDoorReversed:
+                                spr.leftDoorAnim.reverse()
+                                self.leftDoorReversed = True
+                            spr.leftDoorAnim.play()
+                            snd.channelFour.play(snd.doorSound, 0)
+                            self.leftdoor = False
 
-                if not snd.channelOne.get_busy() and not snd.channelThirty.get_busy() and self.powerDownStage == 1:
-                    snd.channelThirty.set_volume(0.7, 0.3)
-                    if random.randint(1, 5) == 1:
-                        snd.channelThirty.play(snd.musicBox, loops=0, maxtime=20000)
-                    else:
-                        snd.channelThirty.play(snd.musicBox, loops=0, maxtime=random.randint(3000, int(snd.musicBox.get_length() * 1000)))
-                    self.powerDownStage = 2
+                        if self.rightdoor:
+                            if not self.rightDoorReversed:
+                                spr.rightDoorAnim.reverse()
+                                self.rightDoorReversed = True
+                            spr.rightDoorAnim.play()
+                            snd.channelFour.play(snd.doorSound, 0)
+                            self.rightdoor = False
 
-                if self.powerDownStage == 2:
-                    spr.bg.changeImg(random.choice(["office\\powerdown\\0", "office\\powerdown\\1", "office\\powerdown\\0", "office\\powerdown\\0"]))
+                        snd.channelOne.play(snd.powerDown, loops=0)
+                        snd.channelOne.fadeout(random.randint(5000, 15000))
 
-                if not snd.channelThirty.get_busy() and self.powerDownStage == 2:
-                    self.powerDownStage = 3
+                        snd.channelTwo.play(snd.ambienceTwo, loops=0)
+                        self.powerDownStage = 1
+                        self.runAtSceneStart = 1
 
-                if self.powerDownStage == 3:
-                    spr.bg.changeImg("office\\powerdown\\2")
-                    self.oldTime = self.current_Milliseconds()
-                    self.powerDownStage += 1
+                    if not snd.channelOne.get_busy() and not snd.channelThirty.get_busy() and self.powerDownStage == 1:
+                        snd.channelThirty.set_volume(0.7, 0.3)
+                        if random.randint(1, 5) == 1:
+                            snd.channelThirty.play(snd.musicBox, loops=0, maxtime=20000)
+                        else:
+                            snd.channelThirty.play(snd.musicBox, loops=0, maxtime=random.randint(3000, int(snd.musicBox.get_length() * 1000)))
+                        self.powerDownStage = 2
 
-                if self.current_Milliseconds() >= self.oldTime + 6000 and self.powerDownStage == 4:
-                    self.changeScene("scarejump")
+                    if self.powerDownStage == 2:
+                        spr.bg.changeImg(random.choice(["office\\powerdown\\0", "office\\powerdown\\1", "office\\powerdown\\0", "office\\powerdown\\0"]))
 
-                spr.scaregroup.update()
-                spr.scaregroup.draw(self.screen)
+                    if not snd.channelThirty.get_busy() and self.powerDownStage == 2:
+                        self.powerDownStage = 3
 
-            elif self.scene == "6am":
-                if self.runAtSceneStart == 0:
-                    pygame.mixer.stop()
-                    self.screen.fill((0, 0, 0))
-                    self.screen.blit(pygame.font.Font(None, 80).render("5 AM", True, (255, 255, 255)), (544, 298))
-                    snd.channelOne.set_volume(1.0)
-                    snd.channelOne.play(snd.chimes, loops=0)
-                    self.oldTime = self.current_Milliseconds()
-                    self.runAtSceneStart = 2
-                try:
-                    if self.current_Milliseconds() >= self.oldTime + 4500:#
-                        snd.channelTwo.play(snd.children, loops=0)
+                    if self.powerDownStage == 3:
+                        spr.bg.changeImg("office\\powerdown\\2")
+                        self.oldTime = self.current_Milliseconds()
+                        self.powerDownStage += 1
+
+                    if self.current_Milliseconds() >= self.oldTime + 6000 and self.powerDownStage == 4:
+                        self.changeScene("scarejump")
+
+                    spr.scaregroup.update()
+                    spr.scaregroup.draw(self.screen)
+
+                elif self.scene == "6am":
+                    if self.runAtSceneStart == 0:
+                        pygame.mixer.stop()
                         self.screen.fill((0, 0, 0))
-                        self.screen.blit(pygame.font.Font(None, 80).render("6 AM", True, (255, 255, 255)), (544, 298))
-                        del self.oldTime
-                except:
-                    pass
+                        self.screen.blit(pygame.font.Font(None, 80).render("5 AM", True, (255, 255, 255)), (544, 298))
+                        snd.channelOne.set_volume(1.0)
+                        snd.channelOne.play(snd.chimes, loops=0)
+                        self.oldTime = self.current_Milliseconds()
+                        self.runAtSceneStart = 2
+                    try:
+                        if self.current_Milliseconds() >= self.oldTime + 4500:#
+                            snd.channelTwo.play(snd.children, loops=0)
+                            self.screen.fill((0, 0, 0))
+                            self.screen.blit(pygame.font.Font(None, 80).render("6 AM", True, (255, 255, 255)), (544, 298))
+                            del self.oldTime
+                    except:
+                        pass
 
-                if not snd.channelOne.get_busy() and self.runAtSceneStart == 2:
-                    self.changeScene("end")
+                    if not snd.channelOne.get_busy() and self.runAtSceneStart == 2:
+                        self.changeScene("end")
 
-            elif self.scene == "end":
+                elif self.scene == "end":
 
-                spr.scaregroup.add(spr.bg)
+                    spr.scaregroup.add(spr.bg)
 
-                if self.runAtSceneStart == 0:
-                    pygame.mixer.stop()
-                    spr.bg.pos = (0, 0)
-                    snd.channelOne.set_volume(1.0)
-                    snd.channelOne.play(snd.musicBox, loops=-1)
-                    self.runAtSceneStart = 1
+                    if self.runAtSceneStart == 0:
+                        pygame.mixer.stop()
+                        spr.bg.pos = (0, 0)
+                        snd.channelOne.set_volume(1.0)
+                        snd.channelOne.play(snd.musicBox, loops=-1)
+                        self.runAtSceneStart = 1
 
-                if self.gmode == "normal":
-                    spr.bg.changeImg("ending\\normal")
+                    if self.gmode == "normal":
+                        spr.bg.changeImg("ending\\normal")
 
-                elif self.gmode == "overtime":
-                    spr.bg.changeImg("ending\\overtime")
+                    elif self.gmode == "overtime":
+                        spr.bg.changeImg("ending\\overtime")
 
-                elif self.gmode == "custom":
-                    spr.bg.changeImg("ending\\custom")
+                    elif self.gmode == "custom":
+                        spr.bg.changeImg("ending\\custom")
 
-                spr.scaregroup.update()
-                spr.scaregroup.draw(self.screen)
+                    spr.scaregroup.update()
+                    spr.scaregroup.draw(self.screen)
 
-            if self.fox.cooldown and self.fox.location != "off" and self.scene != "cam":
-                self.fox.cooldown -= 1
+                if self.fox.cooldown and self.fox.location != "off" and self.scene != "cam":
+                    self.fox.cooldown -= 1
 
-            if self.scene == "office" and not self.leftlight and not self.rightlight and self.fox.status != 5:
-                snd.channelThree.set_volume(0.0)
+                if self.scene == "office" and not self.leftlight and not self.rightlight and self.fox.status != 5:
+                    snd.channelThree.set_volume(0.0)
 
-            if self.scene == "office" and self.leftlight:
-                snd.channelThree.set_volume(0.7, 0.3)
+                if self.scene == "office" and self.leftlight:
+                    snd.channelThree.set_volume(0.7, 0.3)
 
-            if self.scene == "office" and self.rightlight:
-                snd.channelThree.set_volume(0.3, 0.7)
+                if self.scene == "office" and self.rightlight:
+                    snd.channelThree.set_volume(0.3, 0.7)
 
-            if spr.leftDoorAnim.getCurrentFrame() == spr.leftDoorAnim.getFrame(15) and self.leftdoor:
-                spr.leftDoor.changeImg("office\\doors\\left\\15")
+                if spr.leftDoorAnim.getCurrentFrame() == spr.leftDoorAnim.getFrame(15) and self.leftdoor:
+                    spr.leftDoor.changeImg("office\\doors\\left\\15")
 
-            if spr.leftDoorAnim.state == pyganim.PLAYING and not self.scene == "cam":
-                if not self.leftdoor:
-                    spr.leftDoor.changeImg("office\\doors\\left\\0")
+                if spr.leftDoorAnim.state == pyganim.PLAYING and not self.scene == "cam":
+                    if not self.leftdoor:
+                        spr.leftDoor.changeImg("office\\doors\\left\\0")
 
-                spr.leftDoorAnim.blit(self.screen, tuple(spr.leftDoor.pos))
-                self.screen.blit(self.powerLabel, (50, 520))
-                self.screen.blit(self.usageLabel, (50, 550))
-                self.screen.blit(spr.camButton.image, tuple(spr.camButton.pos))
+                    spr.leftDoorAnim.blit(self.screen, tuple(spr.leftDoor.pos))
+                    self.screen.blit(self.powerLabel, (50, 520))
+                    self.screen.blit(self.usageLabel, (50, 550))
+                    self.screen.blit(spr.camButton.image, tuple(spr.camButton.pos))
 
-            if spr.rightDoorAnim.getCurrentFrame() == spr.rightDoorAnim.getFrame(15) and self.rightdoor:
-                spr.rightDoor.changeImg("office\\doors\\right\\15")
+                if spr.rightDoorAnim.getCurrentFrame() == spr.rightDoorAnim.getFrame(15) and self.rightdoor:
+                    spr.rightDoor.changeImg("office\\doors\\right\\15")
 
-            if spr.rightDoorAnim.state == pyganim.PLAYING and not self.scene == "cam":
-                if not self.rightdoor:
-                    spr.rightDoor.changeImg("office\\doors\\right\\0")
+                if spr.rightDoorAnim.state == pyganim.PLAYING and not self.scene == "cam":
+                    if not self.rightdoor:
+                        spr.rightDoor.changeImg("office\\doors\\right\\0")
 
-                spr.rightDoorAnim.blit(self.screen, tuple(spr.rightDoor.pos))
-                self.screen.blit(self.powerLabel, (50, 520))
-                self.screen.blit(self.usageLabel, (50, 550))
-                self.screen.blit(self.timeLabel, (1400, 50))
+                    spr.rightDoorAnim.blit(self.screen, tuple(spr.rightDoor.pos))
+                    self.screen.blit(self.powerLabel, (50, 520))
+                    self.screen.blit(self.usageLabel, (50, 550))
+                    self.screen.blit(self.timeLabel, (1400, 50))
 
-            if spr.cameraAnim.state == pyganim.PLAYING:
-                spr.cameraAnim.blit(self.screen, (0, 0))
+                if spr.cameraAnim.state == pyganim.PLAYING:
+                    spr.cameraAnim.blit(self.screen, (0, 0))
 
-            if spr.cameraAnim.getCurrentFrame() == spr.cameraAnim.getFrame(10) and not self.cameraAnimReversed and self.scene == "office":
-                self.scene = "cam"
-                spr.cameraAnim.state = pyganim.PAUSED
-                self.runAtSceneStart = 0
-                self.oldtime = 0
+                if spr.cameraAnim.getCurrentFrame() == spr.cameraAnim.getFrame(10) and not self.cameraAnimReversed and self.scene == "office":
+                    self.scene = "cam"
+                    spr.cameraAnim.state = pyganim.PAUSED
+                    self.runAtSceneStart = 0
+                    self.oldtime = 0
 
-            # self.screen.blit(self.font.render("%s FPS" % round(self.FPSCLOCK.get_fps()), True, (0,255,0)), (10,10))
+                # self.screen.blit(self.font.render("%s FPS" % round(self.FPSCLOCK.get_fps()), True, (0,255,0)), (10,10))
 
-            pygame.display.update(spr.bg.rect)
+                pygame.display.update(spr.bg.rect)
 
-            self.FPSCLOCK.tick(self.fps)
+                self.FPSCLOCK.tick(self.fps)
 
     def shutdown(self):
         utils.debugprint("Shutting down...")

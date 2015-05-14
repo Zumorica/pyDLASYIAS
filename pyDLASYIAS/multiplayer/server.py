@@ -4,6 +4,7 @@ import threading
 import time
 import sys
 import random
+import pickle
 from socketserver import *
 
 class client():
@@ -185,186 +186,215 @@ class pyDLASYIAS_Server(ThreadingMixIn, TCPServer):
 
             if self.stage == "game":
                 for client in self.clients:
-                    data = str(client.data(), "utf-8").split()
+                    bdata = client.data()
 
-                    if client.character == "bear":
+                    try:
+                        data = pickle.loads(bdata)
+
+                    except:
                         pass
 
-                    if client.character == "rabbit":
-                        pass
+                    else:
+                        if data.type == "Animatronic":
+                            client.location = data.location
+                            client.name = data.name
+                            client.kind = data.kind
+                            client.status = data.status
+                            self.broadcast(bdata, exclude=[client])
 
-                    if client.character == "chicken":
-                        if data[0] == "goto":
+                        if data.type == "Guard":
+                            client.name = data.name
+                            client.scene = data.scene
+                            client.lastcam = data.lastcam
+                            client.usage = data.usage
+                            client.leftdoor = data.leftdoor
+                            client.leftlight = data.leftlight
+                            client.rightdoor = data.rightdoor
+                            client.rightlight = data.rightlight
+                            self.broadcast(bdata, exclude=[client])
 
-                            if data[1] == "cam1b" and self.chicken.location in ["cam1a", "cam7", "cam6"]:
-                                self.chicken.location = "cam1b"
-                                self.broadcast("chicken goto cam1b")
+                        if data.type == "Message":
+                            print("%s: %s" %(data.name, data.message))
 
-                            if data[1] == "cam4a" and self.chicken.location in ["cam6", "cam7"]:
-                                self.chicken.location = "cam4a"
-                                self.broadcast("chicken goto cam4a")
-
-                            if data[1] == "cam4b" and self.chicken.location in ["cam4a"]:
-                                self.chicken.location = "cam4b"
-                                self.broadcast("chicken goto cam4b")
-
-                            if data[1] == "cam6" and self.chicken.location in ["cam1b", "cam7"]:
-                                self.chicken.location = "cam6"
-                                self.broadcast("chicken goto cam6")
-
-                            if data[1] == "cam7" and self.chicken.location in ["cam1b", "cam6"]:
-                                self.chicken.location = "cam7"
-                                self.broadcast("chicken goto cam7")
-
-                            if data[1] == "rightdoor" and self.chicken.location in ["cam4b"]:
-                                self.chicken.location = "rightdoor"
-                                self.broadcast("chicken goto rightdoor")
-
-                    if client.character == "fox":
-
-                        if data[0] == "status":
-
-                            if data[1] == "up":
-                                client.status += 1
-                                self.broadcast("fox status %s" %(client.status))
-
-                            if data[1] == "down":
-                                client.status -= 1
-                                self.broadcast("fox status %s" %(client.status))
-
-                            if data[1] == "0":
-                                client.status = 0
-                                self.broadcast("fox status %s" %(client.status))
-
-                            if data[1] == "1":
-                                client.status = 1
-                                self.broadcast("fox status %s" %(client.status))
-
-                            if data[1] == "2":
-                                client.status = 2
-                                self.broadcast("fox status %s" %(client.status))
-
-                            if data[1] == "3":
-                                client.status = 3
-                                self.broadcast("fox status %s" %(client.status))
-
-                            if data[1] == "4":
-                                client.status = 4
-                                self.broadcast("fox status %s" %(client.status))
-
-                            if data[1] == "5":
-                                client.status = 5
-                                self.broadcast("fox status %s" %(client.status))
-
-                    if client.character == "guard":
-
-                        if data[0] == "scene":
-
-                            if data[1] == "office":
-                                client.scene = "office"
-                                self.broadcast("guard scene office")
-
-                            if data[1] == "cam":
-                                client.scene = "cam"
-                                self.broadcast("guard scene cam")
-
-                        if data[0] == "check":
-
-                            if data[1] in ["cam1a", "cam1b", "cam1c", "cam2a",
-                                           "cam2b", "cam3", "cam4a", "cam4b",
-                                           "cam5", "cam6", "cam7"]:
-                                client.lastcam = data[1]
-                                self.broadcast("guard check %s" %(client.lastcam))
-
-                        if data[0] == "leftdoor":
-
-                            if data[1] == "true":
-                                if not self.leftdoor:
-                                    self.leftdoor = True
-                                    self.usage += 1
-                                    self.broadcast("guard leftdoor true")
-
-                            if data[1] == "false":
-                                if self.leftdoor:
-                                    self.leftdoor = False
-                                    self.usage += 1
-                                    self.broadcast("guard leftdoor false")
-
-                        if data[0] == "rightdoor":
-
-                            if data[1] == "true":
-                                if not self.rightdoor:
-                                    self.rightdoor = True
-                                    self.usage += 1
-                                    self.broadcast("guard rightdoor true")
-
-                            if data[1] == "false":
-                                if self.rightdoor:
-                                    self.rightdoor = False
-                                    self.usage -= 1
-                                    self.broadcast("guard rightdoor false")
-
-                        if data[0] == "leftlight":
-
-                            if data[1] == "true":
-                                if not self.leftlight:
-                                    if self.rightlight:
-
-                                        self.rightlight = False
-                                        self.leftlight = True
-
-                                        self.broadcast("guard rightlight false")
-                                        self.broadcast("guard leftlight true")
-
-                                        self.usage += 1
-                                        self.usage -= 1
-                                    else:
-                                        self.leftlight = True
-                                        self.usage += 1
-                                        self.broadcast("guard leftlight true")
-
-                            if data[1] == "false":
-                                if self.leftlight:
-                                    self.leftlight = False
-                                    self.usage -= 1
-                                    self.broadcast("guard leftlight false")
-
-                        if data[0] == "rightlight":
-
-                            if data[1] == "true":
-                                if not self.rightlight:
-                                    if self.rightlight:
-                                        self.leftlight = False
-                                        self.rightlight = True
-
-                                        self.broadcast("guard rightlight true")
-                                        self.broadcast("guard leftlight false")
-
-                                        self.usage += 1
-                                        self.usage -= 1
-
-                                    else:
-                                        self.rightlight = True
-                                        self.usage += 1
-
-                                        self.broadcast("guard rightlight true")
-
-                            if data[1] == "false":
-                                if self.rightlight:
-                                    self.rightlight = False
-                                    self.usage -= 1
-
-                                    self.broadcast("guard rightlight false")
-
-                        if data[0] == "scene":
-
-                            if data[1] == "office":
-                                client.scene = "office"
-                                self.broadcast("guard scene office")
-
-                            if data[1] == "cam":
-                                client.scene = "cam"
-                                self.broadcast("guard scene cam")
+                    #
+                    # if client.character == "bear":
+                    #     pass
+                    #
+                    # if client.character == "rabbit":
+                    #     pass
+                    #
+                    # if client.character == "chicken":
+                    #     if data[0] == "goto":
+                    #
+                    #         if data[1] == "cam1b" and self.chicken.location in ["cam1a", "cam7", "cam6"]:
+                    #             self.chicken.location = "cam1b"
+                    #             self.broadcast("chicken goto cam1b")
+                    #
+                    #         if data[1] == "cam4a" and self.chicken.location in ["cam6", "cam7"]:
+                    #             self.chicken.location = "cam4a"
+                    #             self.broadcast("chicken goto cam4a")
+                    #
+                    #         if data[1] == "cam4b" and self.chicken.location in ["cam4a"]:
+                    #             self.chicken.location = "cam4b"
+                    #             self.broadcast("chicken goto cam4b")
+                    #
+                    #         if data[1] == "cam6" and self.chicken.location in ["cam1b", "cam7"]:
+                    #             self.chicken.location = "cam6"
+                    #             self.broadcast("chicken goto cam6")
+                    #
+                    #         if data[1] == "cam7" and self.chicken.location in ["cam1b", "cam6"]:
+                    #             self.chicken.location = "cam7"
+                    #             self.broadcast("chicken goto cam7")
+                    #
+                    #         if data[1] == "rightdoor" and self.chicken.location in ["cam4b"]:
+                    #             self.chicken.location = "rightdoor"
+                    #             self.broadcast("chicken goto rightdoor")
+                    #
+                    # if client.character == "fox":
+                    #
+                    #     if data[0] == "status":
+                    #
+                    #         if data[1] == "up":
+                    #             client.status += 1
+                    #             self.broadcast("fox status %s" %(client.status))
+                    #
+                    #         if data[1] == "down":
+                    #             client.status -= 1
+                    #             self.broadcast("fox status %s" %(client.status))
+                    #
+                    #         if data[1] == "0":
+                    #             client.status = 0
+                    #             self.broadcast("fox status %s" %(client.status))
+                    #
+                    #         if data[1] == "1":
+                    #             client.status = 1
+                    #             self.broadcast("fox status %s" %(client.status))
+                    #
+                    #         if data[1] == "2":
+                    #             client.status = 2
+                    #             self.broadcast("fox status %s" %(client.status))
+                    #
+                    #         if data[1] == "3":
+                    #             client.status = 3
+                    #             self.broadcast("fox status %s" %(client.status))
+                    #
+                    #         if data[1] == "4":
+                    #             client.status = 4
+                    #             self.broadcast("fox status %s" %(client.status))
+                    #
+                    #         if data[1] == "5":
+                    #             client.status = 5
+                    #             self.broadcast("fox status %s" %(client.status))
+                    #
+                    # if client.character == "guard":
+                    #
+                    #     if data[0] == "scene":
+                    #
+                    #         if data[1] == "office":
+                    #             client.scene = "office"
+                    #             self.broadcast("guard scene office")
+                    #
+                    #         if data[1] == "cam":
+                    #             client.scene = "cam"
+                    #             self.broadcast("guard scene cam")
+                    #
+                    #     if data[0] == "check":
+                    #
+                    #         if data[1] in ["cam1a", "cam1b", "cam1c", "cam2a",
+                    #                        "cam2b", "cam3", "cam4a", "cam4b",
+                    #                        "cam5", "cam6", "cam7"]:
+                    #             client.lastcam = data[1]
+                    #             self.broadcast("guard check %s" %(client.lastcam))
+                    #
+                    #     if data[0] == "leftdoor":
+                    #
+                    #         if data[1] == "true":
+                    #             if not self.leftdoor:
+                    #                 self.leftdoor = True
+                    #                 self.usage += 1
+                    #                 self.broadcast("guard leftdoor true")
+                    #
+                    #         if data[1] == "false":
+                    #             if self.leftdoor:
+                    #                 self.leftdoor = False
+                    #                 self.usage += 1
+                    #                 self.broadcast("guard leftdoor false")
+                    #
+                    #     if data[0] == "rightdoor":
+                    #
+                    #         if data[1] == "true":
+                    #             if not self.rightdoor:
+                    #                 self.rightdoor = True
+                    #                 self.usage += 1
+                    #                 self.broadcast("guard rightdoor true")
+                    #
+                    #         if data[1] == "false":
+                    #             if self.rightdoor:
+                    #                 self.rightdoor = False
+                    #                 self.usage -= 1
+                    #                 self.broadcast("guard rightdoor false")
+                    #
+                    #     if data[0] == "leftlight":
+                    #
+                    #         if data[1] == "true":
+                    #             if not self.leftlight:
+                    #                 if self.rightlight:
+                    #
+                    #                     self.rightlight = False
+                    #                     self.leftlight = True
+                    #
+                    #                     self.broadcast("guard rightlight false")
+                    #                     self.broadcast("guard leftlight true")
+                    #
+                    #                     self.usage += 1
+                    #                     self.usage -= 1
+                    #                 else:
+                    #                     self.leftlight = True
+                    #                     self.usage += 1
+                    #                     self.broadcast("guard leftlight true")
+                    #
+                    #         if data[1] == "false":
+                    #             if self.leftlight:
+                    #                 self.leftlight = False
+                    #                 self.usage -= 1
+                    #                 self.broadcast("guard leftlight false")
+                    #
+                    #     if data[0] == "rightlight":
+                    #
+                    #         if data[1] == "true":
+                    #             if not self.rightlight:
+                    #                 if self.rightlight:
+                    #                     self.leftlight = False
+                    #                     self.rightlight = True
+                    #
+                    #                     self.broadcast("guard rightlight true")
+                    #                     self.broadcast("guard leftlight false")
+                    #
+                    #                     self.usage += 1
+                    #                     self.usage -= 1
+                    #
+                    #                 else:
+                    #                     self.rightlight = True
+                    #                     self.usage += 1
+                    #
+                    #                     self.broadcast("guard rightlight true")
+                    #
+                    #         if data[1] == "false":
+                    #             if self.rightlight:
+                    #                 self.rightlight = False
+                    #                 self.usage -= 1
+                    #
+                    #                 self.broadcast("guard rightlight false")
+                    #
+                    #     if data[0] == "scene":
+                    #
+                    #         if data[1] == "office":
+                    #             client.scene = "office"
+                    #             self.broadcast("guard scene office")
+                    #
+                    #         if data[1] == "cam":
+                    #             client.scene = "cam"
+                    #             self.broadcast("guard scene cam")
 
 
 

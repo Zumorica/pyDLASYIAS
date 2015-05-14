@@ -1,6 +1,7 @@
 import pyDLASYIAS.Globals
 import pyDLASYIAS.spr
 import pyDLASYIAS.snd
+import pyDLASYIAS.multiplayer
 
 try:
     import sys
