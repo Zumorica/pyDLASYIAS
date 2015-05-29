@@ -1,2 +1,1 @@
 import pyglet
-import os
