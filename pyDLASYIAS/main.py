@@ -1,111 +1,84 @@
 import pyglet
+import os
+import pyDLASYIAS.gameObjects as gameObjects
 from pyglet.gl import *
+
+OFFICE = "office"
+CAMERA = "camera"
 
 class Main(pyglet.window.Window):
     '''Class for the main game.'''
     def __init__(self):
         '''Initialize the game.'''
-        self.time = 0
-        self.power = 0
-        self.usage = 0
+        self.hour = 0
+        self.power = 100
+        self.scene = OFFICE
+
+        self.mouse_x = 0
+        self.mouse_y = 0
+        self.mouseClick = False
 
         self.Sprites = {}
-        self.GameObjects = []
+        self.GameObjects = {}
+        self.Layers = [pyglet.graphics.OrderedGroup(0),
+                       pyglet.graphics.OrderedGroup(1),
+                       pyglet.graphics.OrderedGroup(2),
+                       pyglet.graphics.OrderedGroup(3)]
+        self.Batch = {"common" : pyglet.graphics.Batch(),
+                      "office" : pyglet.graphics.Batch(),
+                      "camera" : pyglet.graphics.Batch()}
 
-        self.setup_sprites()
+        super().__init__(width=1280, height=720)
+
         pyglet.clock.schedule(self.update)
 
-    def setup_sprites(self):
-        self.Sprites["background"] =
+        self.setup_sprites()
+        self.setup_gameobjects()
 
-    def update(self, dt):
-        pass
+    def setup_sprites(self):
+
+        self.Sprites["background"] = pyglet.sprite.Sprite(pyglet.image.load('images\\office\\0.png'),
+                                                          0, 0, batch=self.Batch["common"], group=self.Layers[0])
+
+    def setup_gameobjects(self):
+        self.leftdoor = gameObjects.Door(False, batch=self.Batch["office"], group=self.Layers[1])
+        self.leftbutton = gameObjects.Button(False, self, batch=self.Batch["office"], group=self.Layers[1])
+
+        self.rightdoor = gameObjects.Door(True, batch=self.Batch["office"], group=self.Layers[1])
+        self.rightbutton = gameObjects.Button(True, self.rightdoor, batch=self.Batch["office"], group=self.Layers[1])
+
+        self.push_handlers(self.leftbutton.on_mouse_press, self.rightbutton.on_mouse_press)
+
+        self.GameObjects["leftbutton"] = self.leftbutton
+        self.GameObjects["rightbutton"] = self.rightbutton
+        self.GameObjects["leftdoor"] = self.leftdoor
+        self.GameObjects["rightdoor"] = self.rightdoor
 
     def on_draw(self):
-        for object in self.GameObjects:
-            object.draw()
+        if self.scene == OFFICE:
+            self.Batch["common"].draw()
+            self.Batch["office"].draw()
 
-class Sprite(pyglet.sprite.Sprite):
-    '''Class for a custom sprite. MUST BE PNG.'''
-    def __init__(self, location, filename, x=0, y=0, batch=None, group=None):
-        self.image = pyglet.image.load(os.path.join(location, filename), decoder=pyglet.image.codecs.png.PNGImageDecoder())
-        self.x = x
-        self.y = y
-        self.batch = batch
-        self.group = group
-        self.rekt = Rekt(self.x, self.y, self.image.width, self.image.height)
+        if self.scene == CAMERA:
+            self.Batch["common"].draw()
+            self.Batch["camera"].draw()
 
-        if isinstance(position, tuple):
-            self.position = position
+    def on_mouse_motion(self, x, y, dx, dy):
+        self.mouse_x = x
+        self.mouse_y = y
 
-        else:
-            raise ValueError("Position is not a tuple.")
+    def on_mouse_press(self, x, y, button, modifier):
+        self.mouse_x = x
+        self.mouse_y = y
+        if button == 0:
+            self.mouseClick = True
 
-        super().__init__(self.image, self.x, self.y, batch=self.batch, group=self.group)
-
-    def draw(self):
-        self.image.blit(self.x, self.y)
+    def on_mouse_release(self, x, y, button, modifier):
+        self.mouse_x = x
+        self.mouse_y = y
+        if button == 0:
+            self.mouseClick = False
 
     def update(self, dt):
-        self.rekt.x, self.rekt.y = self.x, self.y
-
-class Rekt():
-    '''Class for rektangles.'''
-    def __init__(self, x, y, w, h):
-        self.x = x
-        self.y = y
-        self.w = w
-        self.h = h
-
-    def __repr__(self):
-        return "<rekt(%d, %d, %d, %d)>" %(self.x, self.y, self.w, self.h)
-
-    def __getitem__(self, key):
-        return (self.x, self.y, self.w, self.h)[key]
-
-    def __setitem__(self, key, val):
-        if key == 0:
-            self.x = val
-
-        elif key == 1:
-            self.y = val
-
-        elif key == 2:
-            self.w = val
-
-        elif key == 3:
-            self.h = val
-
-        else:
-
-            raise IndexError(key)
-
-    def get_Left(self):
-        return self.x
-
-    def set_Left(self, x):
-        self.x = x
-
-    def get_Top(self):
-        return self.y
-
-    def set_Top(self, y):
-        self.y = y
-
-    def get_Width(self):
-        return self.w
-
-    def set_Width(self, w):
-        self.w = w
-
-    def get_Height(self):
-        return self.h
-
-    def set_Height(self, h):
-        self.h = h
-
-    def collidepoint(self, point):
-        '''Checks if the specified point collides with the rectangle.'''
-        if (point[0] is in range(self.x, self.x + self.w)) and (point[1] is in range(self.y, self.y + self.h)):
-            return True
-        return False
+        for key, value in self.GameObjects.items():
+            value.update(dt)
