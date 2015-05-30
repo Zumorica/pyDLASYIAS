@@ -16,7 +16,7 @@ class Animatronic(netObject):
         super().__init__("Animatronic")
         self.name = name
         self.kind = kind
-        self.status = 0         # Used only by foxkindx
+        self.status = 0         # Used only by foxkind
         if self.kind == "fox":
             self.location = "cam1c"
         else:
