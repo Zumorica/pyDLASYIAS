@@ -23,14 +23,14 @@ class GameObject():
 
 class Sprite(GameObject):
     def __init__(self, img, x=0, y=0, batch=None, group=None):
-        super().__init__(pyglet.image.load(img), x=x, y=y, batch=batch, group=group)
+        super().__init__(img, x=x, y=y, batch=batch, group=group)
 
     def change_img(self, img):
         self.image.remove()
         self.image = pyglet.sprite.Sprite(pyglet.image.load(img), x=self.x, y=self.y, batch=self.batch, group=self.group)
 
     def collidepoint(self, x, y):
-        if x in range(self.x, self.x + self.image.width) and y in range(self.y, self.y + self.image.height):
+        if x in range(int(self.x), int(self.x) + self.image.width) and y in range(int(self.y), int(self.y) + self.image.height):
             return True
         return False
 
@@ -40,6 +40,14 @@ class Sprite(GameObject):
 
         self.image.x, self.image.y = int(self.x), int(self.y)
 
+class Camera(Sprite):
+    def __init__(self, img=None, x=0, y=0, batch=None, group=None):
+        super().__init__(img="images\\ui\\button\\camera\\0.png", x=x, y=y, batch=batch, group=group)
+        self.text = pyglet.sprite.Sprite(pyglet.image.load(img), x, y, batch=batch, group=group)
+
+    def draw(self):
+        self.image.draw()
+        self.text.draw()
 
 class Door(GameObject):
     def __init__(self, isRight, x=0, y=0, batch=None, group=None):
