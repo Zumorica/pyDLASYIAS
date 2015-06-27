@@ -1,6 +1,6 @@
 import pyglet
 
-class GameObject():
+class GameObject(pyglet.event.EventDispatcher):
     def __init__(self, img, x=0, y=0, batch=None, group=None):
         if isinstance(img, str):
             self.image = pyglet.sprite.Sprite(pyglet.image.load(img), x=x, y=y, batch=batch, group=group)
@@ -14,6 +14,7 @@ class GameObject():
         self.dx, self.dy = 0, 0
         self.width = self.image.width
         self.height = self.image.height
+        self.movable = True
 
     def draw(self):
         self.image.draw()
@@ -21,18 +22,29 @@ class GameObject():
     def update(self, dt):
         pass
 
+GameObject.register_event_type("on_button_press")
+GameObject.register_event_type("on_button_collide")
+GameObject.register_event_type("on_camera_press")
+
 class Sprite(GameObject):
     def __init__(self, img, x=0, y=0, batch=None, group=None):
         super().__init__(img, x=x, y=y, batch=batch, group=group)
+        self.movable = True
+        self.image.x, self.image.y = x, y
 
-    def change_img(self, img):
+    def change_image(self, img):
         self.image.remove()
         self.image = pyglet.sprite.Sprite(pyglet.image.load(img), x=self.x, y=self.y, batch=self.batch, group=self.group)
 
     def collidepoint(self, x, y):
-        if x in range(int(self.x), int(self.x) + self.image.width) and y in range(int(self.y), int(self.y) + self.image.height):
+        if (x in range(self.image.x, (self.image.x + self.image.width))) and (y in range(self.image.y, (self.image.y + self.image.height))):
             return True
         return False
+
+    #     if (x in range(int(self.x), (int(self.x) + self.image.width))) and (y in range(int(self.y), (int(self.y) + self.image.height))):
+    #         return True
+    #     else:
+    #         return False
 
     def update(self, dt):
         self.x += self.dx * dt
@@ -41,19 +53,39 @@ class Sprite(GameObject):
         self.image.x, self.image.y = int(self.x), int(self.y)
 
 class Camera(Sprite):
-    def __init__(self, img=None, x=0, y=0, batch=None, group=None):
+    def __init__(self, name, img=None, x=0, y=0, batch=None, group=None, grouptwo=None):
         super().__init__(img="images\\ui\\button\\camera\\0.png", x=x, y=y, batch=batch, group=group)
-        self.text = pyglet.sprite.Sprite(pyglet.image.load(img), x, y, batch=batch, group=group)
+        self.text = Sprite(img, x=(x + self.image.width//4), y=(y + self.image.height//4), batch=batch, group=grouptwo)
+        self.name = name
+        self.movable = False
+        self.pressed = False
 
     def draw(self):
         self.image.draw()
         self.text.draw()
+
+    def cameraPress(self):
+        self.dispatch_event("on_camera_press", self.name)
+
+    def on_camera_press(self, camera):
+        pass
+
+    def on_mouse_press(self, button, x, y, mod):
+        pass
+
+    def update(self, dt):
+        if self.pressed:
+            self.change_image("images\\ui\\button\\camera\\1.png")
+        else:
+            self.change_image("images\\ui\\button\\camera\\0.png")
+        super().update(dt)
 
 class Door(GameObject):
     def __init__(self, isRight, x=0, y=0, batch=None, group=None):
         self.isRight = isRight
         self.isClosed = False
         self.Frames = []
+        self.movable = True
 
 
         if not self.isRight:
@@ -136,6 +168,23 @@ class Door(GameObject):
     def __bool__(self):
         return self.isClosed
 
+class SceneButton(Sprite):
+    def __init__(self, x=0, y=0, batch=None, group=None):
+        super().__init__("images\\ui\\button\\camera.png", x=x, y=y, batch=batch, group=group)
+        self.movable = False
+
+    def collideButton(self):
+        self.dispatch_event("on_button_collide")
+
+    def showImage(self, dt):
+        self.image.visible = True
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        if self.collidepoint(x, y) and self.image.visible:
+            self.image.visible = False
+            pyglet.clock.schedule_once(self.showImage, 3)
+            self.collideButton()
+
 class Button(GameObject):
     def __init__(self, isRight, door, x=0, y=0, batch=None, group=None):
         if not isinstance(door, object):
@@ -144,6 +193,7 @@ class Button(GameObject):
         self.door = door
         self.light = False
         self.isRight = isRight
+        self.movable = True
 
         if not self.isRight:
             self.Sprite = {"0" : pyglet.image.load("images\\office\\button\\left\\0.png"),
@@ -162,19 +212,29 @@ class Button(GameObject):
     def draw(self):
         self.image.draw()
 
+    def buttonPress(self, button, state):
+        self.dispatch_event("on_button_press", button, state)
+
+    def on_button_press(self, button, state):
+        pass
+
     def on_mouse_press(self, x, y, button, modifiers):
         if x in range((int(self.x) + 30), (int(self.x) + 68)) and y in range((int(self.y) + 62), (int(self.y) + 118)) and button == 1:
             if self.light:
                 self.light = False
+                self.buttonPress("light", self.light)
             else:
                 self.light = True
+                self.buttonPress("light", self.light)
 
         if x in range((int(self.x) + 30), (int(self.x) + 68)) and y in range((int(self.y) + 144), (int(self.y) + 193)) and button == 1:
             if self.door:
                 self.door.open()
+                self.buttonPress("door", self.door)
 
             else:
                 self.door.close()
+                self.buttonPress("door", self.door)
 
 
     def update(self, dt):
