@@ -1,4 +1,6 @@
 import pyglet
+import random
+import time
 
 class GameObject(pyglet.event.EventDispatcher):
     def __init__(self, img, x=0, y=0, batch=None, group=None):
@@ -25,6 +27,7 @@ class GameObject(pyglet.event.EventDispatcher):
 GameObject.register_event_type("on_button_press")
 GameObject.register_event_type("on_button_collide")
 GameObject.register_event_type("on_camera_press")
+GameObject.register_event_type("on_animation_end")
 
 class Sprite(GameObject):
     def __init__(self, img, x=0, y=0, batch=None, group=None):
@@ -33,8 +36,11 @@ class Sprite(GameObject):
         self.image.x, self.image.y = x, y
 
     def change_image(self, img):
-        self.image.remove()
-        self.image = pyglet.sprite.Sprite(pyglet.image.load(img), x=self.x, y=self.y, batch=self.batch, group=self.group)
+        self.image.delete()
+        if isinstance(img, str):
+            self.image = pyglet.sprite.Sprite(pyglet.image.load(img), x=self.x, y=self.y, batch=self.batch, group=self.group)
+        else:
+            self.image = pyglet.sprite.Sprite(img, x=self.x, y=self.y, batch=self.batch, group=self.group)
 
     def collidepoint(self, x, y):
         if (x in range(self.image.x, (self.image.x + self.image.width))) and (y in range(self.image.y, (self.image.y + self.image.height))):
@@ -52,13 +58,86 @@ class Sprite(GameObject):
 
         self.image.x, self.image.y = int(self.x), int(self.y)
 
-class Camera(Sprite):
+class Tablet(GameObject):
+    def __init__(self, x=0, y=0, batch=None, group=None):
+        self.isClosed = False
+        self.Frames = []
+        self.movable = False
+
+        for i in range(0, 11):
+            if i != 10:
+                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), 0.025))
+            else:
+                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), None))
+
+        self.animation_normal = pyglet.image.Animation(self.Frames)
+        self.Frames = []
+
+        for i in reversed(range(0, 11)):
+            if i != 0:
+                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), 0.025))
+            else:
+                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), None))
+
+        self.animation_reversed = pyglet.image.Animation(self.Frames)
+
+        super().__init__(pyglet.image.load("images\\cameras\\misc\\animation\\0.png"), x=x, y=y, batch=batch, group=group)
+
+        self.image.visible = False
+
+    def update(self, dt):
+        self.x += self.dx * dt
+        self.y += self.dy * dt
+
+        self.image.x, self.image.y = self.x, self.y
+        @self.image.event
+        def on_animation_end():
+            self.dispatch_event("on_animation_end")
+
+    def open(self):
+        self.isClosed = False
+        self.image.delete()
+        self.image = pyglet.sprite.Sprite(self.animation_normal, x=self.x, y=self.y, batch=self.batch, group=self.group)
+
+    def close(self):
+        self.isClosed = True
+        self.image.delete()
+        self.image = pyglet.sprite.Sprite(self.animation_reversed, x=self.x, y=self.y, batch=self.batch, group=self.group)
+
+class Static(GameObject):
+    def __init__(self, opacitymin=255, opacitymax=255, batch=None, group=None):
+        super().__init__(img="images\\cameras\\misc\\static\\0.png", x=0, y=0, batch=batch, group=group)
+        self.opacitymin = opacitymin
+        self.opacitymax = opacitymax
+        self.image.opacity = random.randint(opacitymin, opacitymax)
+        self.Sprites = [pyglet.image.load("images\\cameras\\misc\\static\\0.png"),
+                        pyglet.image.load("images\\cameras\\misc\\static\\1.png"),
+                        pyglet.image.load("images\\cameras\\misc\\static\\2.png"),
+                        pyglet.image.load("images\\cameras\\misc\\static\\3.png"),
+                        pyglet.image.load("images\\cameras\\misc\\static\\4.png"),
+                        pyglet.image.load("images\\cameras\\misc\\static\\5.png"),
+                        pyglet.image.load("images\\cameras\\misc\\static\\6.png"),
+                        pyglet.image.load("images\\cameras\\misc\\static\\7.png")]
+
+    def update(self, dt):
+        self.image.delete()
+        self.image = pyglet.sprite.Sprite(random.choice(self.Sprites), x=self.x, y= self.y, batch=self.batch, group=self.group)
+        self.image.opacity = random.randint(self.opacitymin, self.opacitymax)
+
+class Camera(GameObject):
     def __init__(self, name, img=None, x=0, y=0, batch=None, group=None, grouptwo=None):
         super().__init__(img="images\\ui\\button\\camera\\0.png", x=x, y=y, batch=batch, group=group)
-        self.text = Sprite(img, x=(x + self.image.width//4), y=(y + self.image.height//4), batch=batch, group=grouptwo)
+        self.text = Sprite(img, x=(x + 10), y=(y + 7.5), batch=batch, group=grouptwo)
         self.name = name
         self.movable = False
         self.pressed = False
+        self.Sprites = [pyglet.image.load("images\\ui\\button\\camera\\0.png"),
+                        pyglet.image.load("images\\ui\\button\\camera\\1.png")]
+
+    def collidepoint(self, x, y):
+        if (x in range(self.image.x, (self.image.x + self.image.width))) and (y in range(self.image.y, (self.image.y + self.image.height))):
+            return True
+        return False
 
     def draw(self):
         self.image.draw()
@@ -70,15 +149,22 @@ class Camera(Sprite):
     def on_camera_press(self, camera):
         pass
 
-    def on_mouse_press(self, button, x, y, mod):
-        pass
+    def on_mouse_press(self, x, y, button, mod):
+        if self.collidepoint(x, y):
+            self.cameraPress()
 
     def update(self, dt):
         if self.pressed:
-            self.change_image("images\\ui\\button\\camera\\1.png")
+            self.image.delete()
+            self.image = pyglet.sprite.Sprite(self.Sprites[1], x=self.x, y=self.y, batch=self.batch, group=self.group)
         else:
-            self.change_image("images\\ui\\button\\camera\\0.png")
-        super().update(dt)
+            self.image.delete()
+            self.image = pyglet.sprite.Sprite(self.Sprites[0], x=self.x, y=self.y, batch=self.batch, group=self.group)
+
+        self.x += self.dx * dt
+        self.y += self.dy * dt
+
+        self.image.x, self.image.y = int(self.x), int(self.y)
 
 class Door(GameObject):
     def __init__(self, isRight, x=0, y=0, batch=None, group=None):
@@ -172,18 +258,22 @@ class SceneButton(Sprite):
     def __init__(self, x=0, y=0, batch=None, group=None):
         super().__init__("images\\ui\\button\\camera.png", x=x, y=y, batch=batch, group=group)
         self.movable = False
+        self.cooldown = False
 
     def collideButton(self):
         self.dispatch_event("on_button_collide")
 
-    def showImage(self, dt):
+    def showImage(self, dt=None):
         self.image.visible = True
+        self.cooldown = False
 
     def on_mouse_motion(self, x, y, dx, dy):
-        if self.collidepoint(x, y) and self.image.visible:
+        if self.collidepoint(x, y) and self.image.visible and not self.cooldown:
             self.image.visible = False
-            pyglet.clock.schedule_once(self.showImage, 3)
             self.collideButton()
+            self.cooldown = True
+        else:
+            self.showImage()
 
 class Button(GameObject):
     def __init__(self, isRight, door, x=0, y=0, batch=None, group=None):
@@ -194,6 +284,7 @@ class Button(GameObject):
         self.light = False
         self.isRight = isRight
         self.movable = True
+        self.cooldown = False
 
         if not self.isRight:
             self.Sprite = {"0" : pyglet.image.load("images\\office\\button\\left\\0.png"),
@@ -227,14 +318,16 @@ class Button(GameObject):
                 self.light = True
                 self.buttonPress("light", self.light)
 
-        if x in range((int(self.x) + 30), (int(self.x) + 68)) and y in range((int(self.y) + 144), (int(self.y) + 193)) and button == 1:
+        if x in range((int(self.x) + 30), (int(self.x) + 68)) and y in range((int(self.y) + 144), (int(self.y) + 193)) and button == 1 and not self.cooldown:
             if self.door:
                 self.door.open()
                 self.buttonPress("door", self.door)
+                self.cooldown = True
 
             else:
                 self.door.close()
                 self.buttonPress("door", self.door)
+                self.cooldown = True
 
 
     def update(self, dt):
@@ -260,3 +353,7 @@ class Button(GameObject):
         self.y += self.dy * dt
 
         self.image.x, self.image.y = self.x, self.y
+
+        @self.door.image.event
+        def on_animation_end():
+            self.cooldown = False
