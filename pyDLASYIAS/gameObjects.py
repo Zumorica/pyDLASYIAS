@@ -66,7 +66,7 @@ class Tablet(GameObject):
 
         for i in range(0, 11):
             if i != 10:
-                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), 0.025))
+                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), 0.020))
             else:
                 self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), None))
 
@@ -75,7 +75,7 @@ class Tablet(GameObject):
 
         for i in reversed(range(0, 11)):
             if i != 0:
-                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), 0.025))
+                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), 0.020))
             else:
                 self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), None))
 
@@ -98,11 +98,13 @@ class Tablet(GameObject):
         self.isClosed = False
         self.image.delete()
         self.image = pyglet.sprite.Sprite(self.animation_normal, x=self.x, y=self.y, batch=self.batch, group=self.group)
+        self.image.visible = True
 
     def close(self):
         self.isClosed = True
         self.image.delete()
         self.image = pyglet.sprite.Sprite(self.animation_reversed, x=self.x, y=self.y, batch=self.batch, group=self.group)
+        self.image.visible = True
 
 class Static(GameObject):
     def __init__(self, opacitymin=255, opacitymax=255, batch=None, group=None):
@@ -268,12 +270,34 @@ class SceneButton(Sprite):
         self.cooldown = False
 
     def on_mouse_motion(self, x, y, dx, dy):
-        if self.collidepoint(x, y) and self.image.visible and not self.cooldown:
+        if self.collidepoint(x, y) and not self.cooldown:
             self.image.visible = False
-            self.collideButton()
             self.cooldown = True
+            self.collideButton()
+
+        if self.collidepoint(x, y) and self.cooldown:
+            self.image.visible = False
+            self.cooldown = True
+
         else:
             self.showImage()
+
+    # Another way to do this...
+    # def showImage(self, dt=None):
+    #     self.image.visible = True
+    #     self.cooldown = False
+    #
+    # def on_mouse_motion(self, x, y, dx, dy):
+    #     if self.collidepoint(x, y) and self.image.visible:
+    #         self.image.visible = False
+    #         self.cooldown = True
+    #         self.collideButton()
+    #
+    #     if self.collidepoint(x, y) and not self.image.visible and not self.cooldown:
+    #         self.cooldown = True
+    #
+    #     if self.cooldown and not self.collidepoint(x, y):
+    #         pyglet.clock.schedule_once(self.showImage, 2)
 
 class Button(GameObject):
     def __init__(self, isRight, door, x=0, y=0, batch=None, group=None):

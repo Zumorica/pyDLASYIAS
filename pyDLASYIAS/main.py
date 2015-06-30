@@ -1,4 +1,5 @@
 import pyglet
+import random
 import time
 import sys
 import os
@@ -14,7 +15,8 @@ class Main(pyglet.window.Window):
         super().__init__(width=1280, height=720)
 
         self.hour = 0
-        self.power = 100
+        self.power = 1
+        self.usage = 1
         self.scene = "office"
         self.camera = "cam1a"
 
@@ -24,6 +26,7 @@ class Main(pyglet.window.Window):
         self.Batch = {"common" : pyglet.graphics.Batch(),
                       "office" : pyglet.graphics.Batch(),
                       "camera" : pyglet.graphics.Batch(),
+                      "powerout" : pyglet.graphics.Batch(),
                       "ui"     : pyglet.graphics.Batch()}
 
         self.Layers = [pyglet.graphics.OrderedGroup(0),
@@ -90,13 +93,72 @@ class Main(pyglet.window.Window):
                                         "cam7" : {"0" : pyglet.image.load("images\\cameras\\cam7\\0.png"),
                                                   "b" : pyglet.image.load("images\\cameras\\cam7\\b.png"),
                                                   "c" : pyglet.image.load("images\\cameras\\cam7\\c.png"),
-                                                  "c-1" : pyglet.image.load("images\\cameras\\cam7\\c-1.png")}}}
+                                                  "c-1" : pyglet.image.load("images\\cameras\\cam7\\c-1.png")}},
+                            "powerout" : {"0" : pyglet.image.load("images\\office\\powerout\\0.png"),
+                                          "1" : pyglet.image.load("images\\office\\powerout\\1.png"),
+                                          "2" : pyglet.image.load("images\\office\\powerout\\2.png")}}
+
+        self.Sounds = {"ambience" : {"ambience" : pyglet.media.load("sounds\\ambience\\ambience.wav"),
+                                     "ambience2" : pyglet.media.load("sounds\\ambience\\ambience2.wav"),
+                                     "eerieambience" : pyglet.media.load("sounds\\ambience\\eerieambience.wav"),
+                                     "fan" : pyglet.media.load("sounds\\ambience\\fan.wav")},
+
+                       "camera" : {"blip" : pyglet.media.load("sounds\\camera\\blip.wav"),
+                                   "camerasound" : pyglet.media.load("sounds\\camera\\camerasound.wav"),
+                                   "camerasound2" : pyglet.media.load("sounds\\camera\\camerasound2.wav"),
+                                   "computernoise" : pyglet.media.load("sounds\\camera\\computernoise.wav"),
+                                   "deepsteps" : pyglet.media.load("sounds\\camera\\deepsteps.wav"),
+                                   "garble" : pyglet.media.load("sounds\\camera\\garble.wav"),
+                                   "garble2" : pyglet.media.load("sounds\\camera\\garble2.wav"),
+                                   "garble3" : pyglet.media.load("sounds\\camera\\garble3.wav"),
+                                   "piratesong" : pyglet.media.load("sounds\\camera\\piratesong.wav"),
+                                   "pots" : pyglet.media.load("sounds\\camera\\pots.wav"),
+                                   "pots2" : pyglet.media.load("sounds\\camera\\pots2.wav"),
+                                   "pots3" : pyglet.media.load("sounds\\camera\\pots3.wav"),
+                                   "pots4" : pyglet.media.load("sounds\\camera\\pots4.wav"),
+                                   "putdown" : pyglet.media.load("sounds\\camera\\putdown.wav"),
+                                   "run" : pyglet.media.load("sounds\\camera\\run.wav"),
+                                   "runningfast" : pyglet.media.load("sounds\\camera\\runningfast.wav"),
+                                   "static" : pyglet.media.load("sounds\\camera\\static.wav"),
+                                   "static2" : pyglet.media.load("sounds\\camera\\static2.wav")},
+
+                       "misc" : {"6AM" : pyglet.media.load("sounds\\misc\\6AM.wav"),
+                                 "children" : pyglet.media.load("sounds\\misc\\children.wav"),
+                                 "circus" : pyglet.media.load("sounds\\misc\\circus.wav"),
+                                 "door" : pyglet.media.load("sounds\\misc\\door.wav"),
+                                 "doorknocking" : pyglet.media.load("sounds\\misc\\doorknocking.wav"),
+                                 "doorpounding" : pyglet.media.load("sounds\\misc\\doorpounding.wav"),
+                                 "error" : pyglet.media.load("sounds\\misc\\error.wav"),
+                                 "honk" : pyglet.media.load("sounds\\misc\\honk.wav"),
+                                 "lighthum" : pyglet.media.load("sounds\\misc\\lighthum.wav"),
+                                 "musicbox" : pyglet.media.load("sounds\\misc\\musicbox.wav"),
+                                 "powerout" : pyglet.media.load("sounds\\misc\\powerout.wav"),
+                                 "robotvoice" : pyglet.media.load("sounds\\misc\\robotvoice.wav")},
+
+                       "scary" : {"breathing" : pyglet.media.load("sounds\\scary\\breathing.wav"),
+                                  "breathing2" : pyglet.media.load("sounds\\scary\\breathing2.wav"),
+                                  "breathing3" :    pyglet.media.load("sounds\\scary\\breathing3.wav"),
+                                  "breathing4" : pyglet.media.load("sounds\\scary\\breathing4.wav"),
+                                  "freddygiggle" : pyglet.media.load("sounds\\scary\\freddygiggle.wav"),
+                                  "freddygiggle2" : pyglet.media.load("sounds\\scary\\freddygiggle2.wav"),
+                                  "freddygiggle3" : pyglet.media.load("sounds\\scary\\freddygiggle3.wav"),
+                                  "giggle" : pyglet.media.load("sounds\\scary\\giggle.wav"),
+                                  "robotvoice" : pyglet.media.load("sounds\\scary\\robotvoice.wav"),
+                                  "windowscare" : pyglet.media.load("sounds\\scary\\windowscare.wav"),
+                                  "XSCREAM" : pyglet.media.load("sounds\\scary\\XSCREAM.wav"),
+                                  "XSCREAM2" : pyglet.media.load("sounds\\scary\\XSCREAM2.wav")}}
 
         self.mouse_x, self.mouse_y = 0, 0
         self.mouse_Click = False
         self.moving = "right"
         self.old_x, self.old_y = 0, 0
-
+        self.powerout_stage = 1
+        glViewport(0, 0, self.width, self.height)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(0, 1280, 0, 720, -1, 1)
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
         glEnable(GL_TEXTURE_2D)
 
         self.setup()
@@ -113,6 +175,9 @@ class Main(pyglet.window.Window):
             self.Batch["camera"].draw()
             self.Batch["ui"].draw()
 
+        if self.scene == "powerout":
+            self.Batch["powerout"].draw()
+
         self.fps.draw()
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -127,6 +192,64 @@ class Main(pyglet.window.Window):
         if button == 1:
             self.mouse_x, self.mouse_y = x, y
             self.mouse_Click = False
+
+    def power_calculations(self, dt=None, old_usage=1):
+        if self.power >= 0:
+            if self.usage == 1:
+                if old_usage == 1:
+                    self.power -= 1
+
+                if old_usage == 2:
+                    self.power -= 2
+
+                if old_usage == 3:
+                    self.power -= 2
+
+                if old_usage == 4:
+                    self.power -= 2
+
+                pyglet.clock.schedule_once(self.power_calculations, 9.6, old_usage=1)
+
+            if self.usage == 2:
+                if old_usage == 1:
+                    self.power -= 1
+
+                if old_usage == 2:
+                    self.power -= 1
+
+                if old_usage == 3:
+                    self.power -= 2
+
+                if old_usage == 4:
+                    self.power -= 2
+
+                pyglet.clock.schedule_once(self.power_calculations, 4.8, old_usage=2)
+
+            if self.usage == 3:
+                if old_usage == 1:
+                    self.power -= 1
+
+                if old_usage == 2:
+                    self.power -= 1
+
+                if old_usage == 3:
+                    self.power -= 1
+
+                if old_usage == 4:
+                    self.power -= 2
+
+                pyglet.clock.schedule_once(self.power_calculations, random.choice([2.8, 2.9, 3.9]), old_usage=3)
+
+            if self.usage == 4:
+                self.power -= 1
+
+                pyglet.clock.schedule_once(self.power_calculations, random.choice([1.9, 2.9]), old_usage=4)
+
+            if self.usage == 5:
+                self.usage = 4
+                self.power -= 1
+
+                pyglet.clock.schedule_once(self.power_calculations, random.choice([1.9, 2.9]), old_usage=4)
 
     def setup(self):
         '''Initial setup.'''
@@ -165,12 +288,14 @@ class Main(pyglet.window.Window):
         self.rightbutton = gameObjects.Button(True, x=1500, y=180, door=self.rightdoor, batch=self.Batch["office"], group=self.Layers[1])
         self.background = gameObjects.Sprite("images\\office\\0.png", 0, 0, self.Batch["office"], self.Layers[0])
         self.scenebutton = gameObjects.SceneButton(x=self.width//4, y=36, batch=self.Batch["office"], group=self.Layers[1])
-        self.powerlabel = pyglet.text.Label("Power left:  "+str(self.power), font_name="Five Nights at Freddy's", font_size=16, x=40, y=200, batch=self.Batch["ui"], group=self.Layers[5])
-        self.usagelabel = pyglet.text.Label("Usage:", font_name="Five Nights at Freddy's", font_size=16, x=40, y=170, batch=self.Batch["ui"], group=self.Layers[5])
+        self.powerlabel = pyglet.text.Label("Power left:  "+str(self.power)+"%", font_name="Five Nights at Freddy's", font_size=16, x=40, y=150, batch=self.Batch["ui"], group=self.Layers[5])
+        self.usagelabel = pyglet.text.Label("Usage:"+str(self.usage), font_name="Five Nights at Freddy's", font_size=16, x=40, y=120, batch=self.Batch["ui"], group=self.Layers[5])
         self.hourlabel = pyglet.text.Label(str(self.hour)+"  AM", font_name="Five Nights at Freddy's", font_size=16, x=1020, y=640, batch=self.Batch["ui"], group=self.Layers[5])
         self.nightlabel = pyglet.text.Label("pyDLASYIAS_GL", font_name="Five Nights at Freddy's", font_size=16, x=1020, y=670, batch=self.Batch["ui"], group=self.Layers[5])
         self.fps = pyglet.clock.ClockDisplay()
+        self.cam1a.pressed = True
 
+        self.power_calculations(1)
         self.setup_office()
         pyglet.clock.schedule(self.cam1a.update)
         pyglet.clock.schedule(self.cam1b.update)
@@ -200,6 +325,19 @@ class Main(pyglet.window.Window):
                     if state == True and self.rightbutton.light:
                         self.rightbutton.light = False
 
+                    elif state == True and not self.rightbutton.light:
+                        self.usage += 1
+
+                    elif state == False and not self.rightbutton.light:
+                        self.usage -= 1
+
+                if button == "door":
+                    if state == True:
+                        self.usage += 1
+
+                    if state == False:
+                        self.usage -= 1
+
         @self.rightbutton.event
         def on_button_press(button, state):
             if self.scene == "office":
@@ -207,28 +345,55 @@ class Main(pyglet.window.Window):
                     if state == True and self.leftbutton.light:
                         self.leftbutton.light = False
 
+                    elif state == True and not self.leftbutton.light:
+                        self.usage += 1
+
+                    elif state == False and not self.leftbutton.light:
+                        self.usage -= 1
+
+                if button == "door":
+                    if state == True:
+                        self.usage += 1
+
+                    if state == False:
+                        self.usage -= 1
+
         @self.scenebutton.event
         def on_button_collide():
-            self.tablet.visible = True
-            if self.scene == "office":
-                self.tablet.image.batch = self.Batch["office"]
-                self.tablet.open()
+            if self.tablet.image.visible != True:
+                self.tablet.image.visible = True
+                if self.scene == "office":
+                    self.tablet.batch = self.Batch["office"]
+                    self.tablet.open()
+                    self.usage += 1
+                    if self.leftbutton.light:
+                        self.leftbutton.light = False
+                        self.usage -= 1
 
-            if self.scene == "camera":
-                self.tablet.image.batch = self.Batch["camera"]
-                self.tablet.close()
+                    if self.rightbutton.light:
+                        self.rightbutton.light = False
+                        self.usage -= 1
+
+                    return pyglet.event.EVENT_HANDLED
+
+                elif self.scene == "camera":
+                    self.scene = "office"
+                    self.setup_office()
+                    self.tablet.batch = self.Batch["office"]
+                    self.tablet.close()
+                    self.usage -= 1
+                    return pyglet.event.EVENT_HANDLED
 
         @self.tablet.event
         def on_animation_end():
-            self.tablet.visible = False
-            if self.scene == "office":
+            self.tablet.image.visible = False
+            if self.scene == "office" and not self.tablet.isClosed:
                 self.scene = "camera"
                 self.setup_camera()
+                return pyglet.event.EVENT_HANDLED
 
             elif self.scene == "camera":
-                self.scene = "office"
-                self.setup_office()
-            pyglet.clock.schedule_once(self.scenebutton.showImage, 2)
+                return pyglet.event.EVENT_HANDLED
 
         @self.cam1a.event
         def on_camera_press(camera):
@@ -314,7 +479,7 @@ class Main(pyglet.window.Window):
         except AssertionError:
             pass
 
-        self.background.image.opacity = self.power * 2.55
+        self.background.image.color = (self.power * 2.55, self.power * 2.55, self.power * 2.55)
         self.background.image.x, self.background.image.y = self.old_x, self.old_y
         self.tablet.image.visible = False
         self.GameObjects.clear()
@@ -325,8 +490,8 @@ class Main(pyglet.window.Window):
         self.GameObjects["background"] = self.background
         self.GameObjects["SceneButton"] = self.scenebutton
 
-        self.background.batch = self.Batch["office"]
-        self.scenebutton.batch = self.Batch["office"]
+        self.background.image.batch = self.Batch["office"]
+        self.scenebutton.image.batch = self.Batch["office"]
 
         self.push_handlers(self.scenebutton.on_mouse_motion)
         self.push_handlers(self.leftbutton.on_mouse_press)
@@ -335,8 +500,13 @@ class Main(pyglet.window.Window):
 
     def setup_camera(self):
         '''Camera setup.'''
-        self.pop_handlers()
-        self.background.image.opacity = 255
+        try:
+            self.pop_handlers()
+            self.remove_handlers(self.leftbutton.on_mouse_press)
+        except AssertionError:
+            pass
+
+        self.background.image.color = (255,255,255)
         self.old_X, self.old_y = self.background.x, self.background.y
         self.GameObjects.clear()
         self.GameObjects = self.CameraButtons.copy()
@@ -360,21 +530,62 @@ class Main(pyglet.window.Window):
         self.push_handlers(self.cam7.on_mouse_press)
         self.scene = "camera"
 
+    def setup_powerout(self):
+        '''Powerout setup and stage one of outage.'''
+        try:
+            self.pop_handlers()
+            self.remove_handlers(self.leftbutton.on_mouse_press)
+        except AssertionError:
+            pass
+        self.GameObjects.clear()
+        self.GameObjects["background"] = self.background
+        self.GameObjects["leftdoor"] = self.leftdoor
+        self.GameObjects["rightdoor"] = self.rightdoor
+        self.background.image.batch = self.Batch["powerout"]
+        self.leftdoor.batch = self.Batch["powerout"]
+        self.rightdoor.batch = self.Batch["powerout"]
+        self.background.batch = self.Batch["powerout"]
+        self.background.image.image = self.Backgrounds["powerout"]["0"]
+        self.background.image.color = (255,255,255)
+        self.background.image.opacity = 255
+        self.background.image.visible = True
+        if self.leftbutton.door:
+            self.leftdoor.open()
+        if self.rightbutton.door:
+            self.rightdoor.open()
+
+        self.scene = "powerout"
+
+        sound = pyglet.media.load("sounds\\misc\\powerout.wav").play()
+        if random.randint(0, 1) == 0:
+            pyglet.clock.schedule_once(self.powerout_stage2, 12)
+
+        else:
+            pyglet.clock.schedule_once(self.powerout_stage2, random.randint(4, 18))
+
+    def powerout_stage2(self, dt=None):
+        self.powerout_stage = 2
+        sound = pyglet.media.load("sounds\\misc\\musicbox.wav").play()
+        if random.randint(0, 1) == 0:
+            pyglet.clock.schedule_once(self.powerout_stage3, 12)
+        else:
+            pyglet.clock.schedule_once(self.powerout_stage3, random.randint(3, 61))
+
+    def powerout_stage3(self, dt=None):
+        pyglet.app.exit()
+
     def update(self, dt):
         if self.scene == "office":
-            self.background.image.opacity = self.power * 2.55
-            self.leftbutton.image.opacity = self.power * 2.55
-            self.rightbutton.image.opacity = self.power * 2.55
-            self.leftdoor.image.opacity = self.power * 2.55
-            self.rightdoor.image.opacity = self.power * 2.55
-
             if self.hour == 0:
                 self.hourlabel.text = "12  PM"
             else:
                 self.hourlabel.text = "%s  AM" %(self.hour)
 
+            if self.power < 0:
+                self.setup_powerout()
+
             self.powerlabel.text = "Power left:  %s" %(self.power)
-            self.usagelabel = "Usage: "
+            self.usagelabel.text = "Usage:  %s" %(self.usage)
 
             if not self.leftbutton.light and not self.rightbutton.light:
                 self.background.change_image(self.Backgrounds["office"]["0"])
@@ -438,6 +649,19 @@ class Main(pyglet.window.Window):
                 #Probably scene has changed.
                 pass
 
+            if self.power > 25:
+                self.background.image.color = (self.power * 2.55, self.power * 2.55, self.power * 2.55)
+                self.leftbutton.image.color = (self.power * 2.55, self.power * 2.55, self.power * 2.55)
+                self.rightbutton.image.color = (self.power * 2.55, self.power * 2.55, self.power * 2.55)
+                self.leftdoor.image.color = (self.power * 2.55, self.power * 2.55, self.power * 2.55)
+                self.rightdoor.image.color = (self.power * 2.55, self.power * 2.55, self.power * 2.55)
+            else:
+                self.background.image.color = (25 * 2.55, 25 * 2.55, 25 * 2.55)
+                self.leftbutton.image.color = (25 * 2.55, 25 * 2.55, 25 * 2.55)
+                self.rightbutton.image.color = (25 * 2.55, 25 * 2.55, 25 * 2.55)
+                self.leftdoor.image.color = (25 * 2.55, 25 * 2.55, 25 * 2.55)
+                self.rightdoor.image.color = (25 * 2.55, 25 * 2.55, 25 * 2.55)
+
         if self.scene == "camera":
             if self.moving == "left" and not self.GameObjects["background"].x <= 0:
                 self.GameObjects["background"].x -= int(500 * dt)
@@ -452,12 +676,101 @@ class Main(pyglet.window.Window):
                 self.moving = "left"
 
             if self.camera == "cam1a":
-                self.background.image.delete()
-                self.background.image = pyglet.sprite.Sprite(self.Backgrounds["camera"]["cam1a"]["brc"], x=self.background.x, y=self.background.y, batch=self.background.batch, group=self.background.group)
+                self.background.image.image = self.Backgrounds["camera"]["cam1a"]["brc"]
+                # = pyglet.sprite.Sprite(self.Backgrounds["camera"]["cam1a"]["brc"], x=self.background.x, y=self.background.y, batch=self.background.batch, group=self.background.group)
 
             elif self.camera == "cam1b":
-                self.background.image.delete()
-                self.background.image = pyglet.sprite.Sprite(self.Backgrounds["camera"]["cam1a"]["brc"], x=self.background.x, y=self.background.y, batch=self.background.batch, group=self.background.group)
+                self.background.image.image = self.Backgrounds["camera"]["cam1b"]["0"]
+
+            elif self.camera == "cam1c":
+                self.background.image.image = self.Backgrounds["camera"]["cam1c"]["0"]
+
+            elif self.camera == "cam2a":
+                self.background.image.image = self.Backgrounds["camera"]["cam2a"]["0"]
+
+            elif self.camera == "cam2b":
+                self.background.image.image = self.Backgrounds["camera"]["cam2b"]["0"]
+
+            elif self.camera == "cam3":
+                self.background.image.image = self.Backgrounds["camera"]["cam3"]["0"]
+
+            elif self.camera == "cam4a":
+                self.background.image.image = self.Backgrounds["camera"]["cam4a"]["0"]
+
+            elif self.camera == "cam4b":
+                self.background.image.image = self.Backgrounds["camera"]["cam4b"]["0"]
+
+            elif self.camera == "cam5":
+                self.background.image.image = self.Backgrounds["camera"]["cam5"]["0"]
+
+            elif self.camera == "cam6":
+                self.background.image.image = self.Backgrounds["camera"]["cam6"]["0"]
+
+            elif self.camera == "cam7":
+                self.background.image.image = self.Backgrounds["camera"]["cam7"]["0"]
+
+            else:
+                self.background.image.image = self.Backgrounds["camera"]["cam6"]["0"]
+
+        if self.scene == "powerout":
+            if self.powerout_stage == 1:
+                self.background.image.image = self.Backgrounds["powerout"]["0"]
+
+            if self.powerout_stage == 2:
+                self.background.image.image = random.choice([self.Backgrounds["powerout"]["0"], self.Backgrounds["powerout"]["0"], self.Backgrounds["powerout"]["0"], self.Backgrounds["powerout"]["1"]])
+
+            try:
+                if self.mouse_x in range(0, 150) and not self.GameObjects["background"].x >= 0.0:
+                    for i in self.GameObjects.values():
+                        if i.movable:
+                            i.x += int(600 * dt)
+                            i.update(dt)
+
+                    self.moving = "left"
+
+                if self.mouse_x in range(151, 315) and not self.GameObjects["background"].x >= 0.0:
+                    for i in self.GameObjects.values():
+                        if i.movable:
+                            i.x += int(400 * dt)
+                            i.update(dt)
+
+                    self.moving = "left"
+
+                if self.mouse_x in range(316, 540) and not self.GameObjects["background"].x >= 0.0:
+                    for i in self.GameObjects.values():
+                        if i.movable:
+                            i.x += int(200 * dt)
+                            i.update(dt)
+
+                    self.moving = "left"
+
+
+                if self.mouse_x in range(1140, 1280) and not self.GameObjects["background"].x <= -315:
+                    for i in self.GameObjects.values():
+                        if i.movable:
+                            i.x -= int(600 * dt)
+                            i.update(dt)
+
+                    self.moving = "right"
+
+                if self.mouse_x in range(1000, 1139) and not self.GameObjects["background"].x <= -315:
+                    for i in self.GameObjects.values():
+                        if i.movable:
+                            i.x -= int(400 * dt)
+                            i.update(dt)
+
+                    self.moving = "right"
+
+                if self.mouse_x in range(750, 999) and not self.GameObjects["background"].x <= -315:
+                    for i in self.GameObjects.values():
+                        if i.movable:
+                            i.x -= int(200 * dt)
+                            i.update(dt)
+
+                    self.moving = "right"
+            except KeyError:
+                #Probably scene has changed.
+                pass
 
 if __name__ == "__main__":
     print("Run game.py")
