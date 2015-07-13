@@ -1,5 +1,6 @@
 import pyglet
 import random
+import cocos
 import time
 import sys
 import os
@@ -15,7 +16,7 @@ class Main(pyglet.window.Window):
         super().__init__(width=1280, height=720)
 
         self.hour = 0
-        self.power = 1
+        self.power = 100
         self.usage = 1
         self.scene = "office"
         self.camera = "cam1a"
@@ -148,6 +149,8 @@ class Main(pyglet.window.Window):
                                   "XSCREAM" : pyglet.media.load("sounds\\scary\\XSCREAM.wav"),
                                   "XSCREAM2" : pyglet.media.load("sounds\\scary\\XSCREAM2.wav")}}
 
+        self.Channel = [pyglet.media.Player() for x in range(0, 31)]
+
         self.mouse_x, self.mouse_y = 0, 0
         self.mouse_Click = False
         self.moving = "right"
@@ -160,12 +163,11 @@ class Main(pyglet.window.Window):
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
         glEnable(GL_TEXTURE_2D)
-
         self.setup()
 
     def on_draw(self):
         glClearColor(0.0, 0.0, 0.0, 1.0)
-        self.clear()
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         if self.scene == "office":
             self.Batch["office"].draw()
@@ -318,6 +320,42 @@ class Main(pyglet.window.Window):
         pyglet.clock.schedule(self.scenebutton.update)
         pyglet.clock.schedule(self.update)
 
+
+        for channel in self.Channel:
+            channel.eos_action = channel.EOS_LOOP
+
+        channel10_sourcegroup = pyglet.media.SourceGroup(pyglet.media.AudioFormat(1, 16, 22050), None)
+        channel10_sourcegroup.loop = True
+        channel10_sourcegroup.queue(self.Sounds["camera"]["garble"])
+        channel10_sourcegroup.queue(self.Sounds["camera"]["garble2"])
+        channel10_sourcegroup.queue(self.Sounds["camera"]["garble3"])
+
+        channel11_sourcegroup = pyglet.media.SourceGroup(pyglet.media.AudioFormat(1, 16, 22050), None)
+        channel11_sourcegroup.loop = True
+        channel11_sourcegroup.queue(self.Sounds["camera"]["pots"])
+        channel11_sourcegroup.queue(self.Sounds["camera"]["pots2"])
+        channel11_sourcegroup.queue(self.Sounds["camera"]["pots3"])
+        channel11_sourcegroup.queue(self.Sounds["camera"]["pots4"])
+
+        self.Channel[0].queue(self.Sounds["misc"]["powerout"])
+        self.Channel[1].queue(self.Sounds["ambience"]["fan"])
+        self.Channel[2].queue(self.Sounds["ambience"]["ambience"])
+        self.Channel[3].queue(self.Sounds["misc"]["lighthum"])
+        self.Channel[4].queue(self.Sounds["misc"]["door"])
+        self.Channel[7].queue(self.Sounds["camera"]["camerasound2"])
+        self.Channel[9].queue(self.Sounds["scary"]["XSCREAM"])
+        self.Channel[10].queue(channel10_sourcegroup)
+        self.Channel[11].queue(channel11_sourcegroup)
+        self.Channel[18].queue(self.Sounds["ambience"]["eerieambience"])
+        self.Channel[21].queue(self.Sounds["scary"]["robotvoice"])
+        self.Channel[30].queue(self.Sounds["misc"]["musicbox"])
+
+        self.Channel[0].eos_action = self.Channel[0].EOS_PAUSE
+        self.Channel[4].eos_action = self.Channel[4].EOS_PAUSE
+        self.Channel[9].eos_action = self.Channel[9].EOS_PAUSE
+        self.Channel[30].eos_action = self.Channel[30].EOS_PAUSE
+
+
         @self.leftbutton.event
         def on_button_press(button, state):
             if self.scene == "office":
@@ -326,12 +364,20 @@ class Main(pyglet.window.Window):
                         self.rightbutton.light = False
 
                     elif state == True and not self.rightbutton.light:
+                        self.Channel[3].play()
+                        self.Channel[3].volume = 1.0
                         self.usage += 1
 
                     elif state == False and not self.rightbutton.light:
+                        self.Channel[3].volume = 0.0
                         self.usage -= 1
 
                 if button == "door":
+                    try:
+                        self.Channel[4].seek(0)
+                        self.Channel[4].play()
+                    except:
+                        pass
                     if state == True:
                         self.usage += 1
 
@@ -346,12 +392,20 @@ class Main(pyglet.window.Window):
                         self.leftbutton.light = False
 
                     elif state == True and not self.leftbutton.light:
+                        self.Channel[3].play()
+                        self.Channel[3].volume = 1.0
                         self.usage += 1
 
                     elif state == False and not self.leftbutton.light:
+                        self.Channel[3].volume = 0.0
                         self.usage -= 1
 
                 if button == "door":
+                    try:
+                        self.Channel[4].seek(0)
+                        self.Channel[4].play()
+                    except:
+                        pass
                     if state == True:
                         self.usage += 1
 
@@ -492,6 +546,26 @@ class Main(pyglet.window.Window):
 
         self.background.image.batch = self.Batch["office"]
         self.scenebutton.image.batch = self.Batch["office"]
+        self.background.batch = self.Batch["office"]
+        self.scenebutton.batch = self.Batch["office"]
+
+        self.Channel[0].volume = 0.0
+        self.Channel[1].volume = 0.5
+        self.Channel[2].volume = 0.5
+        self.Channel[4].volume = 0.5
+        self.Channel[7].volume = 0.0
+        self.Channel[10].volume = 0.0
+        self.Channel[11].volume = 0.05
+        self.Channel[18].volume = 0.0
+        self.Channel[20].volume = 0.1
+        self.Channel[21].volume = 0.0
+        self.Channel[22].volume = 0.25
+
+        self.Channel[1].play()
+        self.Channel[2].play()
+        self.Channel[11].play()
+        self.Channel[20].play()
+        self.Channel[22].play()
 
         self.push_handlers(self.scenebutton.on_mouse_motion)
         self.push_handlers(self.leftbutton.on_mouse_press)
