@@ -1,3 +1,4 @@
+import cocos
 import pyglet
 import random
 import cocos
