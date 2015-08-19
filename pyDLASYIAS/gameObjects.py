@@ -1,214 +1,251 @@
 import cocos
 import pyglet
 import random
+import cocos
 import time
+import sys
+import os
+from pyglet.gl import *
+from pyglet.gl.glu import *
+from cocos.director import director
 
 pyglet.resource.path = ["images"]
 pyglet.resource.reindex()
 
-class GameObject(cocos.sprite.Sprite):
-    def __init__(self, img, x=0, y=0):
-        self.EventDispatcher = pyglet.event.EventDispatcher()
-        cocos.sprite.Sprite.__init__(img, (x, y))
-        self.movable = True
+class Base(cocos.sprite.Sprite):
+
+    EventDispatcher = pyglet.event.EventDispatcher()
+
+    def __init__(self, img, img_pos=(0, 0)):
+        if isinstance(img, str):
+            super().__init__(pyglet.image.load(img), img_pos)
+        else:
+            super().__init__(img, img_pos)
+
+        self.isMovable = True
+        self._set_anchor((0, 0))
+        self.rect = self.get_rect()
+
+        self.dx = 0
+        self.dy = 0
+
+    def update(self, dt=0):
+        if self.isMovable and dt != None:
+            self.position = (self.position[0] + (self.dx * dt), self.position[1] + (self.dy * dt))
+            self.dx = 0
+            self.dy = 0
+            self.rect = self.get_rect()
 
     def change_image(self, img):
-        self.image = pyglet.resource.image(img)
+        try:
+            image = pyglet.image.load(img)
+        except TypeError:
+            image = img
+        else:
+            self.image = image
 
-    def update(self, dt):
-        self._update_position
+        self.rect = self.get_rect()
+        self.update()
 
-GameObject.EventDispatcher.egister_event_type("on_button_press")
-GameObject.EventDispatcher.register_event_type("on_button_collide")
-GameObject.EventDispatcher.register_event_type("on_camera_press")
-GameObject.EventDispatcher.register_event_type("on_animation_end")
+    def on_enter(self):
+        super().on_enter()
+        pyglet.clock.schedule(self.update)
+        director.window.push_handlers(self)
 
-class Tablet(GameObject):
-    def __init__(self, x=0, y=0):
-        self.isClosed = False
+    def on_exit(self):
+        super().on_enter()
+        pyglet.clock.unschedule(self.update)
+        director.window.remove_handlers(self)
+
+Base.EventDispatcher.register_event_type("on_button_press")
+Base.EventDispatcher.register_event_type("on_button_collide")
+Base.EventDispatcher.register_event_type("on_camera_press")
+Base.EventDispatcher.register_event_type("on_animation_end")
+
+Base.register_event_type("on_button_press")
+Base.register_event_type("on_button_collide")
+Base.register_event_type("on_camera_press")
+Base.register_event_type("on_animation_end")
+
+class Tablet(Base):
+    def __init__(self, img_pos=(0, 0)):
+        self.isClosed = True
+        self.isMovable = False
         self.Frames = []
-        self.movable = False
+        self.isAnimPlaying = False
 
         for i in range(0, 11):
             if i != 10:
-                self.Frames.append(pyglet.image.AnimationFrame(pyglet.resource.image("images\\cameras\\misc\\animation\\%s.png" %(i)), 0.020))
+                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), 0.020))
             else:
-                self.Frames.append(pyglet.image.AnimationFrame(pyglet.resource.image("images\\cameras\\misc\\animation\\%s.png" %(i)), None))
+                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), None))
 
         self.animation_normal = pyglet.image.Animation(self.Frames)
         self.Frames = []
 
         for i in reversed(range(0, 11)):
             if i != 0:
-                self.Frames.append(pyglet.image.AnimationFrame(pyglet.resource.image("images\\cameras\\misc\\animation\\%s.png" %(i)), 0.020))
+                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), 0.020))
             else:
-                self.Frames.append(pyglet.image.AnimationFrame(pyglet.resource.image("images\\cameras\\misc\\animation\\%s.png" %(i)), None))
+                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), None))
 
         self.animation_reversed = pyglet.image.Animation(self.Frames)
+        self.Frames = []
 
-        super().__init__("images\\cameras\\misc\\animation\\0.png", x=x, y=y)
+        super().__init__("images\\cameras\\misc\\animation\\0.png", img_pos)
+        self.opacity = 0
 
-        self.visible = False
-
-    def update(self, dt):
+    def update(self, dt=0):
         super().update(dt)
+
+        self.position = (0, 0)
 
         @self.event
         def on_animation_end():
+            self.opacity = 0
+            self.isAnimPlaying = False
             self.EventDispatcher.dispatch_event("on_animation_end")
 
     def open(self):
         self.isClosed = False
-        self.image.delete()
+        self.isAnimPlaying = True
         self.image = self.animation_normal
-        self.visible = True
+        self.opacity = 255
 
     def close(self):
         self.isClosed = True
-        self.image.delete()
-        self.image = pyglet.sprite.Sprite(self.animation_reversed, x=self.x, y=self.y, batch=self.batch, group=self.group)
-        self.visible = True
+        self.isAnimPlaying = True
+        self.image = self.animation_reversed
+        self.opacity = 255
 
-class Static(GameObject):
-    def __init__(self, opacitymin=255, opacitymax=255, batch=None, group=None):
-        super().__init__(img="images\\cameras\\misc\\static\\0.png", x=0, y=0, batch=batch, group=group)
-        self.opacitymin = opacitymin
-        self.opacitymax = opacitymax
-        self.opacity = random.randint(opacitymin, opacitymax)
-        self.Sprites = [pyglet.resource.image("images\\cameras\\misc\\static\\0.png"),
-                        pyglet.resource.image("images\\cameras\\misc\\static\\1.png"),
-                        pyglet.resource.image("images\\cameras\\misc\\static\\2.png"),
-                        pyglet.resource.image("images\\cameras\\misc\\static\\3.png"),
-                        pyglet.resource.image("images\\cameras\\misc\\static\\4.png"),
-                        pyglet.resource.image("images\\cameras\\misc\\static\\5.png"),
-                        pyglet.resource.image("images\\cameras\\misc\\static\\6.png"),
-                        pyglet.resource.image("images\\cameras\\misc\\static\\7.png")]
+class Static(Base):
+    def __init__(self, opacity_min=255, opacity_max=255):
+        super().__init__("images\\cameras\\misc\\static\\0.png", (0, 0))
+        self.opacity_min = opacity_min
+        self.opacity_max = opacity_max
+        self.get_random_opacity()
+        self.Sprites = [pyglet.image.load("images\\cameras\\misc\\static\\0.png"),
+                        pyglet.image.load("images\\cameras\\misc\\static\\1.png"),
+                        pyglet.image.load("images\\cameras\\misc\\static\\2.png"),
+                        pyglet.image.load("images\\cameras\\misc\\static\\3.png"),
+                        pyglet.image.load("images\\cameras\\misc\\static\\4.png"),
+                        pyglet.image.load("images\\cameras\\misc\\static\\5.png"),
+                        pyglet.image.load("images\\cameras\\misc\\static\\6.png"),
+                        pyglet.image.load("images\\cameras\\misc\\static\\7.png")]
 
-    def update(self, dt):
-        self.image.delete()
-        self.image = pyglet.sprite.Sprite(random.choice(self.Sprites), x=self.x, y= self.y, batch=self.batch, group=self.group)
-        self.image.opacity = random.randint(self.opacitymin, self.opacitymax)
+    def get_random_opacity(self):
+        self.opacity = random.randint(self.opacity_min, self.opacity_max)
 
-class Camera(GameObject):
-    def __init__(self, name, img=None, x=0, y=0, batch=None, group=None, grouptwo=None):
-        super().__init__(img="images\\ui\\button\\camera\\0.png", x=x, y=y, batch=batch, group=group)
-        self.text = Sprite(img, x=(x + 10), y=(y + 7.5), batch=batch, group=grouptwo)
+    def update(self, dt=0):
+        super().update(dt)
+        image = random.choice(self.Sprites)
+        if image == self.image:
+            self.update()
+        else:
+            self.image = image
+
+class Camera(Base):
+    def __init__(self, name, img, img_pos):
+        super().__init__("images\\ui\\button\\camera\\0.png", img_pos)
+        self.isMovable = False
+        if name != "cam1a":
+            self.pressed = False
+        else:
+            self.pressed = True
         self.name = name
-        self.movable = False
-        self.pressed = False
-        self.Sprites = [pyglet.resource.image("images\\ui\\button\\camera\\0.png"),
-                        pyglet.resource.image("images\\ui\\button\\camera\\1.png")]
-
-    def collidepoint(self, x, y):
-        if (x in range(self.image.x, (self.image.x + self.image.width))) and (y in range(self.image.y, (self.image.y + self.image.height))):
-            return True
-        return False
+        self.text = cocos.sprite.Sprite(pyglet.image.load(img), (img_pos[0] + 10, img_pos[1] + 7.5))
+        self.text._set_anchor((0, 0))
+        self.Sprites = [pyglet.image.load("images\\ui\\button\\camera\\0.png"),
+                        pyglet.image.load("images\\ui\\button\\camera\\1.png")]
 
     def draw(self):
-        self.image.draw()
+        super().draw()
         self.text.draw()
 
     def cameraPress(self):
-        self.EventDispatcher.dispatch_event("on_camera_press", self.name)
+        self.dispatch_event("on_camera_press", self)
+        self.EventDispatcher.dispatch_event("on_camera_press", self)
 
     def on_camera_press(self, camera):
-        pass
+        self.pressed = True
+        self.update()
 
     def on_mouse_press(self, x, y, button, mod):
-        if self.collidepoint(x, y):
+        real_pos = director.get_virtual_coordinates(x, y)
+        if self.contains(real_pos[0], real_pos[1]):
             self.cameraPress()
 
-    def update(self, dt):
+    def on_enter(self):
+        super().on_enter()
+        director.window.push_handlers(self.on_mouse_press)
+
+    def on_exit(self):
+        super().on_exit()
+        director.window.remove_handlers(self.on_mouse_press)
+
+    def update(self, dt=0):
         if self.pressed:
-            self.image.delete()
-            self.image = pyglet.sprite.Sprite(self.Sprites[1], x=self.x, y=self.y, batch=self.batch, group=self.group)
+            self.image = self.Sprites[1]
         else:
-            self.image.delete()
-            self.image = pyglet.sprite.Sprite(self.Sprites[0], x=self.x, y=self.y, batch=self.batch, group=self.group)
+            self.image = self.Sprites[0]
 
-        self.x += self.dx * dt
-        self.y += self.dy * dt
-
-        self.image.x, self.image.y = int(self.x), int(self.y)
-
-class Door(GameObject):
-    def __init__(self, isRight, x=0, y=0, batch=None, group=None):
-        self.isRight = isRight
+class Door(Base):
+    def __init__(self, isRightDoor, img_pos):
+        self.isRightDoor = isRightDoor
         self.isClosed = False
+        self.isMovable = True
         self.Frames = []
-        self.movable = True
 
-
-        if not self.isRight:
+        if not self.isRightDoor:
             for i in range(0, 16):
                 if i != 15:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.resource.image("images\\office\\doors\\left\\%s.png" %(i)), 0.025))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\left\\%s.png" %(i)), 0.025))
                 else:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.resource.image("images\\office\\doors\\left\\%s.png" %(i)), None))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\left\\%s.png" %(i)), None))
 
             self.animation_normal = pyglet.image.Animation(self.Frames)
             self.Frames = []
 
             for i in reversed(range(0, 16)):
                 if i != 0:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.resource.image("images\\office\\doors\\left\\%s.png" %(i)), 0.025))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\left\\%s.png" %(i)), 0.025))
                 else:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.resource.image("images\\office\\doors\\left\\%s.png" %(i)), None))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\left\\%s.png" %(i)), None))
 
             self.animation_reversed = pyglet.image.Animation(self.Frames)
 
-            super().__init__(pyglet.resource.image("images\\office\\doors\\left\\0.png"), x=x, y=y, batch=batch, group=group)
+            super().__init__(pyglet.image.load("images\\office\\doors\\left\\0.png"), img_pos)
 
         else:
             for i in range(0, 16):
                 if i != 15:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.resource.image("images\\office\\doors\\right\\%s.png" %(i)), 0.025))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\right\\%s.png" %(i)), 0.025))
                 else:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.resource.image("images\\office\\doors\\right\\%s.png" %(i)), None))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\right\\%s.png" %(i)), None))
 
             self.animation_normal = pyglet.image.Animation(self.Frames)
             self.Frames = []
 
             for i in reversed(range(0, 16)):
                 if i != 0:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.resource.image("images\\office\\doors\\right\\%s.png" %(i)), 0.025))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\right\\%s.png" %(i)), 0.025))
                 else:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.resource.image("images\\office\\doors\\right\\%s.png" %(i)), None))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\right\\%s.png" %(i)), None))
 
             self.animation_reversed = pyglet.image.Animation(self.Frames)
 
-            super().__init__(pyglet.resource.image("images\\office\\doors\\right\\0.png"), x=x, y=y, batch=batch, group=group)
-
+            super().__init__(pyglet.image.load("images\\office\\doors\\right\\0.png"), img_pos)
 
     def update(self, dt):
-        self.x += self.dx * dt
-        self.y += self.dy * dt
-
-        self.image.x, self.image.y = self.x, self.y
+        super().update(dt)
 
     def open(self):
         self.isClosed = False
-        self.image = pyglet.sprite.Sprite(self.animation_reversed, x=self.x, y=self.y, batch=self.batch, group=self.group)
+        self.image = self.animation_reversed
 
     def close(self):
         self.isClosed = True
-        self.image = pyglet.sprite.Sprite(self.animation_normal, x=self.x, y=self.y, batch=self.batch, group=self.group)
-
-
-
-        # if not self.isRight:
-        #     self.Sprites = {}
-        #     for i in range(0, 16):
-        #         self.Sprites[str(i)] = pyglet.resource.image("images\\office\\doors\\left\\%s.png" %(i))
-        # else:
-        #     self.Sprites = {}
-        #     for i in range(0, 16):
-        #         self.Sprites[str(i)] = pyglet.resource.image("images\\office\\doors\\right\\%s.png" %(i))
-        #
-        # super().__init__(pyglet.resource.image("images\\office\\doors\\left\\0.png"), kwargs)
-
-    def draw(self):
-        self.image.draw()
+        self.image = self.animation_normal
 
     def __cmp__(self, other):
         return self.isClosed == other
@@ -219,85 +256,79 @@ class Door(GameObject):
     def __bool__(self):
         return self.isClosed
 
-class SceneButton(Sprite):
-    def __init__(self, x=0, y=0, batch=None, group=None):
-        super().__init__("images\\ui\\button\\camera.png", x=x, y=y, batch=batch, group=group)
-        self.movable = False
+class SceneButton(Base):
+    def __init__(self, img_pos):
+        super().__init__("images\\ui\\button\\camera.png", img_pos)
+        self.isMovable = False
         self.cooldown = False
 
     def collideButton(self):
-        self.EventDispatcher.dispatch_event("on_button_collide")
+        self.dispatch_event("on_button_collide")
 
-    def showImage(self, dt=None):
-        self.image.visible = True
+    def on_button_collide(self):
+        pass
+
+    def showImage(self, dt=0):
+        self.opacity = 255
         self.cooldown = False
 
     def on_mouse_motion(self, x, y, dx, dy):
-        if self.collidepoint(x, y) and not self.cooldown:
-            self.image.visible = False
+        real_pos = director.get_virtual_coordinates(x, y)
+        if self.contains(real_pos[0], real_pos[1]) and not self.cooldown:
+            self.opacity = 0
             self.cooldown = True
             self.collideButton()
 
-        if self.collidepoint(x, y) and self.cooldown:
-            self.image.visible = False
+        if self.contains(real_pos[0], real_pos[1]) and self.cooldown:
+            self.opacity = 0
             self.cooldown = True
 
         else:
             self.showImage()
 
-    # Another way to do this...
-    # def showImage(self, dt=None):
-    #     self.image.visible = True
-    #     self.cooldown = False
-    #
-    # def on_mouse_motion(self, x, y, dx, dy):
-    #     if self.collidepoint(x, y) and self.image.visible:
-    #         self.image.visible = False
-    #         self.cooldown = True
-    #         self.collideButton()
-    #
-    #     if self.collidepoint(x, y) and not self.image.visible and not self.cooldown:
-    #         self.cooldown = True
-    #
-    #     if self.cooldown and not self.collidepoint(x, y):
-    #         pyglet.clock.schedule_once(self.showImage, 2)
+    def on_enter(self):
+        super().on_enter()
+        director.window.push_handlers(self.on_mouse_motion)
 
-class Button(GameObject):
-    def __init__(self, isRight, door, x=0, y=0, batch=None, group=None):
+    def on_exit(self):
+        super().on_exit()
+        director.window.remove_handlers(self.on_mouse_motion)
+
+class Button(Base):
+    def __init__(self, isRightButton, door, img_pos):
         if not isinstance(door, object):
             raise ValueError("'door' is not an object.")
 
         self.door = door
         self.light = False
-        self.isRight = isRight
-        self.movable = True
+        self.isRightButton = isRightButton
+        self.isMovable = True
         self.cooldown = False
 
-        if not self.isRight:
-            self.Sprite = {"0" : pyglet.resource.image("images\\office\\button\\left\\0.png"),
-                           "d" : pyglet.resource.image("images\\office\\button\\left\\d.png"),
-                           "l" : pyglet.resource.image("images\\office\\button\\left\\l.png"),
-                           "dl" : pyglet.resource.image("images\\office\\button\\left\\dl.png")}
-            super().__init__(self.Sprite["0"], x=x, y=y, batch=batch, group=group)
+        if not self.isRightButton:
+            self.Sprite = {"0" : pyglet.image.load("images\\office\\button\\left\\0.png"),
+                           "d" : pyglet.image.load("images\\office\\button\\left\\d.png"),
+                           "l" : pyglet.image.load("images\\office\\button\\left\\l.png"),
+                           "dl" : pyglet.image.load("images\\office\\button\\left\\dl.png")}
+            super().__init__(self.Sprite["0"], img_pos)
 
         else:
-            self.Sprite = {"0" : pyglet.resource.image("images\\office\\button\\right\\0.png"),
-                           "d" : pyglet.resource.image("images\\office\\button\\right\\d.png"),
-                           "l" : pyglet.resource.image("images\\office\\button\\right\\l.png"),
-                           "dl" : pyglet.resource.image("images\\office\\button\\right\\dl.png")}
-            super().__init__(self.Sprite["0"], x=x, y=y, batch=batch, group=group)
-
-    def draw(self):
-        self.image.draw()
+            self.Sprite = {"0" : pyglet.image.load("images\\office\\button\\right\\0.png"),
+                           "d" : pyglet.image.load("images\\office\\button\\right\\d.png"),
+                           "l" : pyglet.image.load("images\\office\\button\\right\\l.png"),
+                           "dl" : pyglet.image.load("images\\office\\button\\right\\dl.png")}
+            super().__init__(self.Sprite["0"], img_pos)
 
     def buttonPress(self, button, state):
-        self.EventDispatcher.dispatch_event("on_button_press", button, state)
+        self.EventDispatcher.dispatch_event("on_button_press", self.isRightButton, button, state)
 
-    def on_button_press(self, button, state):
+    def on_button_press(self, isRightButton, button, state):
         pass
 
     def on_mouse_press(self, x, y, button, modifiers):
-        if x in range((int(self.x) + 30), (int(self.x) + 68)) and y in range((int(self.y) + 62), (int(self.y) + 118)) and button == 1:
+        real_pos = director.get_virtual_coordinates(x, y)
+        position = director.get_virtual_coordinates(self.position[0], self.position[1])
+        if real_pos[0] in range((int(position[0]) + 30), (int(position[0]) + 68)) and real_pos[1] in range((int(position[1]) + 62), (int(position[1]) + 118)) and button == 1:
             if self.light:
                 self.light = False
                 self.buttonPress("light", self.light)
@@ -305,7 +336,7 @@ class Button(GameObject):
                 self.light = True
                 self.buttonPress("light", self.light)
 
-        if x in range((int(self.x) + 30), (int(self.x) + 68)) and y in range((int(self.y) + 144), (int(self.y) + 193)) and button == 1 and not self.cooldown:
+        if real_pos[0] in range((int(self.position[0]) + 30), (int(self.position[0]) + 68)) and real_pos[1] in range((int(self.position[1]) + 144), (int(self.position[1]) + 193)) and button == 1 and not self.cooldown:
             if self.door:
                 self.door.open()
                 self.buttonPress("door", self.door)
@@ -317,30 +348,35 @@ class Button(GameObject):
                 self.cooldown = True
 
 
-    def update(self, dt):
+    def update(self, dt=0):
+        super().update(dt)
         if not self.door and not self.light:
-            self.image.delete()
-            self.image = pyglet.sprite.Sprite(self.Sprite["0"], x=self.x, y=self.y, batch=self.batch, group=self.group)
+            self.image = self.Sprite["0"]
 
         if self.door and not self.light:
-            self.image.delete()
-            self.image = pyglet.sprite.Sprite(self.Sprite["d"], x=self.x, y=self.y, batch=self.batch, group=self.group)
+            self.image = self.Sprite["d"]
 
         if not self.door and self.light:
-            self.image.delete()
-            self.image = pyglet.sprite.Sprite(self.Sprite["l"], x=self.x, y=self.y, batch=self.batch, group=self.group)
+            self.image = self.Sprite["l"]
 
         if self.door and self.light:
-            self.image.delete()
-            self.image = pyglet.sprite.Sprite(self.Sprite["dl"], x=self.x, y=self.y, batch=self.batch, group=self.group)
+            self.image = self.Sprite["dl"]
 
-        self.draw()
-
-        self.x += self.dx * dt
-        self.y += self.dy * dt
-
-        self.image.x, self.image.y = self.x, self.y
-
-        @self.door.image.event
+        @self.door.event
         def on_animation_end():
             self.cooldown = False
+
+class Blinking(Base):
+    def __init__(self, img, seconds, img_pos):
+        super().__init__(img, img_pos)
+        pyglet.clock.schedule_interval(self.schedule_this, seconds)
+
+    def schedule_this(self, dt=0):
+        if self.opacity == 255:
+            self.opacity = 0
+
+        elif self.opacity == 0:
+            self.opacity = 255
+
+        else:
+            self.opacity = 255
