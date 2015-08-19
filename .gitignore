@@ -99,3 +99,6 @@ target/
 # pyDLASYIAS
 __FUTURE__/
 venv/
+*.pyc
+start.bat
+pyDLASYIAS/__pycache__/gameObjects.cpython-34.pyc
