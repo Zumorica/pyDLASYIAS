@@ -2,6 +2,7 @@
 import pyDLASYIAS
 import cocos
 import pyglet
+import pygame.mixer
 import random
 import cocos
 import time
@@ -12,11 +13,12 @@ from pyglet.gl.glu import *
 from cocos.director import director
 import pyDLASYIAS.gameObjects as gameObjects
 
-sys.setrecursionlimit(10000)
+sys.setrecursionlimit(20000)
+pyglet.font.add_file('FNAF.ttf')
 
 director.init(autoscale=True, audio_backend="sdl", \
               audio=None, fullscreen=False, \
-              resizable=True, vsync=True, width=1280,
+              resizable=False, vsync=True, width=1280,
               height=720, caption="pyDLASYIAS", \
               visible=True)
 director.set_depth_test(True)

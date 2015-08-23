@@ -1,5 +1,6 @@
 import cocos
 import pyglet
+import pygame.mixer
 import random
 import cocos
 import time
@@ -133,8 +134,11 @@ class Static(Base):
                         pyglet.image.load("images\\cameras\\misc\\static\\6.png"),
                         pyglet.image.load("images\\cameras\\misc\\static\\7.png")]
 
-    def get_random_opacity(self):
+    def get_random_opacity(self, dt=0):
         self.opacity = random.randint(self.opacity_min, self.opacity_max)
+
+    def set_opacity(self, opacity, dt=0):
+        self.opacity = opacity
 
     def update(self, dt=0):
         super().update(dt)
@@ -236,14 +240,14 @@ class Door(Base):
 
             super().__init__(pyglet.image.load("images\\office\\doors\\right\\0.png"), img_pos)
 
-    def update(self, dt):
+    def update(self, dt=0):
         super().update(dt)
 
-    def open(self):
+    def open(self, dt=0):
         self.isClosed = False
         self.image = self.animation_reversed
 
-    def close(self):
+    def close(self, dt=0):
         self.isClosed = True
         self.image = self.animation_normal
 
@@ -367,9 +371,10 @@ class Button(Base):
             self.cooldown = False
 
 class Blinking(Base):
-    def __init__(self, img, seconds, img_pos):
+    def __init__(self, img, seconds, img_pos, isMovable=False):
         super().__init__(img, img_pos)
         pyglet.clock.schedule_interval(self.schedule_this, seconds)
+        self.isMovable = isMovable
 
     def schedule_this(self, dt=0):
         if self.opacity == 255:
@@ -380,3 +385,43 @@ class Blinking(Base):
 
         else:
             self.opacity = 255
+
+class Fan(Base):
+    def __init__(self, img_pos):
+        self.Frames = []
+        self.isMovable = True
+
+        for i in range(0, 3):
+                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\fan\\%s.png" %(i)), 0.025))
+
+        self.animation = pyglet.image.Animation(self.Frames)
+
+
+        super().__init__(self.animation, img_pos)
+
+class Animation(Base):
+    def __init__(self, image_path, max_number, frame_time, img_pos, looping=False, isMovable=True, autostart=True):
+        self.isMovable = isMovable
+        self.Frames = []
+        for i in range(0, max_number + 1):
+            self.Frames.append(pyglet.image.load("%s\\%s.png" %(image_path, str(i))))
+
+        self.animation = pyglet.image.Animation.from_image_sequence(self.Frames, frame_time, looping)
+        self.Frames = []
+
+        for i in reversed(range(0, max_number + 1)):
+            self.Frames.append(pyglet.image.load("%s\\%s.png" %(image_path, str(i))))
+
+        self.animation_reversed = pyglet.image.Animation.from_image_sequence(self.Frames, frame_time, looping)
+        self.Frames = []
+
+        if autostart:
+            super().__init__(self.animation, img_pos)
+        else:
+            super().__init__("%s\\0.png"%(image_path), img_pos)
+
+    def play(self, dt=0):
+        self.image = self.animation
+
+    def play_reversed(self, dt=0):
+        self.image = self.animation_reversed

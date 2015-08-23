@@ -1,6 +1,7 @@
 import pyDLASYIAS
 import cocos
 import pyglet
+import pygame.mixer
 import random
 import cocos
 import time
@@ -49,6 +50,8 @@ class Office(Base):
         self.game_start = True
         self.mouse_x = 0
         self.mouse_y = 0
+        self.left_discovered = False
+        self.right_discovered = False
 
         # -GameObjects here- #
         self.left_door = gameObjects.Door(False, (72, 0))
@@ -60,10 +63,12 @@ class Office(Base):
         self.background = gameObjects.Base("images\\office\\0.png", (0, 0))
         self.scene_button = gameObjects.SceneButton((director.window.width//4, 36))
 
-        self.power_label = cocos.text.Label("Power left:  "+str(self.Game.power)+"%", position=(40, 150), font_size=16)
-        self.usage_label = cocos.text.Label("Usage:  "+str(self.Game.usage), position=(40, 120), font_size=16)
-        self.hour_label = cocos.text.Label(str(self.Game.hour)+"  AM", position=(1020, 650), font_size=16)
-        self.night_label = cocos.text.Label(self.Game.night, position=(1020, 670), font_size=16)
+        self.fan = gameObjects.Fan((781, 221))
+
+        self.power_label = cocos.text.Label("Power left:  "+str(self.Game.power)+"%", position=(40, 150), font_size=16, font_name="Fnaf UI")
+        self.usage_label = cocos.text.Label("Usage:  "+str(self.Game.usage), position=(40, 120), font_size=16, font_name="Fnaf UI")
+        self.hour_label = cocos.text.Label(str(self.Game.hour)+" AM", position=(1080, 670), font_size=20, font_name="Fnaf UI", bold=True)
+        self.night_label = cocos.text.Label(self.Game.night, position=(1080, 640), font_size=14, font_name="Fnaf UI")
         self.add(self.power_label, z=10)
         self.add(self.usage_label, z=10)
         self.add(self.hour_label, z=10)
@@ -78,6 +83,7 @@ class Office(Base):
         self.add(self.right_button, z=1)
         self.add(self.scene_button, z=5)
         self.add(self.tablet, z=7)
+        self.add(self.fan, z=1)
 
         @pyDLASYIAS.gameObjects.Button.EventDispatcher.event
         def on_button_press(isRightButton, button, state):
@@ -93,7 +99,13 @@ class Office(Base):
                     elif state == False and not self.right_button.light:
                         self.Game.usage -= 1
 
+                    if state == True and self.Game.rabbit.location == "left_door":
+                        if not self.left_discovered:
+                            pyDLASYIAS.assets.Channel[4].play(pyDLASYIAS.assets.Sounds["scary"]["windowscare"], 0)
+                            self.left_discovered = True
+
                 if button == "door":
+                    pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["misc"]["door"], 0)
                     if state == True:
                         self.Game.usage += 1
 
@@ -112,7 +124,13 @@ class Office(Base):
                     elif state == False and not self.left_button.light:
                         self.Game.usage -=1
 
+                    if state == True and self.Game.chicken.location == "right_door":
+                        if not self.right_discovered:
+                            pyDLASYIAS.assets.Channel[4].play(pyDLASYIAS.assets.Sounds["scary"]["windowscare"], 0)
+                            self.right_discovered = True
+
                 if button == "door":
+                    pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["misc"]["door"], 0)
                     if state == True:
                         self.Game.usage += 1
 
@@ -123,6 +141,7 @@ class Office(Base):
         def on_button_collide():
             if self.isActive and not self.tablet.isAnimPlaying:
                 self.tablet.open()
+                pyDLASYIAS.assets.Sounds["camera"]["putdown"].play(0)
                 self.Game.usage += 1
                 if self.left_button.light:
                     self.left_button.light = False
@@ -147,9 +166,31 @@ class Office(Base):
         super().on_enter()
         if not self.game_start:
             self.tablet.close()
+            pyDLASYIAS.assets.Sounds["camera"]["putdown"].play(0)
             self.Game.usage -= 1
         else:
             self.game_start = False
+            pyDLASYIAS.assets.Channel[1].play(pyDLASYIAS.assets.Sounds["ambience"]["fan"], -1)
+            pyDLASYIAS.assets.Channel[2].play(pyDLASYIAS.assets.Sounds["ambience"]["ambience"], -1)
+            pyDLASYIAS.assets.Channel[3].play(pyDLASYIAS.assets.Sounds["misc"]["lighthum"], -1)
+            pyDLASYIAS.assets.Channel[18].play(pyDLASYIAS.assets.Sounds["ambience"]["eerieambience"], -1)
+            pyDLASYIAS.assets.Channel[21].play(pyDLASYIAS.assets.Sounds["scary"]["robotvoice"], -1)
+
+            pyDLASYIAS.assets.Channel[2].set_volume(0.5)
+            pyDLASYIAS.assets.Channel[18].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[20].set_volume(0.1)
+            pyDLASYIAS.assets.Channel[21].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[22].set_volume(0.25)
+            pyDLASYIAS.assets.Channel[11].set_volume(0.05)
+            pyDLASYIAS.assets.Channel[10].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[4].set_volume(0.5)
+
+        pyDLASYIAS.assets.Channel[1].set_volume(0.7)
+        pyDLASYIAS.assets.Channel[11].set_volume(0.05)
+        pyDLASYIAS.assets.Channel[7].set_volume(0.0)
+        pyDLASYIAS.assets.Channel[8].set_volume(0.0)
+        pyDLASYIAS.assets.Channel[21].set_volume(0.0)
+        pyDLASYIAS.assets.Channel[10].set_volume(0.0)
 
 
     def on_exit(self):
@@ -163,12 +204,25 @@ class Office(Base):
         if self.Game.hour == 0: self.hour_label.element.text = "12  AM"
         else: self.hour_label.element.text = str(self.Game.hour)+"  PM"
 
+        if self.Game.power < 0 and not self.tablet.isAnimPlaying:
+            director.run(self.Game.powerout)
+
+        if not self.left_button.light and not self.right_button.light:
+            pyDLASYIAS.assets.Channel[3].set_volume(0.0)
+
+        if self.left_button.light:
+            pyDLASYIAS.assets.Channel[3].set_volume(0.7, 0.3)
+
+        if self.right_button.light:
+            pyDLASYIAS.assets.Channel[3].set_volume(0.3, 0.7)
+
         if self.Game.power > 25:
             self.background.color = (self.Game.power * 2.55, self.Game.power * 2.55, self.Game.power * 2.55)
             self.left_button.color = (self.Game.power * 2.55, self.Game.power * 2.55, self.Game.power * 2.55)
             self.right_button.color = (self.Game.power * 2.55, self.Game.power * 2.55, self.Game.power * 2.55)
             self.left_door.color = (self.Game.power * 2.55, self.Game.power * 2.55, self.Game.power * 2.55)
             self.right_door.color = (self.Game.power * 2.55, self.Game.power * 2.55, self.Game.power * 2.55)
+            self.fan.color = (self.Game.power * 2.55, self.Game.power * 2.55, self.Game.power * 2.55)
 
         # The code below makes the office move with the mouse's position.
 
@@ -232,10 +286,16 @@ class Office(Base):
             self.background.image = pyDLASYIAS.assets.Backgrounds["office"]["0"]
 
         if self.left_button.light and not self.right_button.light:
-            self.background.image = pyDLASYIAS.assets.Backgrounds["office"]["1"]
+            if self.Game.rabbit.location == "left_door":
+                self.background.image = pyDLASYIAS.assets.Backgrounds["office"]["r"]
+            else:
+                self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["office"]["0"], pyDLASYIAS.assets.Backgrounds["office"]["1"]])
 
         if not self.left_button.light and self.right_button.light:
-            self.background.image = pyDLASYIAS.assets.Backgrounds["office"]["2"]
+            if self.Game.chicken.location == "right_door":
+                self.background.image = pyDLASYIAS.assets.Backgrounds["office"]["c"]
+            else:
+                self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["office"]["0"], pyDLASYIAS.assets.Backgrounds["office"]["2"]])
 
 class Camera(Base):
     def __init__(self, main_game):
@@ -269,14 +329,16 @@ class Camera(Base):
         self.background = gameObjects.Base("images\\cameras\\cam1a\\brc.png", (0, 0))
         self.scene_button = gameObjects.SceneButton((director.window.width//4, 36))
 
-        self.power_label = cocos.text.Label("Power left:  "+str(self.Game.power)+"%", position=(40, 150), font_size=16)
-        self.usage_label = cocos.text.Label("Usage:  "+str(self.Game.usage), position=(40, 120), font_size=16)
-        self.hour_label = cocos.text.Label(str(self.Game.hour)+"  AM", position=(1020, 650), font_size=16)
-        self.night_label = cocos.text.Label(self.Game.night, position=(1020, 670), font_size=16)
+        self.power_label = cocos.text.Label("Power left:  "+str(self.Game.power)+"%", position=(40, 150), font_size=16, font_name="Fnaf UI")
+        self.usage_label = cocos.text.Label("Usage:  "+str(self.Game.usage), position=(40, 120), font_size=16, font_name="Fnaf UI")
+        self.hour_label = cocos.text.Label(str(self.Game.hour)+" AM", position=(1080, 670), font_size=20, font_name="Fnaf UI", bold=True)
+        self.night_label = cocos.text.Label(self.Game.night, position=(1080, 640), font_size=14, font_name="Fnaf UI")
+        self.camera_label = cocos.text.Label(pyDLASYIAS.assets.Cameras[self.active_camera], position=(848, 440), font_size=24, font_name="Fnaf UI")
         self.add(self.power_label, z=10)
         self.add(self.usage_label, z=10)
         self.add(self.hour_label, z=10)
         self.add(self.night_label, z=10)
+        self.add(self.camera_label, z=10)
 
         self.map.isMovable = False
         self.reddot.isMovable = False
@@ -319,6 +381,9 @@ class Camera(Base):
                 camera.pressed = False
             self.cam1a.pressed = True
             self.active_camera = "cam1a"
+            pyDLASYIAS.assets.Channel[21].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[11].set_volume(0.1)
+            pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
 
         @self.cam1b.event
         def on_camera_press(camera):
@@ -326,6 +391,9 @@ class Camera(Base):
                 camera.pressed = False
             self.cam1b.pressed = True
             self.active_camera = "cam1b"
+            pyDLASYIAS.assets.Channel[21].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[11].set_volume(0.1)
+            pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
 
         @self.cam1c.event
         def on_camera_press(camera):
@@ -333,6 +401,9 @@ class Camera(Base):
                 camera.pressed = False
             self.cam1c.pressed = True
             self.active_camera = "cam1c"
+            pyDLASYIAS.assets.Channel[21].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[11].set_volume(0.1)
+            pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
 
         @self.cam2a.event
         def on_camera_press(camera):
@@ -340,6 +411,9 @@ class Camera(Base):
                 camera.pressed = False
             self.cam2a.pressed = True
             self.active_camera = "cam2a"
+            pyDLASYIAS.assets.Channel[21].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[11].set_volume(0.1)
+            pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
 
         @self.cam2b.event
         def on_camera_press(camera):
@@ -347,6 +421,9 @@ class Camera(Base):
                 camera.pressed = False
             self.cam2b.pressed = True
             self.active_camera = "cam2b"
+            pyDLASYIAS.assets.Channel[21].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[11].set_volume(0.1)
+            pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
 
         @self.cam3.event
         def on_camera_press(camera):
@@ -354,6 +431,9 @@ class Camera(Base):
                 camera.pressed = False
             self.cam3.pressed = True
             self.active_camera = "cam3"
+            pyDLASYIAS.assets.Channel[21].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[11].set_volume(0.1)
+            pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
 
         @self.cam4a.event
         def on_camera_press(camera):
@@ -361,6 +441,9 @@ class Camera(Base):
                 camera.pressed = False
             self.cam4a.pressed = True
             self.active_camera = "cam4a"
+            pyDLASYIAS.assets.Channel[21].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[11].set_volume(0.1)
+            pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
 
         @self.cam4b.event
         def on_camera_press(camera):
@@ -368,6 +451,9 @@ class Camera(Base):
                 camera.pressed = False
             self.cam4b.pressed = True
             self.active_camera = "cam4b"
+            pyDLASYIAS.assets.Channel[21].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[11].set_volume(0.1)
+            pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
 
         @self.cam5.event
         def on_camera_press(camera):
@@ -375,6 +461,9 @@ class Camera(Base):
                 camera.pressed = False
             self.cam5.pressed = True
             self.active_camera = "cam5"
+            pyDLASYIAS.assets.Channel[21].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[11].set_volume(0.1)
+            pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
 
         @self.cam6.event
         def on_camera_press(camera):
@@ -382,6 +471,9 @@ class Camera(Base):
                 camera.pressed = False
             self.cam6.pressed = True
             self.active_camera = "cam6"
+            pyDLASYIAS.assets.Channel[21].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[11].set_volume(0.1)
+            pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
 
         @self.cam7.event
         def on_camera_press(camera):
@@ -389,6 +481,9 @@ class Camera(Base):
                 camera.pressed = False
             self.cam7.pressed = True
             self.active_camera = "cam7"
+            pyDLASYIAS.assets.Channel[21].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[11].set_volume(0.1)
+            pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
 
         @self.scene_button.event
         def on_button_collide():
@@ -406,95 +501,194 @@ class Camera(Base):
         self.static.get_random_opacity()
         self.random_number = random.randint(0, 100)
 
+        pyDLASYIAS.assets.Channel[7].set_volume(1.0)
+        pyDLASYIAS.assets.Channel[8].set_volume(0.0)
+        pyDLASYIAS.assets.Channel[1].set_volume(0.03)
+        pyDLASYIAS.assets.Channel[10].set_volume(0.0)
+
+        pyDLASYIAS.assets.Channel[7].play(pyDLASYIAS.assets.Sounds["camera"]["camerasound2"], -1)
+        pyDLASYIAS.assets.Channel[8].play(pyDLASYIAS.assets.Sounds["camera"]["static3"], -1)
+        pyDLASYIAS.assets.Channel[10].play(random.choice([pyDLASYIAS.assets.Sounds["camera"]["garble"], \
+                                                          pyDLASYIAS.assets.Sounds["camera"]["garble2"], \
+                                                          pyDLASYIAS.assets.Sounds["camera"]["garble3"]]), -1)
+
     def update(self, dt=0):
         super().update(dt)
 
+        if self.static.opacity != 255:
+            pyDLASYIAS.assets.Channel[10].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[7].set_volume(1.0)
+            pyDLASYIAS.assets.Channel[8].set_volume(0.0)
+        else:
+            pyDLASYIAS.assets.Channel[10].set_volume(0.75)
+            pyDLASYIAS.assets.Channel[7].set_volume(0.25)
+            pyDLASYIAS.assets.Channel[8].set_volume(1.0)
+
         self.power_label.element.text = "Power left:  "+str(self.Game.power)+"%"
         self.usage_label.element.text = "Usage:  "+str(self.Game.usage)
-        if self.Game.hour == 0: self.hour_label.element.text = "12  AM"
-        else: self.hour_label.element.text = str(self.Game.hour)+"  PM"
+        if self.Game.hour == 0: self.hour_label.element.text = "12 PM"
+        else: self.hour_label.element.text = str(self.Game.hour)+" AM"
+        self.camera_label.element.text = pyDLASYIAS.assets.Cameras[self.active_camera]
 
-        # # The code below makes the camera move with the mouse.
-        # if self.mouse_x in range(0, 150) and not self.background.position[0] >= 0.0:
-        #     for children in self.get_children():
-        #         if children.isMovable:
-        #             children.dx = 600
-        #     self.camera_movement = "left"
-        #
-        # if self.mouse_x in range(151, 315) and not self.background.position[0] >= 0.0:
-        #     for children in self.get_children():
-        #         if children.isMovable:
-        #             children.dx = 400
-        #     self.camera_movement = "left"
-        #
-        # if self.mouse_x in range(316, 540) and not self.background.position[0] >= 0.0:
-        #     for children in self.get_children():
-        #         if children.isMovable:
-        #             children.dx = 200
-        #     self.camera_movement = "left"
-        #
-        # if self.mouse_x in range(1140, 1280) and not self.background.position[0] <= -315:
-        #     for children in self.get_children():
-        #         if children.isMovable:
-        #             children.dx = -600
-        #     self.camera_movement = "right"
-        #
-        # if self.mouse_x in range(1000, 1139) and not self.background.position[0] <= -315:
-        #     for children in self.get_children():
-        #         if children.isMovable:
-        #             children.dx = -400
-        #     self.camera_movement = "right"
-        #
-        # if self.mouse_x in range(750, 999) and not self.background.position[0] <= -315:
-        #     for children in self.get_children():
-        #         if children.isMovable:
-        #             children.dx = -200
-        #     self.camera_movement = "right"
+        if self.Game.power < 0:
+            director.run(self.Game.office)
 
-        if self.camera_movement == "left" and not self.background.position[0] <= 0:
-            self.background.dx = -500
+        if self.camera_movement == "left" and not self.background.position[0] >= 0.0:
+            self.background.dx = 89
 
-        if self.camera_movement == "right" and not self.background.position[0] <= 320:
-            self.background.dx = 500
+        if self.camera_movement == "right" and not self.background.position[0] <= -315.0:
+            self.background.dx = -95
 
-        if not self.background.position[0] >= 0.0:
+        if self.background.position[0] >= 0.0:
             self.camera_movement = "right"
 
-        if not self.background.position[0] <= -315:
+        if self.background.position[0] <= -315.0:
             self.camera_movement = "left"
 
         if self.active_camera == "cam1a":
-            self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1a"]["brc"]
+            if self.Game.bear.location == "cam1a" and self.Game.rabbit.location == "cam1a" and self.Game.chicken.location == "cam1a":
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1a"]["brc"]
+            elif self.Game.bear.location == "cam1a" and self.Game.rabbit.location == "cam1a" and not self.Game.chicken.location == "cam1a":
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1a"]["br"]
+            elif self.Game.bear.location == "cam1a" and not self.Game.rabbit.location == "cam1a" and self.Game.chicken.location == "cam1a":
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1a"]["bc"]
+            elif self.Game.bear.location == "cam1a" and not self.Game.rabbit.location == "cam1a" and not self.Game.chicken.location == "cam1a":
+                if self.random_number in range(60, 70):
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1a"]["b-1"]
+                else:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1a"]["b"]
+            elif not self.Game.bear.location == "cam1a" and not self.Game.rabbit.location == "cam1a" and not self.Game.chicken.location == "cam1a":
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1a"]["0"]
+            else:
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam6"]["0"]
 
         elif self.active_camera == "cam1b":
-            self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1b"]["0"]
+            if self.Game.bear.location == "cam1b" and not self.Game.rabbit.location == "cam1b" and not self.Game.chicken.location == "cam1b":
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1b"]["b"]
+            elif self.Game.rabbit.location == "cam1b" and not self.Game.chicken.location == "cam1b":
+                if self.random_number in range(0, 50):
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1b"]["r"]
+                else:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1b"]["r-1"]
+            elif not self.Game.rabbit.location == "cam1b" and self.Game.chicken.location == "cam1b":
+                if self.random_number in range(10, 60):
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1b"]["c"]
+                else:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1b"]["c-1"]
+            elif not self.Game.rabbit.location == "cam1b" and not self.Game.chicken.location == "cam1b":
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1b"]["0"]
+            else:
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam6"]["0"]
+
 
         elif self.active_camera == "cam1c":
-            self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1c"]["0"]
+            self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam1c"][str(self.Game.fox.status)]
 
         elif self.active_camera == "cam2a":
-            self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam2a"]["0"]
+            if self.Game.rabbit.location == "cam2a":
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam2a"]["r"]
+            elif not self.Game.rabbit.location == "cam2a":
+                self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["camera"]["cam2a"]["0"], pyDLASYIAS.assets.Backgrounds["camera"]["cam2a"]["1"]])
+            else:
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam6"]["0"]
 
         elif self.active_camera == "cam2b":
-            self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam2b"]["0"]
+            if self.Game.rabbit.location == "cam2b":
+                self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["camera"]["cam2b"]["r"], pyDLASYIAS.assets.Backgrounds["camera"]["cam2b"]["r-1"]])
+                pyDLASYIAS.assets.Channel[21].set_volume(random.uniform(0.3, 0.7), random.uniform(0.1, 0.5))
+            elif not self.Game.rabbit.location == "cam2b":
+                if self.random_number == 87:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam2b"]["2"]
+                elif self.random_number in range(88, 93):
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam2b"]["1"]
+                else:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam2b"]["0"]
+                pyDLASYIAS.assets.Channel[21].set_volume(0.0)
+            else:
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam6"]["0"]
+                pyDLASYIAS.assets.Channel[21].set_volume(0.0)
 
         elif self.active_camera == "cam3":
-            self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam3"]["0"]
+            if self.Game.rabbit.location == "cam3":
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam3"]["r"]
+            elif not self.Game.rabbit.location == "cam3":
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam3"]["0"]
+            else:
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam6"]["0"]
 
         elif self.active_camera == "cam4a":
-            self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam4a"]["0"]
+            if self.Game.bear.location == "cam4a" and not self.Game.chicken.location == "cam4a":
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam4a"]["b"]
+            elif self.Game.chicken.location == "cam4a":
+                if self.random_number in range(0, 50):
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam4a"]["c"]
+                else:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam4a"]["c-1"]
+            elif not self.Game.chicken.location == "cam4a":
+                if self.random_number == 87:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam4a"]["2"]
+                elif self.random_number == 83:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam4a"]["1"]
+                else:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam4a"]["0"]
+            else:
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam6"]["0"]
 
         elif self.active_camera == "cam4b":
-            self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["0"]
+            if self.Game.bear.location == "cam4b" and not self.Game.chicken.location == "cam4b":
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["b"]
+                pyDLASYIAS.assets.Channel[21].set_volume(random.uniform(0.1, 0.4), random.uniform(0.3, 0.8))
+            elif self.Game.chicken.location == "cam4b":
+                 self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["c"], pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["c-1"], pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["c-2"]])
+                 pyDLASYIAS.assets.Channel[21].set_volume(random.uniform(0.1, 0.5), random.uniform(0.3, 0.7))
+            elif not self.Game.chicken.location == "cam4b":
+                if self.random_number == 87:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["4"]
+                elif self.random_number == 86:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["3"]
+                elif self.random_number == 85:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["2"]
+                elif self.random_number == 84:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["1"]
+                else:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["0"]
+                pyDLASYIAS.assets.Channel[21].set_volume(0.0)
+            else:
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam6"]["0"]
+                pyDLASYIAS.assets.Channel[21].set_volume(0.0)
 
         elif self.active_camera == "cam5":
-            self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam5"]["0"]
+            if self.Game.rabbit.location == "cam5":
+                if self.random_number > 75:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam5"]["r-1"]
+                else:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam5"]["r"]
+            elif not self.Game.rabbit.location == "cam5":
+                if self.random_number > 87:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam5"]["1"]
+                else:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam5"]["0"]
+            else:
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam6"]["0"]
 
         elif self.active_camera == "cam6":
             self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam6"]["0"]
+            pyDLASYIAS.assets.Channel[11].set_volume(random.uniform(0.6, 0.8))
+            if self.Game.chicken.location == "cam6":
+                pyDLASYIAS.assets.Channel[11].queue(random.choice([pyDLASYIAS.assets.Sounds["camera"]["pots"], pyDLASYIAS.assets.Sounds["camera"]["pots2"], pyDLASYIAS.assets.Sounds["camera"]["pots3"], pyDLASYIAS.assets.Sounds["camera"]["pots4"]]))
+            if self.Game.bear.location == "cam6":
+                pyDLASYIAS.assets.Channel[11].play(pyDLASYIAS.assets.Sounds["misc"]["musicbox"], -1)
 
         elif self.active_camera == "cam7":
-            self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam7"]["0"]
+            if self.Game.bear.location == "cam7" and not self.Game.chicken.location == "cam7":
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam7"]["b"]
+            elif self.Game.chicken.location == "cam7":
+                if self.random_number in range(0, 50):
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam7"]["c"]
+                else:
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam7"]["c-1"]
+            else:
+                self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam7"]["0"]
 
         else:
             self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam6"]["0"]
@@ -507,46 +701,102 @@ class Powerout(Base):
 
     def setup(self):
         self.stage = 1
+        self.mouse_x = 0
+        self.mouse_y = 0
 
         self.background = gameObjects.Base(pyDLASYIAS.assets.Backgrounds["powerout"]["0"], (0,0))
+        self.left_door = gameObjects.Animation("images\\office\\doors\\left", 15, 0.025, (0,0), autostart=False, looping=False)
+        self.right_door = gameObjects.Animation("images\\office\\doors\\right", 15, 0.025, (0,0), autostart=False, looping=False)
 
         self.add(self.background, z=0)
+        self.add(self.left_door, z=1)
+        self.add(self.right_door, z=1)
 
     def on_enter(self):
         super().on_enter()
-        if self.Game.office.left_button.door:
-            self.add(self.Game.office.left_door, z=1)
-            self.Game.office.left_door.open()
+        pygame.mixer.stop()
+        self.mouse_x = self.Game.office.mouse_x
+        self.mouse_y = self.Game.office.mouse_y
+        self.background.position = self.Game.office.background.position
+        self.left_door.position = self.Game.office.left_door.position
+        self.right_door.position = self.Game.office.right_door.position
+        if self.Game.office.left_door.isClosed:
+            self.left_door.play_reversed()
+            pyDLASYIAS.assets.Channel[8].set_volume(0.7, 0.3)
+            pyDLASYIAS.assets.Channel[8].play(pyDLASYIAS.assets.Sounds["misc"]["door"], 0)
 
-        if self.Game.office.right_button.door:
-            self.add(self.Game.office.right_door, z=1)
-            self.Game.office.right_door.open()
+        if self.Game.office.right_door.isClosed:
+            self.right_door.play_reversed()
+            pyDLASYIAS.assets.Channel[9].set_volume(0.3, 0.7)
+            pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["misc"]["door"], 0)
 
-        #Powerout sound here
+        pyDLASYIAS.assets.Channel[1].set_volume(1.0)
+        pyDLASYIAS.assets.Channel[2].set_volume(0.5)
+        pyDLASYIAS.assets.Channel[4].set_volume(1.0)
+
+        pyDLASYIAS.assets.Channel[1].play(pyDLASYIAS.assets.Sounds["misc"]["powerout"], 0)
+        pyDLASYIAS.assets.Channel[2].play(pyDLASYIAS.assets.Sounds["ambience"]["ambience2"], -1)
+
+        pyDLASYIAS.assets.Channel[1].fadeout(18000)
 
         if random.randint(0, 1):
             pyglet.clock.schedule_once(self.stage_2, 12)
 
         else:
-            pyglet.clock.schedule_once(self.stage_2, random.randint(4, 18))
+            pyglet.clock.schedule_once(self.stage_2, random.randint(4, 21))
 
     def stage_2(self, dt=0):
         self.stage += 1
 
-        #Musicbox here
-
+        pyDLASYIAS.assets.Channel[30].set_volume(0.7, 0.3)
         if random.randint(0, 1):
-            pyglet.clock.schedule_once(self.stage_3, 12)
+            pyDLASYIAS.assets.Channel[30].play(pyDLASYIAS.assets.Sounds["misc"]["musicbox"])
+            pyDLASYIAS.assets.Channel[30].fadeout(random.randint(3000, int(pyDLASYIAS.assets.Sounds["misc"]["musicbox"].get_length() * 1000)))
         else:
-            pyglet.clock.schedule_once(self.stage_3, random.randint(3, 61))
+            pyDLASYIAS.assets.Channel[30].play(pyDLASYIAS.assets.Sounds["misc"]["musicbox"])
+            pyDLASYIAS.assets.Channel[30].fadeout(26000)
 
-        #Stage 3 and jumpscare here?
+    def stage_3(self, dt=0):
+        pygame.mixer.stop()
+        pyDLASYIAS.assets.Channel[1].set_volume(0.0)
+        pyDLASYIAS.assets.Channel[2].set_volume(0.35)
+        pyDLASYIAS.assets.Channel[1].play(pyDLASYIAS.assets.Sounds["misc"]["lighthum"], -1)
+        pyDLASYIAS.assets.Channel[2].play(pyDLASYIAS.assets.Sounds["ambience"]["eerieambience"], -1)
+        pyDLASYIAS.assets.Channel[30].play(pyDLASYIAS.assets.Sounds["camera"]["deepsteps"], -1)
+        pyglet.clock.schedule_once(self.change_volume, 2, pyDLASYIAS.assets.Channel[30], 0.6, 0.4)
+        pyglet.clock.schedule_once(self.change_volume, 3, pyDLASYIAS.assets.Channel[2], 0.5, None)
+        pyglet.clock.schedule_once(self.change_volume, 5, pyDLASYIAS.assets.Channel[30], 0.5, 0.5)
 
+        for children in self.get_children():
+            children.color = (0, 0, 0)
+
+        pyglet.clock.schedule_once(self.change_scene, delay=random.randint(2, 7))
+
+    def change_scene(self, dt=0):
+        self.stage += 1
+
+    def change_volume(self, dt=0, channel=None, left=1.0, right=None):
+        if right != None:
+            channel.set_volume(left, right)
+        else:
+            channel.set_volume(left)
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        real_pos = director.get_virtual_coordinates(x, y)
+        self.mouse_x = real_pos[0]
+        self.mouse_y = real_pos[1]
 
     def update(self, dt=0):
         super().update(dt)
         if self.stage == 2:
-            self.background.image = random.choice([self.Backgrounds["powerout"]["0"], self.Backgrounds["powerout"]["0"], self.Backgrounds["powerout"]["0"], self.Backgrounds["powerout"]["1"]])
+            self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["powerout"]["0"], pyDLASYIAS.assets.Backgrounds["powerout"]["0"], pyDLASYIAS.assets.Backgrounds["powerout"]["0"], pyDLASYIAS.assets.Backgrounds["powerout"]["1"]])
+            if not pyDLASYIAS.assets.Channel[30].get_busy():
+                self.stage += 1
+                self.stage_3()
+
+        if self.stage == 4:
+            self.Game.scarejump.death_cause = "powerout"
+            director.run(self.Game.scarejump)
 
         if self.mouse_x in range(0, 150) and not self.background.position[0] >= 0.0:
             for children in self.get_children():
@@ -601,3 +851,50 @@ class Powerout(Base):
                 except:
                     pass
             self.moving = "right"
+
+class Scarejump(Base):
+    def __init__(self, main_game):
+        super().__init__(main_game)
+
+        self.death_cause = None
+
+        self.setup()
+
+    def setup(self):
+        self.powerout_scarejump = gameObjects.Animation("images\\office\\scarejump\\bear\\powerout", 19, 0.020, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
+        self.bear_scarejump = gameObjects.Animation("images\\office\\scarejump\\bear\\normal", 29, 0.020, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
+        self.rabbit_scarejump = gameObjects.Animation("images\\office\\scarejump\\rabbit", 10, 0.020, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
+        self.chicken_scarejump = gameObjects.Animation("images\\office\\scarejump\\chicken", 12, 0.020, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
+        self.fox_scarejump = gameObjects.Animation("images\\office\\scarejump\\fox", 18, 0.020, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
+
+    def on_enter(self):
+        pygame.mixer.stop()
+        if self.death_cause == "powerout":
+            self.add(self.powerout_scarejump, z=0)
+            self.powerout_scarejump.play()
+
+        elif self.death_cause == "bear":
+            self.add(self.bear_scarejump, z=0)
+            self.bear_scarejump.position = self.Game.office.background.position
+            self.bear_scarejump.play()
+
+        elif self.death_cause == "rabbit":
+            self.add(self.rabbit_scarejump, z=0)
+            self.rabbit_scarejump.position = self.Game.office.background.position
+            self.rabbit_scarejump.play()
+
+        elif self.death_cause == "chicken":
+            self.add(self.chicken_scarejump, z=0)
+            self.chicken_scarejump.position = self.Game.office.background.position
+            self.chicken_scarejump.play()
+
+        elif self.death_cause == "fox":
+            self.add(self.fox_scarejump, z=0)
+            self.fox_scarejump.position = self.Game.office.background.position
+            self.fox_scarejump.play()
+
+        else:
+            raise ValueError("value of death_cause variable unknown")
+
+        pyDLASYIAS.assets.Channel[11].set_volume(1.0)
+        pyDLASYIAS.assets.Channel[11].play(pyDLASYIAS.assets.Sounds["scary"]["XSCREAM"])

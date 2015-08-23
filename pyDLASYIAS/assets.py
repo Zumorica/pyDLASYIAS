@@ -1,5 +1,6 @@
 import cocos
 import pyglet
+import pygame.mixer
 import random
 import cocos
 import time
@@ -9,7 +10,7 @@ from pyglet.gl import *
 from pyglet.gl.glu import *
 from cocos.director import director
 
-__all__ = ['Backgrounds', 'Sounds', 'Cameras']
+__all__ = ['Backgrounds', 'Sounds', 'Cameras', 'Channel']
 
 Backgrounds = {"office" : {"0" : pyglet.image.load("images\\office\\0.png"),
                            "1" : pyglet.image.load("images\\office\\1.png"),
@@ -37,7 +38,7 @@ Backgrounds = {"office" : {"0" : pyglet.image.load("images\\office\\0.png"),
                                       "5" : pyglet.image.load("images\\cameras\\cam1c\\5.png")},
                            "cam2a" : {"0" : pyglet.image.load("images\\cameras\\cam2a\\0.png"),
                                       "1" : pyglet.image.load("images\\cameras\\cam2a\\1.png"),
-                                      "r" : pyglet.image.load("images\\cameras\\cam2a\\1.png")},
+                                      "r" : pyglet.image.load("images\\cameras\\cam2a\\r.png")},
                            "cam2b" : {"0" : pyglet.image.load("images\\cameras\\cam2b\\0.png"),
                                       "1" : pyglet.image.load("images\\cameras\\cam2b\\1.png"),
                                       "2" : pyglet.image.load("images\\cameras\\cam2b\\2.png"),
@@ -73,63 +74,71 @@ Backgrounds = {"office" : {"0" : pyglet.image.load("images\\office\\0.png"),
                              "1" : pyglet.image.load("images\\office\\powerout\\1.png"),
                              "2" : pyglet.image.load("images\\office\\powerout\\2.png")}}
 
-Sounds = {"ambience" : {"ambience" : pyglet.media.load("sounds\\ambience\\ambience.wav"),
-                        "ambience2" : pyglet.media.load("sounds\\ambience\\ambience2.wav"),
-                        "eerieambience" : pyglet.media.load("sounds\\ambience\\eerieambience.wav"),
-                        "fan" : pyglet.media.load("sounds\\ambience\\fan.wav")},
+pygame.mixer.init()
 
-          "camera" : {"blip" : pyglet.media.load("sounds\\camera\\blip.wav"),
-                      "camerasound" : pyglet.media.load("sounds\\camera\\camerasound.wav"),
-                      "camerasound2" : pyglet.media.load("sounds\\camera\\camerasound2.wav"),
-                      "computernoise" : pyglet.media.load("sounds\\camera\\computernoise.wav"),
-                      "deepsteps" : pyglet.media.load("sounds\\camera\\deepsteps.wav"),
-                      "garble" : pyglet.media.load("sounds\\camera\\garble.wav"),
-                      "garble2" : pyglet.media.load("sounds\\camera\\garble2.wav"),
-                      "garble3" : pyglet.media.load("sounds\\camera\\garble3.wav"),
-                      "piratesong" : pyglet.media.load("sounds\\camera\\piratesong.wav"),
-                      "pots" : pyglet.media.load("sounds\\camera\\pots.wav"),
-                      "pots2" : pyglet.media.load("sounds\\camera\\pots2.wav"),
-                      "pots3" : pyglet.media.load("sounds\\camera\\pots3.wav"),
-                      "pots4" : pyglet.media.load("sounds\\camera\\pots4.wav"),
-                      "putdown" : pyglet.media.load("sounds\\camera\\putdown.wav"),
-                      "run" : pyglet.media.load("sounds\\camera\\run.wav"),
-                      "runningfast" : pyglet.media.load("sounds\\camera\\runningfast.wav"),
-                      "static" : pyglet.media.load("sounds\\camera\\static.wav"),
-                      "static2" : pyglet.media.load("sounds\\camera\\static2.wav")},
+Sounds = {"ambience" : {"ambience" : pygame.mixer.Sound("sounds\\ambience\\ambience.wav"),
+                        "ambience2" : pygame.mixer.Sound("sounds\\ambience\\ambience2.wav"),
+                        "eerieambience" : pygame.mixer.Sound("sounds\\ambience\\eerieambience.wav"),
+                        "fan" : pygame.mixer.Sound("sounds\\ambience\\fan.wav")},
 
-         "misc" : {"6AM" : pyglet.media.load("sounds\\misc\\6AM.wav"),
-                   "children" : pyglet.media.load("sounds\\misc\\children.wav"),
-                   "circus" : pyglet.media.load("sounds\\misc\\circus.wav"),
-                   "door" : pyglet.media.load("sounds\\misc\\door.wav"),
-                   "doorknocking" : pyglet.media.load("sounds\\misc\\doorknocking.wav"),
-                   "doorpounding" : pyglet.media.load("sounds\\misc\\doorpounding.wav"),
-                   "error" : pyglet.media.load("sounds\\misc\\error.wav"),
-                   "honk" : pyglet.media.load("sounds\\misc\\honk.wav"),
-                   "lighthum" : pyglet.media.load("sounds\\misc\\lighthum.wav"),
-                   "musicbox" : pyglet.media.load("sounds\\misc\\musicbox.wav"),
-                   "powerout" : pyglet.media.load("sounds\\misc\\powerout.wav"),
-                   "robotvoice" : pyglet.media.load("sounds\\misc\\robotvoice.wav")},
+          "camera" : {"blip" : pygame.mixer.Sound("sounds\\camera\\blip.wav"),
+                      "camerasound" : pygame.mixer.Sound("sounds\\camera\\camerasound.wav"),
+                      "camerasound2" : pygame.mixer.Sound("sounds\\camera\\camerasound2.wav"),
+                      "computernoise" : pygame.mixer.Sound("sounds\\camera\\computernoise.wav"),
+                      "deepsteps" : pygame.mixer.Sound("sounds\\camera\\deepsteps.wav"),
+                      "garble" : pygame.mixer.Sound("sounds\\camera\\garble.wav"),
+                      "garble2" : pygame.mixer.Sound("sounds\\camera\\garble2.wav"),
+                      "garble3" : pygame.mixer.Sound("sounds\\camera\\garble3.wav"),
+                      "piratesong" : pygame.mixer.Sound("sounds\\camera\\piratesong.wav"),
+                      "pots" : pygame.mixer.Sound("sounds\\camera\\pots.wav"),
+                      "pots2" : pygame.mixer.Sound("sounds\\camera\\pots2.wav"),
+                      "pots3" : pygame.mixer.Sound("sounds\\camera\\pots3.wav"),
+                      "pots4" : pygame.mixer.Sound("sounds\\camera\\pots4.wav"),
+                      "putdown" : pygame.mixer.Sound("sounds\\camera\\putdown.wav"),
+                      "run" : pygame.mixer.Sound("sounds\\camera\\run.wav"),
+                      "runningfast" : pygame.mixer.Sound("sounds\\camera\\runningfast.wav"),
+                      "static" : pygame.mixer.Sound("sounds\\camera\\static.wav"),
+                      "static2" : pygame.mixer.Sound("sounds\\camera\\static2.wav"),
+                      "static3" : pygame.mixer.Sound("sounds\\camera\\static3.wav")},
 
-         "scary" : {"breathing" : pyglet.media.load("sounds\\scary\\breathing.wav"),
-                    "breathing2" : pyglet.media.load("sounds\\scary\\breathing2.wav"),
-                    "breathing3" :    pyglet.media.load("sounds\\scary\\breathing3.wav"),
-                    "breathing4" : pyglet.media.load("sounds\\scary\\breathing4.wav"),
-                    "freddygiggle" : pyglet.media.load("sounds\\scary\\freddygiggle.wav"),
-                    "freddygiggle2" : pyglet.media.load("sounds\\scary\\freddygiggle2.wav"),
-                    "freddygiggle3" : pyglet.media.load("sounds\\scary\\freddygiggle3.wav"),
-                    "giggle" : pyglet.media.load("sounds\\scary\\giggle.wav"),
-                    "robotvoice" : pyglet.media.load("sounds\\scary\\robotvoice.wav"),
-                    "windowscare" : pyglet.media.load("sounds\\scary\\windowscare.wav"),
-                    "XSCREAM" : pyglet.media.load("sounds\\scary\\XSCREAM.wav"),
-                    "XSCREAM2" : pyglet.media.load("sounds\\scary\\XSCREAM2.wav")}}
-                    
-Cameras = {"cam1a" : "",
-           "cam1b" : "",
-           "cam1c" : "",
-           "cam2a" : "",
-           "cam3" : "",
-           "cam4a" : "",
-           "cam4b" : "",
-           "cam5" : "",
-           "cam6" : "",
-           "cam7" : ""}
+         "misc" : {"6AM" : pygame.mixer.Sound("sounds\\misc\\6AM.wav"),
+                   "children" : pygame.mixer.Sound("sounds\\misc\\children.wav"),
+                   "circus" : pygame.mixer.Sound("sounds\\misc\\circus.wav"),
+                   "door" : pygame.mixer.Sound("sounds\\misc\\door.wav"),
+                   "doorknocking" : pygame.mixer.Sound("sounds\\misc\\doorknocking.wav"),
+                   "doorpounding" : pygame.mixer.Sound("sounds\\misc\\doorpounding.wav"),
+                   "error" : pygame.mixer.Sound("sounds\\misc\\error.wav"),
+                   "honk" : pygame.mixer.Sound("sounds\\misc\\honk.wav"),
+                   "lighthum" : pygame.mixer.Sound("sounds\\misc\\lighthum.wav"),
+                   "musicbox" : pygame.mixer.Sound("sounds\\misc\\musicbox.wav"),
+                   "powerout" : pygame.mixer.Sound("sounds\\misc\\powerout.wav"),
+                   "robotvoice" : pygame.mixer.Sound("sounds\\misc\\robotvoice.wav")},
+
+         "scary" : {"breathing" : pygame.mixer.Sound("sounds\\scary\\breathing.wav"),
+                    "breathing2" : pygame.mixer.Sound("sounds\\scary\\breathing2.wav"),
+                    "breathing3" :    pygame.mixer.Sound("sounds\\scary\\breathing3.wav"),
+                    "breathing4" : pygame.mixer.Sound("sounds\\scary\\breathing4.wav"),
+                    "freddygiggle" : pygame.mixer.Sound("sounds\\scary\\freddygiggle.wav"),
+                    "freddygiggle2" : pygame.mixer.Sound("sounds\\scary\\freddygiggle2.wav"),
+                    "freddygiggle3" : pygame.mixer.Sound("sounds\\scary\\freddygiggle3.wav"),
+                    "giggle" : pygame.mixer.Sound("sounds\\scary\\giggle.wav"),
+                    "robotvoice" : pygame.mixer.Sound("sounds\\scary\\robotvoice.wav"),
+                    "windowscare" : pygame.mixer.Sound("sounds\\scary\\windowscare.wav"),
+                    "XSCREAM" : pygame.mixer.Sound("sounds\\scary\\XSCREAM.wav"),
+                    "XSCREAM2" : pygame.mixer.Sound("sounds\\scary\\XSCREAM2.wav")}}
+
+Cameras = {"cam1a" : "Stage Show",
+           "cam1b" : "Dinning Area",
+           "cam1c" : "Pirate Cove",
+           "cam2a" : "West Hall",
+           "cam2b" : "West Hall Corner",
+           "cam3" : "Supply Room",
+           "cam4a" : "East Hall",
+           "cam4b" : "East Hall Corner",
+           "cam5" : "Backstage",
+           "cam6" : "Kitchen",
+           "cam7" : "Restrooms"}
+
+pygame.mixer.set_num_channels(31)
+
+Channel = [pygame.mixer.Channel(i) for i in range(0, 31)]
