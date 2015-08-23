@@ -9,6 +9,7 @@ import os
 from pyglet.gl import *
 from pyglet.gl.glu import *
 from cocos.director import director
+from cocos.scenes import *
 
 __all__ = ['Backgrounds', 'Sounds', 'Cameras', 'Channel']
 

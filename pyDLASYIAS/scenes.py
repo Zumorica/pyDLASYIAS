@@ -13,6 +13,7 @@ from cocos.euclid import *
 from cocos.actions.basegrid_actions import *
 from cocos.actions import *
 from cocos.director import director
+from cocos.scenes import *
 import pyDLASYIAS.gameObjects as gameObjects
 
 class Base(cocos.scene.Scene):
@@ -141,7 +142,7 @@ class Office(Base):
         def on_button_collide():
             if self.isActive and not self.tablet.isAnimPlaying:
                 self.tablet.open()
-                pyDLASYIAS.assets.Sounds["camera"]["putdown"].play(0)
+                pyDLASYIAS.assets.Channel[25].play(pyDLASYIAS.assets.Sounds["camera"]["putdown"], 0)
                 self.Game.usage += 1
                 if self.left_button.light:
                     self.left_button.light = False
@@ -166,7 +167,7 @@ class Office(Base):
         super().on_enter()
         if not self.game_start:
             self.tablet.close()
-            pyDLASYIAS.assets.Sounds["camera"]["putdown"].play(0)
+            pyDLASYIAS.assets.Channel[25].play(pyDLASYIAS.assets.Sounds["camera"]["putdown"], 0)
             self.Game.usage -= 1
         else:
             self.game_start = False
@@ -201,10 +202,10 @@ class Office(Base):
 
         self.power_label.element.text = "Power left:  "+str(self.Game.power)+"%"
         self.usage_label.element.text = "Usage:  "+str(self.Game.usage)
-        if self.Game.hour == 0: self.hour_label.element.text = "12  AM"
-        else: self.hour_label.element.text = str(self.Game.hour)+"  PM"
+        if self.Game.hour == 0: self.hour_label.element.text = "12 PM"
+        else: self.hour_label.element.text = str(self.Game.hour)+" AM"
 
-        if self.Game.power < 0 and not self.tablet.isAnimPlaying:
+        if self.Game.power < 0 and not self.tablet.isAnimPlaying and not pyDLASYIAS.assets.Channel[25].get_busy():
             director.run(self.Game.powerout)
 
         if not self.left_button.light and not self.right_button.light:
@@ -857,44 +858,93 @@ class Scarejump(Base):
         super().__init__(main_game)
 
         self.death_cause = None
+        self.end_game_now = False
 
         self.setup()
 
     def setup(self):
-        self.powerout_scarejump = gameObjects.Animation("images\\office\\scarejump\\bear\\powerout", 19, 0.020, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
-        self.bear_scarejump = gameObjects.Animation("images\\office\\scarejump\\bear\\normal", 29, 0.020, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
-        self.rabbit_scarejump = gameObjects.Animation("images\\office\\scarejump\\rabbit", 10, 0.020, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
-        self.chicken_scarejump = gameObjects.Animation("images\\office\\scarejump\\chicken", 12, 0.020, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
-        self.fox_scarejump = gameObjects.Animation("images\\office\\scarejump\\fox", 18, 0.020, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
+        self.powerout_scarejump = gameObjects.Animation("images\\office\\scarejump\\bear\\powerout", 19, 0.030, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
+        self.bear_scarejump = gameObjects.Animation("images\\office\\scarejump\\bear\\normal", 29, 0.030, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
+        self.rabbit_scarejump = gameObjects.Animation("images\\office\\scarejump\\rabbit", 10, 0.030, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
+        self.chicken_scarejump = gameObjects.Animation("images\\office\\scarejump\\chicken", 12, 0.030, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
+        self.fox_scarejump = gameObjects.Animation("images\\office\\scarejump\\fox", 18, 0.030, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
 
     def on_enter(self):
         pygame.mixer.stop()
         if self.death_cause == "powerout":
             self.add(self.powerout_scarejump, z=0)
             self.powerout_scarejump.play()
+            pyglet.clock.schedule_once(self.static_end, delay=0.035*19)
 
         elif self.death_cause == "bear":
             self.add(self.bear_scarejump, z=0)
             self.bear_scarejump.position = self.Game.office.background.position
             self.bear_scarejump.play()
+            pyglet.clock.schedule_once(self.static, delay=0.035*29)
 
         elif self.death_cause == "rabbit":
             self.add(self.rabbit_scarejump, z=0)
             self.rabbit_scarejump.position = self.Game.office.background.position
             self.rabbit_scarejump.play()
+            pyglet.clock.schedule_once(self.static_end, delay=0.035*10)
 
         elif self.death_cause == "chicken":
             self.add(self.chicken_scarejump, z=0)
             self.chicken_scarejump.position = self.Game.office.background.position
             self.chicken_scarejump.play()
+            pyglet.clock.schedule_once(self.static_end, delay=0.035*12)
 
         elif self.death_cause == "fox":
             self.add(self.fox_scarejump, z=0)
             self.fox_scarejump.position = self.Game.office.background.position
             self.fox_scarejump.play()
+            pyglet.clock.schedule_once(self.static_end, delay=0.035*18)
 
         else:
             raise ValueError("value of death_cause variable unknown")
 
+        pyglet.clock.schedule(self.update)
+
         pyDLASYIAS.assets.Channel[11].set_volume(1.0)
         pyDLASYIAS.assets.Channel[11].play(pyDLASYIAS.assets.Sounds["scary"]["XSCREAM"])
+
+    def static_end(self, dt=0):
+        pygame.mixer.stop()
+
+        self.static = gameObjects.Static()
+        self.add(self.static, z=1)
+        pyglet.clock.schedule(self.static.update)
+
+        pyDLASYIAS.assets.Channel[11].play(pyDLASYIAS.assets.Sounds["camera"]["static"], 0)
+
+        self.end_game_now = True
+
+    def update(self, dt=0):
+        super().update(dt)
+
+        if self.end_game_now and not pyDLASYIAS.assets.Channel[11].get_busy():
+            director.run(FadeTransition(self.Game.stuffed, duration=3, src=cocos.scene.Scene(self.static)))
+
+            pyglet.clock.unschedule(self.update)
+
+class Stuffed(Base):
+    def __init__(self, main_game):
+        super().__init__(main_game)
+
+        self.setup()
+
+    def setup(self):
+        self.background = gameObjects.Base("images\\intro\\stuffed.png", (0,0))
+        self.label = cocos.text.Label("Game over", position=(1024, 128), font_size=24, font_name="Fnaf UI")
+
+
+        self.add(self.background, z=0)
+        self.add(self.label, z=1)
+
+    def on_enter(self):
+        super().on_enter()
+
+        pyglet.clock.schedule(self.update)
+
+    def update(self, dt=0):
+        pygame.mixer.stop()

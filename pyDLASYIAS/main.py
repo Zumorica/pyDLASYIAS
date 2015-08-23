@@ -10,6 +10,7 @@ import os
 from pyglet.gl import *
 from pyglet.gl.glu import *
 from cocos.director import director
+from cocos.scenes import *
 import pyDLASYIAS.gameObjects as gameObjects
 
 class Main(object):
@@ -25,6 +26,7 @@ class Main(object):
         self.camera = pyDLASYIAS.scenes.Camera(self)
         self.powerout = pyDLASYIAS.scenes.Powerout(self)
         self.scarejump = pyDLASYIAS.scenes.Scarejump(self)
+        self.stuffed = pyDLASYIAS.scenes.Stuffed(self)
 
         self.bear = pyDLASYIAS.animatronics.Bear("Bear", 1, self)
         self.rabbit = pyDLASYIAS.animatronics.Rabbit("Rabbit", 20, self)
