@@ -14,7 +14,9 @@ from cocos.scenes import *
 import pyDLASYIAS.gameObjects as gameObjects
 
 class Main(object):
-    def __init__(self, power=1, hour=0, hours_to_seconds=86, night="pyDLASYIAS"):
+    def __init__(self, power=100, hour=0, hours_to_seconds=86, night="pyDLASYIAS", \
+                       bear_level=0, rabbit_level=0, chicken_level=0, fox_level=0, \
+                       lose_power=True, time_advance=True, ending="custom"):
 
         self.usage = 1
         self.power = power
@@ -27,19 +29,26 @@ class Main(object):
         self.powerout = pyDLASYIAS.scenes.Powerout(self)
         self.scarejump = pyDLASYIAS.scenes.Scarejump(self)
         self.stuffed = pyDLASYIAS.scenes.Stuffed(self)
+        self.ending = pyDLASYIAS.scenes.Ending("custom", self)
+        self.night_end = pyDLASYIAS.scenes.Night_End(self.ending, self)
 
         self.bear = pyDLASYIAS.animatronics.Bear("Bear", 1, self)
         self.rabbit = pyDLASYIAS.animatronics.Rabbit("Rabbit", 20, self)
         self.chicken = pyDLASYIAS.animatronics.Chicken("Chicken", 20, self)
         self.fox = pyDLASYIAS.animatronics.Fox("Fox", 1, self)
 
+        self.bear.location = "security_office"
+
         self.animatronics = {"Bear" : self.bear,
                              "Rabbit" : self.rabbit,
                              "Chicken" : self.chicken,
                              "Fox" : self.fox}
 
-        self.power_calculations()
-        pyglet.clock.schedule_interval(self.next_hour, hours_to_seconds)
+        if lose_power:
+            self.power_calculations()
+
+        if time_advance:
+            pyglet.clock.schedule_interval(self.next_hour, hours_to_seconds)
 
         director.run(self.office)
 

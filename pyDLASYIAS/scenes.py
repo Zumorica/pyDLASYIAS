@@ -140,7 +140,7 @@ class Office(Base):
 
         @self.scene_button.event
         def on_button_collide():
-            if self.isActive and not self.tablet.isAnimPlaying:
+            if self.isActive and not self.tablet.isAnimPlaying and not self.Game.power < 0:
                 self.tablet.open()
                 pyDLASYIAS.assets.Channel[25].play(pyDLASYIAS.assets.Sounds["camera"]["putdown"], 0)
                 self.Game.usage += 1
@@ -165,10 +165,18 @@ class Office(Base):
 
     def on_enter(self):
         super().on_enter()
-        if not self.game_start:
+        if not self.game_start and not self.Game.hour >= 6:
             self.tablet.close()
             pyDLASYIAS.assets.Channel[25].play(pyDLASYIAS.assets.Sounds["camera"]["putdown"], 0)
             self.Game.usage -= 1
+
+            if self.Game.rabbit.location == "security_office" and not self.Game.fox.status == 5:
+                self.Game.scarejump.death_cause = "rabbit"
+                director.run(self.Game.scarejump)
+
+            if self.Game.chicken.location == "security_office" and not self.Game.fox.status == 5:
+                self.Game.scarejump.death_cause = "chicken"
+                director.run(self.Game.scarejump)
         else:
             self.game_start = False
             pyDLASYIAS.assets.Channel[1].play(pyDLASYIAS.assets.Sounds["ambience"]["fan"], -1)
@@ -199,6 +207,17 @@ class Office(Base):
 
     def update(self, dt=0):
         super().update(dt)
+
+        if self.Game.hour >= 6:
+            director.run(FadeTransition(self.Game.night_end, duration=1, src=self, color=(0, 0, 0)))
+
+        if self.Game.bear.location == "security_office" and self.moving == "right":
+            self.Game.scarejump.death_cause = "bear"
+            director.run(self.Game.scarejump)
+
+        if self.Game.fox.status == 5:
+            self.Game.scarejump.death_cause = "fox"
+            director.run(self.Game.scarejump)
 
         self.power_label.element.text = "Power left:  "+str(self.Game.power)+"%"
         self.usage_label.element.text = "Usage:  "+str(self.Game.usage)
@@ -329,6 +348,7 @@ class Camera(Base):
         self.static = gameObjects.Static(70, 160)
         self.background = gameObjects.Base("images\\cameras\\cam1a\\brc.png", (0, 0))
         self.scene_button = gameObjects.SceneButton((director.window.width//4, 36))
+        self.fox_animation = gameObjects.Animation("images\\cameras\\cam2a\\animation", 26, 0.025, (0,0), autostart=False, looping=False, isMovable=True)
 
         self.power_label = cocos.text.Label("Power left:  "+str(self.Game.power)+"%", position=(40, 150), font_size=16, font_name="Fnaf UI")
         self.usage_label = cocos.text.Label("Usage:  "+str(self.Game.usage), position=(40, 120), font_size=16, font_name="Fnaf UI")
@@ -385,6 +405,11 @@ class Camera(Base):
             pyDLASYIAS.assets.Channel[21].set_volume(0.0)
             pyDLASYIAS.assets.Channel[11].set_volume(0.1)
             pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
+            try:
+                if self.Game.fox.status >= 4:
+                    self.fox_animation.kill()
+            except Exception:
+                pass
 
         @self.cam1b.event
         def on_camera_press(camera):
@@ -395,6 +420,11 @@ class Camera(Base):
             pyDLASYIAS.assets.Channel[21].set_volume(0.0)
             pyDLASYIAS.assets.Channel[11].set_volume(0.1)
             pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
+            try:
+                if self.Game.fox.status >= 4:
+                    self.fox_animation.kill()
+            except Exception:
+                pass
 
         @self.cam1c.event
         def on_camera_press(camera):
@@ -405,9 +435,17 @@ class Camera(Base):
             pyDLASYIAS.assets.Channel[21].set_volume(0.0)
             pyDLASYIAS.assets.Channel[11].set_volume(0.1)
             pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
+            try:
+                if self.Game.fox.status >= 4:
+                    self.fox_animation.kill()
+            except Exception:
+                pass
 
         @self.cam2a.event
         def on_camera_press(camera):
+            if self.Game.fox.status >= 4 and self.active_camera != "cam2a":
+                self.add(self.fox_animation, z=1)
+                self.fox_animation.play()
             for camera in self.CamButtons.values():
                 camera.pressed = False
             self.cam2a.pressed = True
@@ -425,6 +463,11 @@ class Camera(Base):
             pyDLASYIAS.assets.Channel[21].set_volume(0.0)
             pyDLASYIAS.assets.Channel[11].set_volume(0.1)
             pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
+            try:
+                if self.Game.fox.status >= 4:
+                    self.fox_animation.kill()
+            except Exception:
+                pass
 
         @self.cam3.event
         def on_camera_press(camera):
@@ -435,7 +478,11 @@ class Camera(Base):
             pyDLASYIAS.assets.Channel[21].set_volume(0.0)
             pyDLASYIAS.assets.Channel[11].set_volume(0.1)
             pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
-
+            try:
+                if self.Game.fox.status >= 4:
+                    self.fox_animation.kill()
+            except Exception:
+                pass
         @self.cam4a.event
         def on_camera_press(camera):
             for camera in self.CamButtons.values():
@@ -445,6 +492,11 @@ class Camera(Base):
             pyDLASYIAS.assets.Channel[21].set_volume(0.0)
             pyDLASYIAS.assets.Channel[11].set_volume(0.1)
             pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
+            try:
+                if self.Game.fox.status >= 4:
+                    self.fox_animation.kill()
+            except Exception:
+                pass
 
         @self.cam4b.event
         def on_camera_press(camera):
@@ -455,6 +507,11 @@ class Camera(Base):
             pyDLASYIAS.assets.Channel[21].set_volume(0.0)
             pyDLASYIAS.assets.Channel[11].set_volume(0.1)
             pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
+            try:
+                if self.Game.fox.status >= 4:
+                    self.fox_animation.kill()
+            except Exception:
+                pass
 
         @self.cam5.event
         def on_camera_press(camera):
@@ -465,6 +522,11 @@ class Camera(Base):
             pyDLASYIAS.assets.Channel[21].set_volume(0.0)
             pyDLASYIAS.assets.Channel[11].set_volume(0.1)
             pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
+            try:
+                if self.Game.fox.status >= 4:
+                    self.fox_animation.kill()
+            except Exception:
+                pass
 
         @self.cam6.event
         def on_camera_press(camera):
@@ -475,6 +537,11 @@ class Camera(Base):
             pyDLASYIAS.assets.Channel[21].set_volume(0.0)
             pyDLASYIAS.assets.Channel[11].set_volume(0.1)
             pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
+            try:
+                if self.Game.fox.status >= 4:
+                    self.fox_animation.kill()
+            except Exception:
+                pass
 
         @self.cam7.event
         def on_camera_press(camera):
@@ -485,6 +552,11 @@ class Camera(Base):
             pyDLASYIAS.assets.Channel[21].set_volume(0.0)
             pyDLASYIAS.assets.Channel[11].set_volume(0.1)
             pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
+            try:
+                if self.Game.fox.status >= 4:
+                    self.fox_animation.kill()
+            except Exception:
+                pass
 
         @self.scene_button.event
         def on_button_collide():
@@ -515,6 +587,14 @@ class Camera(Base):
 
     def update(self, dt=0):
         super().update(dt)
+
+        try:
+            if self.Game.fox.status >= 4 and self.fox_animation._frame_index == 26 and self.fox_animation in self.get_children():
+                self.fox_animation.kill()
+                self.Game.fox.status += 1
+                director.run(self.Game.office)
+        except AttributeError:
+            pass    # Animation not playing
 
         if self.static.opacity != 255:
             pyDLASYIAS.assets.Channel[10].set_volume(0.0)
@@ -863,47 +943,48 @@ class Scarejump(Base):
         self.setup()
 
     def setup(self):
-        self.powerout_scarejump = gameObjects.Animation("images\\office\\scarejump\\bear\\powerout", 19, 0.030, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
-        self.bear_scarejump = gameObjects.Animation("images\\office\\scarejump\\bear\\normal", 29, 0.030, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
+        self.powerout_scarejump = gameObjects.Animation("images\\office\\scarejump\\bear\\powerout", 19, 0.030, img_pos=(0,0), looping=False, isMovable=True, autostart=False)
+        self.bear_scarejump = gameObjects.Animation("images\\office\\scarejump\\bear\\normal", 29, 0.030, img_pos=(0,0), looping=False, isMovable=True, autostart=False)
         self.rabbit_scarejump = gameObjects.Animation("images\\office\\scarejump\\rabbit", 10, 0.030, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
         self.chicken_scarejump = gameObjects.Animation("images\\office\\scarejump\\chicken", 12, 0.030, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
-        self.fox_scarejump = gameObjects.Animation("images\\office\\scarejump\\fox", 18, 0.030, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
+        self.fox_scarejump = gameObjects.Animation("images\\office\\scarejump\\fox", 18, 0.030, img_pos=(0,0), looping=False, isMovable=True, autostart=False)
 
     def on_enter(self):
         pygame.mixer.stop()
         if self.death_cause == "powerout":
             self.add(self.powerout_scarejump, z=0)
             self.powerout_scarejump.play()
-            pyglet.clock.schedule_once(self.static_end, delay=0.035*19)
+            pyglet.clock.schedule_once(self.static_end, delay=0.06*19)
 
         elif self.death_cause == "bear":
             self.add(self.bear_scarejump, z=0)
             self.bear_scarejump.position = self.Game.office.background.position
             self.bear_scarejump.play()
-            pyglet.clock.schedule_once(self.static, delay=0.035*29)
+            pyglet.clock.schedule_once(self.static_end, delay=0.06*29)
 
         elif self.death_cause == "rabbit":
             self.add(self.rabbit_scarejump, z=0)
             self.rabbit_scarejump.position = self.Game.office.background.position
             self.rabbit_scarejump.play()
-            pyglet.clock.schedule_once(self.static_end, delay=0.035*10)
+            pyglet.clock.schedule_once(self.static_end, delay=0.06*10)
 
         elif self.death_cause == "chicken":
             self.add(self.chicken_scarejump, z=0)
             self.chicken_scarejump.position = self.Game.office.background.position
             self.chicken_scarejump.play()
-            pyglet.clock.schedule_once(self.static_end, delay=0.035*12)
+            pyglet.clock.schedule_once(self.static_end, delay=0.06*12)
 
         elif self.death_cause == "fox":
             self.add(self.fox_scarejump, z=0)
             self.fox_scarejump.position = self.Game.office.background.position
             self.fox_scarejump.play()
-            pyglet.clock.schedule_once(self.static_end, delay=0.035*18)
+            pyglet.clock.schedule_once(self.static_end, delay=0.06*18)
 
         else:
             raise ValueError("value of death_cause variable unknown")
 
         pyglet.clock.schedule(self.update)
+
 
         pyDLASYIAS.assets.Channel[11].set_volume(1.0)
         pyDLASYIAS.assets.Channel[11].play(pyDLASYIAS.assets.Sounds["scary"]["XSCREAM"])
@@ -921,9 +1002,14 @@ class Scarejump(Base):
 
     def update(self, dt=0):
         super().update(dt)
+        if not self.end_game_now and self.Game.hour >= 6:
+            pyDLASYIAS.assets.Channel[11].set_volume(0.0)
+            director.run(FadeTransition(self.Game.night_end, duration=1, src=cocos.scene.Scene(gameObjects.Base(self.powerout_scarejump.animation.frames[self.powerout_scarejump._frame_index].image, (0,0))), color=(0, 0, 0)))
+
+            pyglet.clock.unschedule(self.update)
 
         if self.end_game_now and not pyDLASYIAS.assets.Channel[11].get_busy():
-            director.run(FadeTransition(self.Game.stuffed, duration=3, src=cocos.scene.Scene(self.static)))
+            director.run(FadeTransition(self.Game.stuffed, duration=3, src=cocos.scene.Scene(self.static), color=(0, 0, 0)))
 
             pyglet.clock.unschedule(self.update)
 
@@ -946,5 +1032,80 @@ class Stuffed(Base):
 
         pyglet.clock.schedule(self.update)
 
+    def on_exit(self):
+        super().on_exit()
+
+        pyglet.clock.unschedule(self.update)
+
     def update(self, dt=0):
         pygame.mixer.stop()
+
+class Night_End(Base):
+    def __init__(self, redirect, main_game):
+        super().__init__(main_game)
+
+        self.redirect = redirect
+
+        self.setup()
+
+    def setup(self):
+        self.redirect_now = False
+
+        self.label = cocos.text.Label("5 AM", position=((director.window.width//2) - 32, director.window.height//2), font_size=32, font_name="Fnaf UI", bold=True)
+        self.layer = cocos.layer.util_layers.ColorLayer(0, 0, 0, 255)
+
+        self.add(self.layer, z=0)
+        self.add(self.label, z=0)
+
+    def on_enter(self):
+        super().on_enter()
+
+        #pyDLASYIAS.assets.Channel[11].set_volume(0.0)
+        pyDLASYIAS.assets.Channel[1].set_volume(1.0)
+        if not pyDLASYIAS.assets.Channel[1].get_busy():
+            pyDLASYIAS.assets.Channel[1].play(pyDLASYIAS.assets.Sounds["misc"]["6AM"], 0)
+
+            pyglet.clock.schedule_once(self.stage_2, delay=3)
+            pyglet.clock.schedule(self.update)
+
+    def on_exit(self):
+        super().on_exit()
+        pyglet.clock.unschedule(self.update)
+
+    def stage_2(self, dt=0):
+        pyDLASYIAS.assets.Channel[2].set_volume(1.0)
+        if not pyDLASYIAS.assets.Channel[2].get_busy():
+            pyDLASYIAS.assets.Channel[2].play(pyDLASYIAS.assets.Sounds["misc"]["children"], 0)
+
+        self.label.element.text = "6 AM"
+
+        pyglet.clock.schedule_once(self.stage_3, delay=7)
+
+    def stage_3(self, dt=0):
+        self.redirect_now = True
+
+    def update(self, dt=0):
+        pyDLASYIAS.assets.Channel[1].set_volume(1.0)
+        pyDLASYIAS.assets.Channel[2].set_volume(1.0)
+        if self.redirect_now:
+            director.run(FadeTransition(self.redirect, duration=1, src=cocos.scene.Scene(self.layer, self.label), color=(0, 0, 0)))
+
+class Ending(Base):
+    def __init__(self, ending, main_game):
+        self.ending = ending
+        super().__init__(main_game)
+
+        self.setup()
+
+    def setup(self):
+        self.background = gameObjects.Base("images\\ending\\%s.png"%(self.ending))
+
+        self.add(self.background, z=0)
+
+    def on_enter(self):
+        super().on_enter()
+        pyDLASYIAS.assets.Channel[1].set_volume(0.0)
+        pyDLASYIAS.assets.Channel[2].set_volume(0.0)
+        if not pyDLASYIAS.assets.Channel[30].get_busy():
+            pyDLASYIAS.assets.Channel[30].set_volume(1.0)
+            pyDLASYIAS.assets.Channel[30].play(pyDLASYIAS.assets.Sounds["misc"]["musicbox"], 0)

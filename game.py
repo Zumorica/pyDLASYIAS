@@ -16,7 +16,6 @@ import pyDLASYIAS.gameObjects as gameObjects
 
 sys.setrecursionlimit(20000)
 pyglet.font.add_file('FNAF.ttf')
-
 director.init(autoscale=True, audio_backend="sdl", \
               audio=None, fullscreen=False, \
               resizable=False, vsync=True, width=1280,
