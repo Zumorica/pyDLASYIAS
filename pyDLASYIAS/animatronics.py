@@ -176,7 +176,7 @@ class Fox(Base):
     def think(self, dt=0):
         super().think(dt)
         if self.isActive and self.level > 0:
-            if self.status < 3 and not self.isOnCamera and self.level != 0 and not self.cooldown:
+            if self.status < 3 and not self.isOnCamera and not self.cooldown:
                 if random.randint(0, 20) <= self.level:
                     self.status += 1
 
@@ -187,6 +187,9 @@ class Fox(Base):
                                   and random.randint(0, 20) <= self.level \
                                   and self.Game.animatronics["Rabbit"].location not in ["cam2a", "cam2b", "left_door"]:
                 self.status == 5
+
+            if self.cooldown:
+                self.cooldown = False
 
 class Bear(Base):
     def __init__(self, name, level, main_game):
@@ -212,30 +215,7 @@ class Bear(Base):
 
         pyDLASYIAS.assets.Channel[30].play(random.choice([pyDLASYIAS.assets.Sounds["scary"]["freddygiggle"], pyDLASYIAS.assets.Sounds["scary"]["freddygiggle2"], pyDLASYIAS.assets.Sounds["scary"]["freddygiggle3"]]))
 
-        if self.isActive:
-            if isinstance(location, str):
-                if direct_move:
-                    self.change_static_opacity()
-                    self.location = location
-                    self.change_static_opacity()
-
-                else:
-                    if random.randint(1, 20) <= self.level:
-                        self.change_static_opacity()
-                        self.location = location
-                        self.change_static_opacity()
-
-            elif isinstance(location, list):
-                if direct_move:
-                    self.change_static_opacity()
-                    self.location = random.choice(location)
-                    self.change_static_opacity()
-
-                else:
-                    if random.randint(1, 20) <= self.level:
-                        self.change_static_opacity()
-                        self.location = random.choice(location)
-                        self.change_static_opacity()
+        super().move(location, direct_move)
 
     def think(self, dt=0):
         super().think(dt)
@@ -245,6 +225,7 @@ class Bear(Base):
 
             self.level = self.level_base + self.level_extra
 
+            self.location = "cam1b"
             if self.level > 4:
                 if self.location == "cam1a" and self.Game.animatronics["Rabbit"].location != "cam1a" \
                                             and self.Game.animatronics["Chicken"].location != "cam1a" and (not self.isOnCamera and random.randint(0, 1)):

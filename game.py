@@ -306,7 +306,7 @@ class Custom_Night(pyDLASYIAS.scenes.Base):
 
         if self.button_right_time.contains(x, y):
             if self.hour != 6:
-                self.hour += 6
+                self.hour += 1
 
         if self.button_left_power.contains(x, y):
             if self.power != 0:

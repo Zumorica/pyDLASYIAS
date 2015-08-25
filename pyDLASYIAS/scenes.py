@@ -450,6 +450,7 @@ class Camera(Base):
             pyDLASYIAS.assets.Channel[21].set_volume(0.0)
             pyDLASYIAS.assets.Channel[11].set_volume(0.1)
             pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
+            self.Game.fox.cooldown = True
             try:
                 if self.Game.fox.status >= 4:
                     self.fox_animation.kill()
@@ -600,6 +601,8 @@ class Camera(Base):
         pyDLASYIAS.assets.Channel[10].play(random.choice([pyDLASYIAS.assets.Sounds["camera"]["garble"], \
                                                           pyDLASYIAS.assets.Sounds["camera"]["garble2"], \
                                                           pyDLASYIAS.assets.Sounds["camera"]["garble3"]]), -1)
+
+        self.Game.fox.cooldown = True
 
     def update(self, dt=0):
         super().update(dt)
