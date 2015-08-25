@@ -53,6 +53,7 @@ class Office(Base):
         self.mouse_y = 0
         self.left_discovered = False
         self.right_discovered = False
+        self.about_to_get_scarejumped = False
 
         # -GameObjects here- #
         self.left_door = gameObjects.Door(False, (72, 0))
@@ -140,7 +141,7 @@ class Office(Base):
 
         @self.scene_button.event
         def on_button_collide():
-            if self.isActive and not self.tablet.isAnimPlaying and not self.Game.power < 0:
+            if self.isActive and not self.tablet.isAnimPlaying and not self.Game.power < 0 and not self.about_to_get_scarejumped:
                 self.tablet.open()
                 pyDLASYIAS.assets.Channel[25].play(pyDLASYIAS.assets.Sounds["camera"]["putdown"], 0)
                 self.Game.usage += 1
@@ -172,11 +173,15 @@ class Office(Base):
 
             if self.Game.rabbit.location == "security_office" and not self.Game.fox.status == 5:
                 self.Game.scarejump.death_cause = "rabbit"
-                director.run(self.Game.scarejump)
+                self.about_to_get_scarejumped = True
+                self.fan.kill()
+                self.background.image = pyglet.image.load("images\\office\\scarejump\\rabbit\\0.png")
 
             if self.Game.chicken.location == "security_office" and not self.Game.fox.status == 5:
                 self.Game.scarejump.death_cause = "chicken"
-                director.run(self.Game.scarejump)
+                self.about_to_get_scarejumped = True
+                self.fan.kill()
+                self.background.image = pyglet.image.load("images\\office\\scarejump\\chicken\\0.png")
         else:
             self.game_start = False
             pyDLASYIAS.assets.Channel[1].play(pyDLASYIAS.assets.Sounds["ambience"]["fan"], -1)
@@ -211,12 +216,21 @@ class Office(Base):
         if self.Game.hour >= 6:
             director.run(FadeTransition(self.Game.night_end, duration=1, src=self, color=(0, 0, 0)))
 
-        if self.Game.bear.location == "security_office" and self.moving == "right":
+        if self.Game.bear.location == "security_office" and self.moving == "right" and not self.tablet.isAnimPlaying:
             self.Game.scarejump.death_cause = "bear"
             director.run(self.Game.scarejump)
 
-        if self.Game.fox.status == 5:
-            self.Game.scarejump.death_cause = "fox"
+        if self.Game.fox.status == 5 and not self.tablet.isAnimPlaying:
+            if self.left_door:
+                pyDLASYIAS.assets.Channel[12].set_volume(0.7, 0.3)
+                pyDLASYIAS.assets.Channel[12].play(random.choice([pyDLASYIAS.assets.Sounds["misc"]["doorpounding"], pyDLASYIAS.assets.Sounds["misc"]["doorknocking"]]), 0)
+                self.Game.fox.status = random.randint(1, 2)
+                self.Game.power -= random.randint(3, 15)
+            else:
+                self.Game.scarejump.death_cause = "fox"
+                director.run(self.Game.scarejump)
+
+        if self.Game.scarejump.death_cause in ["rabbit", "chicken"] and not self.tablet.isAnimPlaying:
             director.run(self.Game.scarejump)
 
         self.power_label.element.text = "Power left:  "+str(self.Game.power)+"%"
@@ -302,20 +316,21 @@ class Office(Base):
 
         # The code below changes the image of the office.
 
-        if not self.left_button.light and not self.right_button.light:
-            self.background.image = pyDLASYIAS.assets.Backgrounds["office"]["0"]
+        if not self.about_to_get_scarejumped:
+            if not self.left_button.light and not self.right_button.light:
+                self.background.image = pyDLASYIAS.assets.Backgrounds["office"]["0"]
 
-        if self.left_button.light and not self.right_button.light:
-            if self.Game.rabbit.location == "left_door":
-                self.background.image = pyDLASYIAS.assets.Backgrounds["office"]["r"]
-            else:
-                self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["office"]["0"], pyDLASYIAS.assets.Backgrounds["office"]["1"]])
+            if self.left_button.light and not self.right_button.light:
+                if self.Game.rabbit.location == "left_door":
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["office"]["r"]
+                else:
+                    self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["office"]["0"], pyDLASYIAS.assets.Backgrounds["office"]["1"]])
 
-        if not self.left_button.light and self.right_button.light:
-            if self.Game.chicken.location == "right_door":
-                self.background.image = pyDLASYIAS.assets.Backgrounds["office"]["c"]
-            else:
-                self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["office"]["0"], pyDLASYIAS.assets.Backgrounds["office"]["2"]])
+            if not self.left_button.light and self.right_button.light:
+                if self.Game.chicken.location == "right_door":
+                    self.background.image = pyDLASYIAS.assets.Backgrounds["office"]["c"]
+                else:
+                    self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["office"]["0"], pyDLASYIAS.assets.Backgrounds["office"]["2"]])
 
 class Camera(Base):
     def __init__(self, main_game):
@@ -443,7 +458,7 @@ class Camera(Base):
 
         @self.cam2a.event
         def on_camera_press(camera):
-            if self.Game.fox.status >= 4 and self.active_camera != "cam2a":
+            if self.Game.fox.status >= 4 and self.active_camera != "cam2a" and not self.Game.rabbit.location in ["left_door", "cam2a", "cam2b"]:
                 self.add(self.fox_animation, z=1)
                 self.fox_animation.play()
             for camera in self.CamButtons.values():
@@ -578,6 +593,7 @@ class Camera(Base):
         pyDLASYIAS.assets.Channel[8].set_volume(0.0)
         pyDLASYIAS.assets.Channel[1].set_volume(0.03)
         pyDLASYIAS.assets.Channel[10].set_volume(0.0)
+        pyDLASYIAS.assets.Channel[12].set_volume(0.0)
 
         pyDLASYIAS.assets.Channel[7].play(pyDLASYIAS.assets.Sounds["camera"]["camerasound2"], -1)
         pyDLASYIAS.assets.Channel[8].play(pyDLASYIAS.assets.Sounds["camera"]["static3"], -1)
@@ -675,7 +691,7 @@ class Camera(Base):
 
         elif self.active_camera == "cam2b":
             if self.Game.rabbit.location == "cam2b":
-                self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["camera"]["cam2b"]["r"], pyDLASYIAS.assets.Backgrounds["camera"]["cam2b"]["r-1"]])
+                self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["camera"]["cam2b"]["r"], pyDLASYIAS.assets.Backgrounds["camera"]["cam2b"]["r"], pyDLASYIAS.assets.Backgrounds["camera"]["cam2b"]["r"], pyDLASYIAS.assets.Backgrounds["camera"]["cam2b"]["r-1"]])
                 pyDLASYIAS.assets.Channel[21].set_volume(random.uniform(0.3, 0.7), random.uniform(0.1, 0.5))
             elif not self.Game.rabbit.location == "cam2b":
                 if self.random_number == 87:
@@ -720,7 +736,7 @@ class Camera(Base):
                 self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["b"]
                 pyDLASYIAS.assets.Channel[21].set_volume(random.uniform(0.1, 0.4), random.uniform(0.3, 0.8))
             elif self.Game.chicken.location == "cam4b":
-                 self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["c"], pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["c-1"], pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["c-2"]])
+                 self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["c"], pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["c"], pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["c"], pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["c-1"], pyDLASYIAS.assets.Backgrounds["camera"]["cam4b"]["c-2"]])
                  pyDLASYIAS.assets.Channel[21].set_volume(random.uniform(0.1, 0.5), random.uniform(0.3, 0.7))
             elif not self.Game.chicken.location == "cam4b":
                 if self.random_number == 87:
@@ -839,17 +855,21 @@ class Powerout(Base):
 
     def stage_3(self, dt=0):
         pygame.mixer.stop()
-        pyDLASYIAS.assets.Channel[1].set_volume(0.0)
-        pyDLASYIAS.assets.Channel[2].set_volume(0.35)
-        pyDLASYIAS.assets.Channel[1].play(pyDLASYIAS.assets.Sounds["misc"]["lighthum"], -1)
-        pyDLASYIAS.assets.Channel[2].play(pyDLASYIAS.assets.Sounds["ambience"]["eerieambience"], -1)
-        pyDLASYIAS.assets.Channel[30].play(pyDLASYIAS.assets.Sounds["camera"]["deepsteps"], -1)
-        pyglet.clock.schedule_once(self.change_volume, 2, pyDLASYIAS.assets.Channel[30], 0.6, 0.4)
-        pyglet.clock.schedule_once(self.change_volume, 3, pyDLASYIAS.assets.Channel[2], 0.5, None)
-        pyglet.clock.schedule_once(self.change_volume, 5, pyDLASYIAS.assets.Channel[30], 0.5, 0.5)
+        if random.randint(0, 1):
+            pyDLASYIAS.assets.Channel[1].set_volume(0.0)
+            pyDLASYIAS.assets.Channel[2].set_volume(0.35)
+            pyDLASYIAS.assets.Channel[1].play(pyDLASYIAS.assets.Sounds["misc"]["lighthum"], -1)
+            pyDLASYIAS.assets.Channel[2].play(pyDLASYIAS.assets.Sounds["ambience"]["eerieambience"], -1)
+            pyDLASYIAS.assets.Channel[30].play(pyDLASYIAS.assets.Sounds["camera"]["deepsteps"], -1)
+            pyglet.clock.schedule_once(self.change_volume, 2, pyDLASYIAS.assets.Channel[30], 0.6, 0.4)
+            pyglet.clock.schedule_once(self.change_volume, 3, pyDLASYIAS.assets.Channel[2], 0.5, None)
+            pyglet.clock.schedule_once(self.change_volume, 5, pyDLASYIAS.assets.Channel[30], 0.5, 0.5)
 
         for children in self.get_children():
             children.color = (0, 0, 0)
+
+        self.left_door.color = (255, 255, 255)
+        self.right_door.color = (255, 255, 255)
 
         pyglet.clock.schedule_once(self.change_scene, delay=random.randint(2, 7))
 
@@ -944,7 +964,7 @@ class Scarejump(Base):
 
     def setup(self):
         self.powerout_scarejump = gameObjects.Animation("images\\office\\scarejump\\bear\\powerout", 19, 0.030, img_pos=(0,0), looping=False, isMovable=True, autostart=False)
-        self.bear_scarejump = gameObjects.Animation("images\\office\\scarejump\\bear\\normal", 29, 0.030, img_pos=(0,0), looping=False, isMovable=True, autostart=False)
+        self.bear_scarejump = gameObjects.Animation("images\\office\\scarejump\\bear\\normal", 29, 0.0325, img_pos=(0,0), looping=False, isMovable=True, autostart=False)
         self.rabbit_scarejump = gameObjects.Animation("images\\office\\scarejump\\rabbit", 10, 0.030, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
         self.chicken_scarejump = gameObjects.Animation("images\\office\\scarejump\\chicken", 12, 0.030, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
         self.fox_scarejump = gameObjects.Animation("images\\office\\scarejump\\fox", 18, 0.030, img_pos=(0,0), looping=False, isMovable=True, autostart=False)
@@ -960,7 +980,7 @@ class Scarejump(Base):
             self.add(self.bear_scarejump, z=0)
             self.bear_scarejump.position = self.Game.office.background.position
             self.bear_scarejump.play()
-            pyglet.clock.schedule_once(self.static_end, delay=0.06*29)
+            pyglet.clock.schedule_once(self.static_end, delay=0.0325*29)
 
         elif self.death_cause == "rabbit":
             self.add(self.rabbit_scarejump, z=0)
@@ -976,6 +996,7 @@ class Scarejump(Base):
 
         elif self.death_cause == "fox":
             self.add(self.fox_scarejump, z=0)
+            self.add(self.Game.office.fan, z=0)
             self.fox_scarejump.position = self.Game.office.background.position
             self.fox_scarejump.play()
             pyglet.clock.schedule_once(self.static_end, delay=0.06*18)

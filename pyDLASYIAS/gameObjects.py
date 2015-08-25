@@ -121,11 +121,13 @@ class Tablet(Base):
         self.opacity = 255
 
 class Static(Base):
-    def __init__(self, opacity_min=255, opacity_max=255):
+    def __init__(self, opacity_min=255, opacity_max=255, random=False):
         super().__init__("images\\cameras\\misc\\static\\0.png", (0, 0))
         self.opacity_min = opacity_min
         self.opacity_max = opacity_max
+        self.random = random
         self.get_random_opacity()
+        self.index = 0
         self.Sprites = [pyglet.image.load("images\\cameras\\misc\\static\\0.png"),
                         pyglet.image.load("images\\cameras\\misc\\static\\1.png"),
                         pyglet.image.load("images\\cameras\\misc\\static\\2.png"),
@@ -143,11 +145,17 @@ class Static(Base):
 
     def update(self, dt=0):
         super().update(dt)
-        image = random.choice(self.Sprites)
-        if image == self.image:
-            self.update()
+        if self.random:
+            image = random.choice(self.Sprites)
+            if image == self.image:
+                self.update()
+            else:
+                self.image = image
         else:
-            self.image = image
+            self.index += 1
+            if self.index > 7:
+                self.index = 0
+            self.image = self.Sprites[self.index]
 
 class Camera(Base):
     def __init__(self, name, img, img_pos):

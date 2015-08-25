@@ -62,7 +62,10 @@ class Base(object):
             pyglet.clock.schedule_once(self.Game.camera.static.get_random_opacity, random.randint(2, 5))
 
     def think(self, dt=0):
-        pass
+        if self.Game.hour >= 2:
+            self.level_extra = 1
+
+        self.level = self.level_base + self.level_extra
 
     def update(self, dt=0):
         if self.location == self.Game.camera.active_camera:
@@ -80,12 +83,8 @@ class Chicken(Base):
         pyglet.clock.schedule_interval(self.think, 4)
 
     def think(self, dt=0):
-        if self.isActive:
-            if self.Game.hour >= 2:
-                self.level_extra = 1
-
-            self.level = self.level_base + self.level_extra
-
+        super().think(dt)
+        if self.isActive and self.level > 0:
             if self.location == "cam1a":
                 self.move("cam1b")
 
@@ -128,12 +127,8 @@ class Rabbit(Base):
         pyglet.clock.schedule_interval(self.think, 4)
 
     def think(self, dt=0):
-        if self.isActive:
-            if self.Game.hour >= 2:
-                self.level_extra = 1
-
-            self.level = self.level_base + self.level_extra
-
+        super().think(dt)
+        if self.isActive and self.level > 0:
             if self.location == "cam1a":
                 self.move(["cam5", "cam1b"])
 
@@ -141,13 +136,20 @@ class Rabbit(Base):
                 self.move(["cam5", "cam2a"])
 
             elif self.location == "cam2a":
-                self.move(["cam3", "cam2b"])
+                if self.Game.fox.status == 4:
+                    self.move("cam3", True)
+                else:
+                    self.move(["cam3", "cam2b"])
 
             elif self.location == "cam2b":
-                self.move(["cam3", "left_door"])
+                if self.Game.fox.status == 4:
+                    self.move("cam3", True)
+                else:
+                    self.move(["cam3", "left_door"])
 
             elif self.location == "cam3":
-                self.move(["left_door", "cam2a"])
+                if not self.Game.fox.status == 4:
+                    self.move(["left_door", "cam2a"])
 
             elif self.location == "cam5":
                 self.move(["cam1b", "cam2a"])
@@ -172,12 +174,8 @@ class Fox(Base):
         pyglet.clock.schedule_interval(self.think, 5)
 
     def think(self, dt=0):
-        if self.isActive:
-            if self.Game.hour >= 2:
-                self.level_extra = 1
-
-            self.level = self.level_base + self.level_extra
-
+        super().think(dt)
+        if self.isActive and self.level > 0:
             if self.status < 3 and not self.isOnCamera and self.level != 0 and not self.cooldown:
                 if random.randint(0, 20) <= self.level:
                     self.status += 1
@@ -190,9 +188,6 @@ class Fox(Base):
                                   and self.Game.animatronics["Rabbit"].location not in ["cam2a", "cam2b", "left_door"]:
                 self.status == 5
 
-            elif self.status == 5 and self.Game.office.left_button.door:
-                self.status = random.randint(1, 2)
-
 class Bear(Base):
     def __init__(self, name, level, main_game):
         super().__init__(name, level, main_game)
@@ -201,8 +196,50 @@ class Bear(Base):
 
         pyglet.clock.schedule_interval(self.think, 3)
 
-    def think(self, dt=0):
+    def move(self, location, direct_move=False):
+        if self.location == "cam1a":
+            pyDLASYIAS.assets.Channel[30].set_volume(0.2, 0.2)
+        if self.location == "cam1b":
+            pyDLASYIAS.assets.Channel[30].set_volume(0.3, 0.3)
+        if self.location == "cam7":
+            pyDLASYIAS.assets.Channel[30].set_volume(0.3, 0.5)
+        if self.location == "cam6":
+            pyDLASYIAS.assets.Channel[30].set_volume(0.4, 0.6)
+        if self.location == "cam4a":
+            pyDLASYIAS.assets.Channel[30].set_volume(0.45, 0.65)
+        if self.location == "cam4b":
+            pyDLASYIAS.assets.Channel[30].set_volume(0.3, 0.7)
+
+        pyDLASYIAS.assets.Channel[30].play(random.choice([pyDLASYIAS.assets.Sounds["scary"]["freddygiggle"], pyDLASYIAS.assets.Sounds["scary"]["freddygiggle2"], pyDLASYIAS.assets.Sounds["scary"]["freddygiggle3"]]))
+
         if self.isActive:
+            if isinstance(location, str):
+                if direct_move:
+                    self.change_static_opacity()
+                    self.location = location
+                    self.change_static_opacity()
+
+                else:
+                    if random.randint(1, 20) <= self.level:
+                        self.change_static_opacity()
+                        self.location = location
+                        self.change_static_opacity()
+
+            elif isinstance(location, list):
+                if direct_move:
+                    self.change_static_opacity()
+                    self.location = random.choice(location)
+                    self.change_static_opacity()
+
+                else:
+                    if random.randint(1, 20) <= self.level:
+                        self.change_static_opacity()
+                        self.location = random.choice(location)
+                        self.change_static_opacity()
+
+    def think(self, dt=0):
+        super().think(dt)
+        if self.isActive and self.level > 0:
             if self.Game.hour >= 2:
                 self.level_extra = 1
 
@@ -210,7 +247,7 @@ class Bear(Base):
 
             if self.level > 4:
                 if self.location == "cam1a" and self.Game.animatronics["Rabbit"].location != "cam1a" \
-                                            and self.Game.animatronics["Chicken"].location != "cam1a" and not self.isOnCamera:
+                                            and self.Game.animatronics["Chicken"].location != "cam1a" and (not self.isOnCamera and random.randint(0, 1)):
                     self.move("cam1b")
 
                 elif self.location == "cam1b" and self.Game.animatronics["Rabbit"].location != "cam1b" \

@@ -33,11 +33,9 @@ class Main(object):
         self.night_end = pyDLASYIAS.scenes.Night_End(self.ending, self)
 
         self.bear = pyDLASYIAS.animatronics.Bear("Bear", 1, self)
-        self.rabbit = pyDLASYIAS.animatronics.Rabbit("Rabbit", 20, self)
-        self.chicken = pyDLASYIAS.animatronics.Chicken("Chicken", 20, self)
-        self.fox = pyDLASYIAS.animatronics.Fox("Fox", 1, self)
-
-        self.bear.location = "security_office"
+        self.rabbit = pyDLASYIAS.animatronics.Rabbit("Rabbit", 5, self)
+        self.chicken = pyDLASYIAS.animatronics.Chicken("Chicken", 5, self)
+        self.fox = pyDLASYIAS.animatronics.Fox("Fox", 5, self)
 
         self.animatronics = {"Bear" : self.bear,
                              "Rabbit" : self.rabbit,
