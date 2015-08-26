@@ -166,7 +166,7 @@ class Main_Menu(pyDLASYIAS.scenes.Base):
         self.add(self.static, z=1)
         self.add(self.background, z=0)
         self.add(self.custom_night, z=2)
-        self.add(cocos.text.Label("pyDLASYIAS", position=(32, director.window.height - 64), font_size=32, font_name="Fnaf UI"))
+        self.add(Menu_Title(position=(32, director.window.height - 64), font_size=32, font_name="Fnaf UI"))
 
     def enter_custom_night(self):
         director.run(custom_night)
@@ -200,6 +200,30 @@ class Menu_Item(cocos.text.Label):
             pyDLASYIAS.assets.Sounds["camera"]["blip"].play(0)
         elif self.element.text.startswith(">") and not self.rect.contains(x, y):
             self.element.text = self.element.text[1:]
+            self.isSelected = False
+
+class Menu_Title(cocos.text.Label):
+    def __init__(self, position=(0, 0), **kwargs):
+        super().__init__(">pyDLASYIAS", position, **kwargs)
+        self.rect = cocos.rect.Rect(position[0], position[1], self.element.content_width, self.element.content_height)
+        self.isSelected = False
+
+    def on_enter(self):
+        super().on_enter()
+        director.window.push_handlers(self)
+
+    def on_exit(self):
+        super().on_exit()
+        director.window.remove_handlers(self)
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        if self.rect.contains(x, y) and not self.isSelected and not self.element.text == ">pyDontLetAnimatronicsStuffYouIntoASuit":
+            self.isSelected = True
+            self.element.text = ">pyDontLetAnimatronicsStuffYouIntoASuit"
+            self.rect = cocos.rect.Rect(self.position[0], self.position[1], self.element.content_width, self.element.content_height)
+        elif self.element.text == ">pyDontLetAnimatronicsStuffYouIntoASuit" and not self.rect.contains(x, y):
+            self.element.text = ">pyDLASYIAS"
+            self.rect = cocos.rect.Rect(self.position[0], self.position[1], self.element.content_width, self.element.content_height)
             self.isSelected = False
 
 class Custom_Night(pyDLASYIAS.scenes.Base):

@@ -17,8 +17,8 @@ from cocos.scenes import *
 import pyDLASYIAS.gameObjects as gameObjects
 
 class Base(cocos.scene.Scene):
-    def __init__(self, main_game):
-        super().__init__()
+    def __init__(self, main_game, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.Game = main_game
 
         self.isActive = False
@@ -41,8 +41,8 @@ class Base(cocos.scene.Scene):
         pyglet.clock.unschedule(self.update)
 
 class Office(Base):
-    def __init__(self, main_game):
-        super().__init__(main_game)
+    def __init__(self, main_game, *args, **kwargs):
+        super().__init__(main_game, *args, **kwargs)
 
         self.setup()
 
@@ -335,8 +335,8 @@ class Office(Base):
                     self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["office"]["0"], pyDLASYIAS.assets.Backgrounds["office"]["2"]])
 
 class Camera(Base):
-    def __init__(self, main_game):
-        super().__init__(main_game)
+    def __init__(self, main_game, *args, **kwargs):
+        super().__init__(main_game, *args, **kwargs)
 
         self.setup()
 
@@ -796,8 +796,8 @@ class Camera(Base):
             self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam6"]["0"]
 
 class Powerout(Base):
-    def __init__(self, main_game):
-        super().__init__(main_game)
+    def __init__(self, main_game, *args, **kwargs):
+        super().__init__(main_game, *args, **kwargs)
 
         self.setup()
 
@@ -959,8 +959,8 @@ class Powerout(Base):
             self.moving = "right"
 
 class Scarejump(Base):
-    def __init__(self, main_game):
-        super().__init__(main_game)
+    def __init__(self, main_game, *args, **kwargs):
+        super().__init__(main_game, *args, **kwargs)
 
         self.death_cause = None
         self.end_game_now = False
@@ -1043,8 +1043,8 @@ class Scarejump(Base):
             pyglet.clock.unschedule(self.update)
 
 class Stuffed(Base):
-    def __init__(self, main_game):
-        super().__init__(main_game)
+    def __init__(self, main_game, *args, **kwargs):
+        super().__init__(main_game, *args, **kwargs)
 
         self.setup()
 
@@ -1070,8 +1070,8 @@ class Stuffed(Base):
         pygame.mixer.stop()
 
 class Night_End(Base):
-    def __init__(self, redirect, main_game):
-        super().__init__(main_game)
+    def __init__(self, redirect, main_game, *args, **kwargs):
+        super().__init__(main_game, *args, **kwargs)
 
         self.redirect = redirect
 
@@ -1120,9 +1120,9 @@ class Night_End(Base):
             director.run(FadeTransition(self.redirect, duration=1, src=cocos.scene.Scene(self.layer, self.label), color=(0, 0, 0)))
 
 class Ending(Base):
-    def __init__(self, ending, main_game):
+    def __init__(self, ending, main_game, *args, **kwargs):
         self.ending = ending
-        super().__init__(main_game)
+        super().__init__(main_game, *args, **kwargs)
 
         self.setup()
 
