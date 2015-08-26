@@ -166,7 +166,7 @@ class Camera(Base):
         else:
             self.pressed = True
         self.name = name
-        self.text = cocos.sprite.Sprite(pyglet.image.load(img), (img_pos[0] + 10, img_pos[1] + 7.5))
+        self.text = cocos.sprite.Sprite(pyglet.image.load(img), (img_pos[0] + 7.5, img_pos[1] + 7.5))
         self.text._set_anchor((0, 0))
         self.Sprites = [pyglet.image.load("images\\ui\\button\\camera\\0.png"),
                         pyglet.image.load("images\\ui\\button\\camera\\1.png")]
