@@ -250,7 +250,7 @@ class Office(Base):
         if self.right_button.light:
             pyDLASYIAS.assets.Channel[3].set_volume(0.3, 0.7)
 
-        if self.Game.power > 25:
+        if self.Game.power > 25 and self.Game.power <= 100:
             self.background.color = (self.Game.power * 2.55, self.Game.power * 2.55, self.Game.power * 2.55)
             self.left_button.color = (self.Game.power * 2.55, self.Game.power * 2.55, self.Game.power * 2.55)
             self.right_button.color = (self.Game.power * 2.55, self.Game.power * 2.55, self.Game.power * 2.55)
@@ -324,12 +324,14 @@ class Office(Base):
                 if self.Game.rabbit.location == "left_door":
                     self.background.image = pyDLASYIAS.assets.Backgrounds["office"]["r"]
                 else:
+                    self.left_discovered = False
                     self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["office"]["0"], pyDLASYIAS.assets.Backgrounds["office"]["1"]])
 
             if not self.left_button.light and self.right_button.light:
                 if self.Game.chicken.location == "right_door":
                     self.background.image = pyDLASYIAS.assets.Backgrounds["office"]["c"]
                 else:
+                    self.right_discovered = False
                     self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["office"]["0"], pyDLASYIAS.assets.Backgrounds["office"]["2"]])
 
 class Camera(Base):
@@ -1008,7 +1010,10 @@ class Scarejump(Base):
             raise ValueError("value of death_cause variable unknown")
 
         pyglet.clock.schedule(self.update)
-
+        self.Game.bear.isActive = False
+        self.Game.rabbit.isActive = False
+        self.Game.chicken.isActive = False
+        self.Game.fox.isActive = False
 
         pyDLASYIAS.assets.Channel[11].set_volume(1.0)
         pyDLASYIAS.assets.Channel[11].play(pyDLASYIAS.assets.Sounds["scary"]["XSCREAM"])

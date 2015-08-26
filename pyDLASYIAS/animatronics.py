@@ -157,8 +157,6 @@ class Rabbit(Base):
             elif self.location == "left_door":
                 if self.Game.office.left_button.door:
                     self.move(["cam1b", "left_door"])
-                    if self.location != "left_door":
-                        self.Game.left_discovered = False
 
                 else:
                     self.move(["security_office", "left_door"])
