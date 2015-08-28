@@ -11,6 +11,8 @@ from pyglet.gl.glu import *
 from cocos.director import director
 from cocos.scenes import *
 
+import pyDLASYIAS
+
 pyglet.resource.path = ["images"]
 pyglet.resource.reindex()
 
@@ -20,7 +22,8 @@ class Base(cocos.sprite.Sprite):
 
     def __init__(self, img, img_pos=(0, 0)):
         if isinstance(img, str):
-            super().__init__(pyglet.image.load(img), img_pos)
+            img_loaded = pyDLASYIAS.assets.load(img)
+            super().__init__(img_loaded, img_pos)
         else:
             super().__init__(img, img_pos)
 
@@ -40,7 +43,7 @@ class Base(cocos.sprite.Sprite):
 
     def change_image(self, img):
         try:
-            image = pyglet.image.load(img)
+            image = pyDLASYIAS.assets.load(img)
         except TypeError:
             image = img
         else:
@@ -78,18 +81,18 @@ class Tablet(Base):
 
         for i in range(0, 11):
             if i != 10:
-                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), 0.020))
+                self.Frames.append(pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\cameras\\misc\\animation\\%s.png" %(i)), 0.020))
             else:
-                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), None))
+                self.Frames.append(pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\cameras\\misc\\animation\\%s.png" %(i)), None))
 
         self.animation_normal = pyglet.image.Animation(self.Frames)
         self.Frames = []
 
         for i in reversed(range(0, 11)):
             if i != 0:
-                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), 0.020))
+                self.Frames.append(pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\cameras\\misc\\animation\\%s.png" %(i)), 0.020))
             else:
-                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\animation\\%s.png" %(i)), None))
+                self.Frames.append(pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\cameras\\misc\\animation\\%s.png" %(i)), None))
 
         self.animation_reversed = pyglet.image.Animation(self.Frames)
         self.Frames = []
@@ -128,14 +131,14 @@ class Static(Base):
         self.random = random
         self.get_random_opacity()
         self.index = 0
-        self.Sprites = [pyglet.image.load("images\\cameras\\misc\\static\\0.png"),
-                        pyglet.image.load("images\\cameras\\misc\\static\\1.png"),
-                        pyglet.image.load("images\\cameras\\misc\\static\\2.png"),
-                        pyglet.image.load("images\\cameras\\misc\\static\\3.png"),
-                        pyglet.image.load("images\\cameras\\misc\\static\\4.png"),
-                        pyglet.image.load("images\\cameras\\misc\\static\\5.png"),
-                        pyglet.image.load("images\\cameras\\misc\\static\\6.png"),
-                        pyglet.image.load("images\\cameras\\misc\\static\\7.png")]
+        self.Sprites = [pyDLASYIAS.assets.load("images\\cameras\\misc\\static\\0.png"),
+                        pyDLASYIAS.assets.load("images\\cameras\\misc\\static\\1.png"),
+                        pyDLASYIAS.assets.load("images\\cameras\\misc\\static\\2.png"),
+                        pyDLASYIAS.assets.load("images\\cameras\\misc\\static\\3.png"),
+                        pyDLASYIAS.assets.load("images\\cameras\\misc\\static\\4.png"),
+                        pyDLASYIAS.assets.load("images\\cameras\\misc\\static\\5.png"),
+                        pyDLASYIAS.assets.load("images\\cameras\\misc\\static\\6.png"),
+                        pyDLASYIAS.assets.load("images\\cameras\\misc\\static\\7.png")]
 
     def get_random_opacity(self, dt=0):
         self.opacity = random.randint(self.opacity_min, self.opacity_max)
@@ -166,10 +169,10 @@ class Camera(Base):
         else:
             self.pressed = True
         self.name = name
-        self.text = cocos.sprite.Sprite(pyglet.image.load(img), (img_pos[0] + 7.5, img_pos[1] + 7.5))
+        self.text = cocos.sprite.Sprite(pyDLASYIAS.assets.load(img), (img_pos[0] + 7.5, img_pos[1] + 7.5))
         self.text._set_anchor((0, 0))
-        self.Sprites = [pyglet.image.load("images\\ui\\button\\camera\\0.png"),
-                        pyglet.image.load("images\\ui\\button\\camera\\1.png")]
+        self.Sprites = [pyDLASYIAS.assets.load("images\\ui\\button\\camera\\0.png"),
+                        pyDLASYIAS.assets.load("images\\ui\\button\\camera\\1.png")]
 
     def draw(self):
         super().draw()
@@ -212,42 +215,42 @@ class Door(Base):
         if not self.isRightDoor:
             for i in range(0, 16):
                 if i != 15:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\left\\%s.png" %(i)), 0.025))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\office\\doors\\left\\%s.png" %(i)), 0.025))
                 else:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\left\\%s.png" %(i)), None))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\office\\doors\\left\\%s.png" %(i)), None))
 
             self.animation_normal = pyglet.image.Animation(self.Frames)
             self.Frames = []
 
             for i in reversed(range(0, 16)):
                 if i != 0:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\left\\%s.png" %(i)), 0.025))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\office\\doors\\left\\%s.png" %(i)), 0.025))
                 else:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\left\\%s.png" %(i)), None))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\office\\doors\\left\\%s.png" %(i)), None))
 
             self.animation_reversed = pyglet.image.Animation(self.Frames)
 
-            super().__init__(pyglet.image.load("images\\office\\doors\\left\\0.png"), img_pos)
+            super().__init__(pyDLASYIAS.assets.load("images\\office\\doors\\left\\0.png"), img_pos)
 
         else:
             for i in range(0, 16):
                 if i != 15:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\right\\%s.png" %(i)), 0.025))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\office\\doors\\right\\%s.png" %(i)), 0.025))
                 else:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\right\\%s.png" %(i)), None))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\office\\doors\\right\\%s.png" %(i)), None))
 
             self.animation_normal = pyglet.image.Animation(self.Frames)
             self.Frames = []
 
             for i in reversed(range(0, 16)):
                 if i != 0:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\right\\%s.png" %(i)), 0.025))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\office\\doors\\right\\%s.png" %(i)), 0.025))
                 else:
-                    self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\doors\\right\\%s.png" %(i)), None))
+                    self.Frames.append(pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\office\\doors\\right\\%s.png" %(i)), None))
 
             self.animation_reversed = pyglet.image.Animation(self.Frames)
 
-            super().__init__(pyglet.image.load("images\\office\\doors\\right\\0.png"), img_pos)
+            super().__init__(pyDLASYIAS.assets.load("images\\office\\doors\\right\\0.png"), img_pos)
 
     def update(self, dt=0):
         super().update(dt)
@@ -319,17 +322,17 @@ class Button(Base):
         self.cooldown = False
 
         if not self.isRightButton:
-            self.Sprite = {"0" : pyglet.image.load("images\\office\\button\\left\\0.png"),
-                           "d" : pyglet.image.load("images\\office\\button\\left\\d.png"),
-                           "l" : pyglet.image.load("images\\office\\button\\left\\l.png"),
-                           "dl" : pyglet.image.load("images\\office\\button\\left\\dl.png")}
+            self.Sprite = {"0" : pyDLASYIAS.assets.load("images\\office\\button\\left\\0.png"),
+                           "d" : pyDLASYIAS.assets.load("images\\office\\button\\left\\d.png"),
+                           "l" : pyDLASYIAS.assets.load("images\\office\\button\\left\\l.png"),
+                           "dl" : pyDLASYIAS.assets.load("images\\office\\button\\left\\dl.png")}
             super().__init__(self.Sprite["0"], img_pos)
 
         else:
-            self.Sprite = {"0" : pyglet.image.load("images\\office\\button\\right\\0.png"),
-                           "d" : pyglet.image.load("images\\office\\button\\right\\d.png"),
-                           "l" : pyglet.image.load("images\\office\\button\\right\\l.png"),
-                           "dl" : pyglet.image.load("images\\office\\button\\right\\dl.png")}
+            self.Sprite = {"0" : pyDLASYIAS.assets.load("images\\office\\button\\right\\0.png"),
+                           "d" : pyDLASYIAS.assets.load("images\\office\\button\\right\\d.png"),
+                           "l" : pyDLASYIAS.assets.load("images\\office\\button\\right\\l.png"),
+                           "dl" : pyDLASYIAS.assets.load("images\\office\\button\\right\\dl.png")}
             super().__init__(self.Sprite["0"], img_pos)
 
     def buttonPress(self, button, state):
@@ -405,7 +408,7 @@ class Fan(Base):
         self.isMovable = True
 
         for i in range(0, 3):
-                self.Frames.append(pyglet.image.AnimationFrame(pyglet.image.load("images\\office\\fan\\%s.png" %(i)), 0.025))
+                self.Frames.append(pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\office\\fan\\%s.png" %(i)), 0.025))
 
         self.animation = pyglet.image.Animation(self.Frames)
 
@@ -417,13 +420,13 @@ class Animation(Base):
         self.isMovable = isMovable
         self.Frames = []
         for i in range(0, max_number + 1):
-            self.Frames.append(pyglet.image.load("%s\\%s.png" %(image_path, str(i))))
+            self.Frames.append(pyDLASYIAS.assets.load("%s\\%s.png" %(image_path, str(i))))
 
         self.animation = pyglet.image.Animation.from_image_sequence(self.Frames, frame_time, looping)
         self.Frames = []
 
         for i in reversed(range(0, max_number + 1)):
-            self.Frames.append(pyglet.image.load("%s\\%s.png" %(image_path, str(i))))
+            self.Frames.append(pyDLASYIAS.assets.load("%s\\%s.png" %(image_path, str(i))))
 
         self.animation_reversed = pyglet.image.Animation.from_image_sequence(self.Frames, frame_time, looping)
         self.Frames = []

@@ -1,5 +1,4 @@
-'''To-Do launcher.'''
-import pyDLASYIAS
+#!/usr/bin/env python3
 import cocos
 import pyglet
 import pygame.mixer
@@ -12,6 +11,10 @@ from pyglet.gl import *
 from pyglet.gl.glu import *
 from cocos.director import director
 from cocos.scenes import *
+
+sys.setrecursionlimit(25000)
+
+import pyDLASYIAS
 import pyDLASYIAS.gameObjects as gameObjects
 
 pyglet.font.add_file('FNAF.ttf')
@@ -24,99 +27,99 @@ class Intro(pyDLASYIAS.scenes.Base):
 
     def setup(self):
 
-        self.Frames = [pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\newspaper-0.png"), 1),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-0.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-1.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\newspaper-0.png"), 0.35),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-2.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-3.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\b-1.png"), 0.35),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-4.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\itsme-0.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-5.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\itsme-1.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\b-0.png"), 0.50),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-6.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-7.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\crying-0.png"), 0.10),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-1.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\stage-0.png"), 0.15),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-2.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-3.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\stage-0.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-4.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-5.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\r-0.png"), 0.15),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-6.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-7.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\r-0.png"), 0.07),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\r-1.png"), 0.04),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-1.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-2.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-3.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-4.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-5.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-6.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-7.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-1.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-2.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-3.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-4.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-5.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\newspaper-1.png"), 0.10),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-6.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\newspaper-2.png"), 0.10),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-7.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\newspaper-3.png"), 0.10),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-0.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\c-0.png"), 0.15),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-1.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-2.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\itsme-1.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\itsme-0.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-3.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-4.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-5.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-6.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-7.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-0.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-1.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\gbear-0.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-2.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-3.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-4.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-5.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-6.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\itsme-2.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\crying-0.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-7.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-0.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-1.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\stuffed.png"), 0.35),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-3.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\stuffed.png"), 0.17),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-4.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-5.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\b-2.png"), 0.08),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-6.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-7.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\b-5.png"), 0.25),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\stuffed.png"), 0.14),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-0.png"), 0.06),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-1.png"), 0.06),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-2.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-3.png"), 0.06),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-4.png"), 0.05),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-5.png"), 0.06),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-6.png"), 0.06),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-7.png"), 0.07),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-0.png"), 0.08),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-1.png"), 0.09),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-2.png"), 0.10),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-3.png"), 0.11),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-4.png"), 0.12),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\intro\\static-5.png"), 0.13),
-                       pyglet.image.AnimationFrame(pyglet.image.load("images\\cameras\\misc\\black.png"), None)]
+        self.Frames = [pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\newspaper-0.png"), 1),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-0.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-1.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\newspaper-0.png"), 0.35),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-2.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-3.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\b-1.png"), 0.35),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-4.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\itsme-0.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-5.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\itsme-1.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\b-0.png"), 0.50),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-6.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-7.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\crying-0.png"), 0.10),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-1.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\stage-0.png"), 0.15),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-2.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-3.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\stage-0.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-4.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-5.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\r-0.png"), 0.15),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-6.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-7.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\r-0.png"), 0.07),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\r-1.png"), 0.04),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-1.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-2.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-3.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-4.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-5.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-6.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-7.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-1.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-2.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-3.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-4.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-5.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\newspaper-1.png"), 0.10),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-6.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\newspaper-2.png"), 0.10),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-7.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\newspaper-3.png"), 0.10),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-0.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\c-0.png"), 0.15),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-1.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-2.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\itsme-1.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\itsme-0.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-3.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-4.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-5.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-6.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-7.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-0.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-1.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\gbear-0.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-2.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-3.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-4.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-5.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-6.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\itsme-2.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\crying-0.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-7.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-0.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-1.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\stuffed.png"), 0.35),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-3.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\stuffed.png"), 0.17),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-4.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-5.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\b-2.png"), 0.08),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-6.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-7.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\b-5.png"), 0.25),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\stuffed.png"), 0.14),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-0.png"), 0.06),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-1.png"), 0.06),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-2.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-3.png"), 0.06),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-4.png"), 0.05),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-5.png"), 0.06),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-6.png"), 0.06),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-7.png"), 0.07),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-0.png"), 0.08),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-1.png"), 0.09),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-2.png"), 0.10),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-3.png"), 0.11),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-4.png"), 0.12),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\intro\\static-5.png"), 0.13),
+                       pyglet.image.AnimationFrame(pyDLASYIAS.assets.load("images\\cameras\\misc\\black.png"), None)]
 
         self.animation = pyglet.image.Animation(self.Frames)
 
@@ -170,6 +173,9 @@ class Main_Menu(pyDLASYIAS.scenes.Base):
 
     def enter_custom_night(self):
         director.run(custom_night)
+
+    def on_enter(self):
+        super().on_enter()
 
     def update(self, dt=0):
         super().update(dt)
@@ -252,34 +258,34 @@ class Custom_Night(pyDLASYIAS.scenes.Base):
         self.label_chicken_level = cocos.text.Label(str(self.chicken_level), (792, 255), font_size=24, font_name="Fnaf UI")
         self.label_fox_level = cocos.text.Label(str(self.fox_level), (1072, 255), font_size=24, font_name="Fnaf UI")
 
-        self.bear_sprite = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\animatronics\\b.png"), (128, 346), anchor=(0,0))
-        self.rabbit_sprite = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\animatronics\\r.png"), (413, 346), anchor=(0,0))
-        self.chicken_sprite = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\animatronics\\c.png"), (692, 346), anchor=(0,0))
-        self.fox_sprite = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\animatronics\\f.png"), (967, 346), anchor=(0,0))
+        self.bear_sprite = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\animatronics\\b.png"), (128, 346), anchor=(0,0))
+        self.rabbit_sprite = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\animatronics\\r.png"), (413, 346), anchor=(0,0))
+        self.chicken_sprite = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\animatronics\\c.png"), (692, 346), anchor=(0,0))
+        self.fox_sprite = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\animatronics\\f.png"), (967, 346), anchor=(0,0))
 
-        self.button_left_bear = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\buttons\\0.png"), (122,250), anchor=(0,0))
-        self.button_right_bear = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\buttons\\1.png"), (311,250), anchor=(0,0))
+        self.button_left_bear = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\0.png"), (122,250), anchor=(0,0))
+        self.button_right_bear = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\1.png"), (311,250), anchor=(0,0))
 
-        self.button_left_rabbit = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\buttons\\0.png"), (406,250), anchor=(0,0))
-        self.button_right_rabbit = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\buttons\\1.png"), (593,250), anchor=(0,0))
+        self.button_left_rabbit = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\0.png"), (406,250), anchor=(0,0))
+        self.button_right_rabbit = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\1.png"), (593,250), anchor=(0,0))
 
-        self.button_left_chicken = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\buttons\\0.png"), (690,250), anchor=(0,0))
-        self.button_right_chicken = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\buttons\\1.png"), (876,250), anchor=(0,0))
+        self.button_left_chicken = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\0.png"), (690,250), anchor=(0,0))
+        self.button_right_chicken = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\1.png"), (876,250), anchor=(0,0))
 
-        self.button_left_fox = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\buttons\\0.png"), (969,250), anchor=(0,0))
-        self.button_right_fox = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\buttons\\1.png"), (1154,250), anchor=(0,0))
+        self.button_left_fox = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\0.png"), (969,250), anchor=(0,0))
+        self.button_right_fox = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\1.png"), (1154,250), anchor=(0,0))
 
-        self.button_left_time = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\buttons\\0.png"), (122, 110), anchor=(0,0))
-        self.button_right_time = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\buttons\\1.png"), (311, 110), anchor=(0,0))
+        self.button_left_time = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\0.png"), (122, 110), anchor=(0,0))
+        self.button_right_time = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\1.png"), (311, 110), anchor=(0,0))
         self.label_time = cocos.text.Label(str(self.hour), (227, 125), font_size=24, font_name="Fnaf UI")
         self.label_time_title = cocos.text.Label("Hour", (122, 175), font_size=28, font_name="Fnaf UI", bold=True)
 
-        self.button_left_power = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\buttons\\0.png"), (406, 110), anchor=(0,0))
-        self.button_right_power = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\buttons\\1.png"), (593, 110), anchor=(0,0))
+        self.button_left_power = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\0.png"), (406, 110), anchor=(0,0))
+        self.button_right_power = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\1.png"), (593, 110), anchor=(0,0))
         self.label_power = cocos.text.Label(str(self.power), (510, 125), font_size=24, font_name="Fnaf UI")
         self.label_power_title = cocos.text.Label("Power", (406, 175), font_size=28, font_name="Fnaf UI", bold=True)
 
-        self.button_ready = cocos.sprite.Sprite(pyglet.image.load("images\\custom\\buttons\\2.png"), (1044, 117), anchor=(0,0))
+        self.button_ready = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\2.png"), (1044, 117), anchor=(0,0))
         self.back = Menu_Item("Back", (16, 16), self.go_back, font_size=16, font_name="Fnaf UI")
 
         self.add(self.label_custom, z=1)
@@ -378,7 +384,7 @@ class Custom_Night(pyDLASYIAS.scenes.Base):
                                  bear_level = self.bear_level, \
                                  rabbit_level = self.rabbit_level, \
                                  chicken_level = self.chicken_level, \
-                                 fox_level = self.fox_level)
+                                 fox_level = self.fox_level, menu=main_menu)
 
     def update(self, dt=0):
         super().update(dt)
@@ -390,7 +396,7 @@ class Custom_Night(pyDLASYIAS.scenes.Base):
         self.label_fox_level.element.text = str(self.fox_level)
 
 if __name__ == "__main__":
-    sys.setrecursionlimit(20000)
+    global intro, main_menu, custom_night
     director.init(autoscale=True, audio_backend="sdl", \
                   audio=None, fullscreen=False, \
                   resizable=False, vsync=True, width=1280,

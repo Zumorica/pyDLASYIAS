@@ -16,7 +16,9 @@ import pyDLASYIAS.gameObjects as gameObjects
 class Main(object):
     def __init__(self, power=100, hour=0, hours_to_seconds=86, night="pyDLASYIAS", \
                        bear_level=0, rabbit_level=0, chicken_level=0, fox_level=0, \
-                       lose_power=True, time_advance=True, ending="custom"):
+                       lose_power=True, time_advance=True, ending="custom", menu=None):
+
+        for channel in pyDLASYIAS.assets.Channel: channel.set_volume(1.0)
 
         self.usage = 1
         self.power = power
@@ -24,6 +26,7 @@ class Main(object):
         self.night = night
 
         self.window = director.window
+        self.main_menu = menu
         self.office = pyDLASYIAS.scenes.Office(self)
         self.camera = pyDLASYIAS.scenes.Camera(self)
         self.powerout = pyDLASYIAS.scenes.Powerout(self)

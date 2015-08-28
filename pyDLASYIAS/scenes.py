@@ -175,13 +175,13 @@ class Office(Base):
                 self.Game.scarejump.death_cause = "rabbit"
                 self.about_to_get_scarejumped = True
                 self.fan.kill()
-                self.background.image = pyglet.image.load("images\\office\\scarejump\\rabbit\\0.png")
+                self.background.image = pyDLASYIAS.assets.load("images\\office\\scarejump\\rabbit\\0.png")
 
             if self.Game.chicken.location == "security_office" and not self.Game.fox.status == 5:
                 self.Game.scarejump.death_cause = "chicken"
                 self.about_to_get_scarejumped = True
                 self.fan.kill()
-                self.background.image = pyglet.image.load("images\\office\\scarejump\\chicken\\0.png")
+                self.background.image = pyDLASYIAS.assets.load("images\\office\\scarejump\\chicken\\0.png")
         else:
             self.game_start = False
             pyDLASYIAS.assets.Channel[1].play(pyDLASYIAS.assets.Sounds["ambience"]["fan"], -1)
@@ -214,7 +214,8 @@ class Office(Base):
         super().update(dt)
 
         if self.Game.hour >= 6:
-            director.run(FadeTransition(self.Game.night_end, duration=1, src=self, color=(0, 0, 0)))
+            pygame.mixer.stop()
+            director.run(FadeTransition(self.Game.night_end, duration=3, src=cocos.scene.Scene(self.background, self.left_button, self.right_button, self.left_door, self.right_door), color=(0, 0, 0)))
 
         if self.Game.bear.location == "security_office" and self.moving == "right" and not self.tablet.isAnimPlaying:
             self.Game.scarejump.death_cause = "bear"
@@ -1056,10 +1057,14 @@ class Stuffed(Base):
         self.add(self.background, z=0)
         self.add(self.label, z=1)
 
+    def goBack(self, dt=0):
+        director.run(FadeTransition(self.Game.main_menu, duration=3, src=cocos.scene.Scene(cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\intro\\stuffed.png"))), color=(0, 0, 0)))
+
     def on_enter(self):
         super().on_enter()
 
         pyglet.clock.schedule(self.update)
+        pyglet.clock.schedule_once(self.goBack, delay=5)
 
     def on_exit(self):
         super().on_exit()
@@ -1078,13 +1083,13 @@ class Night_End(Base):
         self.setup()
 
     def setup(self):
-        self.redirect_now = False
+        self.redirected = False
 
         self.label = cocos.text.Label("5 AM", position=((director.window.width//2) - 32, director.window.height//2), font_size=32, font_name="Fnaf UI", bold=True)
         self.layer = cocos.layer.util_layers.ColorLayer(0, 0, 0, 255)
 
         self.add(self.layer, z=0)
-        self.add(self.label, z=0)
+        self.add(self.label, z=1)
 
     def on_enter(self):
         super().on_enter()
@@ -1094,12 +1099,10 @@ class Night_End(Base):
         if not pyDLASYIAS.assets.Channel[1].get_busy():
             pyDLASYIAS.assets.Channel[1].play(pyDLASYIAS.assets.Sounds["misc"]["6AM"], 0)
 
-            pyglet.clock.schedule_once(self.stage_2, delay=3)
-            pyglet.clock.schedule(self.update)
+        pyglet.clock.schedule_once(self.stage_2, delay=3)
 
     def on_exit(self):
         super().on_exit()
-        pyglet.clock.unschedule(self.update)
 
     def stage_2(self, dt=0):
         pyDLASYIAS.assets.Channel[2].set_volume(1.0)
@@ -1111,13 +1114,14 @@ class Night_End(Base):
         pyglet.clock.schedule_once(self.stage_3, delay=7)
 
     def stage_3(self, dt=0):
-        self.redirect_now = True
+        if not self.redirected:
+            self.redirected = True
+            director.run(FadeTransition(self.redirect, duration=1, src=cocos.scene.Scene(self.layer, self.label), color=(0, 0, 0)))
 
     def update(self, dt=0):
         pyDLASYIAS.assets.Channel[1].set_volume(1.0)
         pyDLASYIAS.assets.Channel[2].set_volume(1.0)
-        if self.redirect_now:
-            director.run(FadeTransition(self.redirect, duration=1, src=cocos.scene.Scene(self.layer, self.label), color=(0, 0, 0)))
+
 
 class Ending(Base):
     def __init__(self, ending, main_game, *args, **kwargs):
@@ -1127,9 +1131,17 @@ class Ending(Base):
         self.setup()
 
     def setup(self):
+        self.end = False
+
         self.background = gameObjects.Base("images\\ending\\%s.png"%(self.ending))
 
         self.add(self.background, z=0)
+
+    def on_mouse_press(self, x, y, button, mod):
+        if not self.end:
+            self.end = True
+            pyDLASYIAS.assets.Channel[30].fadeout(3000)
+            director.run(FadeTransition(self.Game.main_menu, duration=3, src=self, color=(0, 0, 0)))
 
     def on_enter(self):
         super().on_enter()
@@ -1138,3 +1150,11 @@ class Ending(Base):
         if not pyDLASYIAS.assets.Channel[30].get_busy():
             pyDLASYIAS.assets.Channel[30].set_volume(1.0)
             pyDLASYIAS.assets.Channel[30].play(pyDLASYIAS.assets.Sounds["misc"]["musicbox"], 0)
+
+        director.window.push_handlers(self)
+
+    def on_exit(self):
+        super().on_exit()
+        director.window.remove_handlers(self)
+        if not pyDLASYIAS.assets.Channel[30].get_busy():
+            pygame.mixer.stop()
