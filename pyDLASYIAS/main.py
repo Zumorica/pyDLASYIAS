@@ -115,4 +115,4 @@ class Main(object):
             self.hour += 1
 
         for mod in self.mods:
-            mod.on_power_calculation(dt)
+            mod.on_hour_advance(dt)
