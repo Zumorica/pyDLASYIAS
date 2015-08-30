@@ -168,7 +168,7 @@ class Main_Menu(pyDLASYIAS.scenes.Base):
         self.static = gameObjects.Static(87, 120)
         self.background = gameObjects.Base("images\\intro\\b-0.png", (0,0))
         self.custom_night = Menu_Item("Custom Night", position=(40, 128), callback=self.enter_custom_night, font_size=16, font_name="Fnaf UI")
-        self.mod_list = Menu_Item("Mods", position=(40, 160), callback=self.enter_mods_list, font_size = 16, font_name="Fnaf UI")
+        self.mod_list = Menu_Item("Mods", position=(40, 172), callback=self.enter_mods_list, font_size = 16, font_name="Fnaf UI")
 
 
         self.add(self.static, z=1)
@@ -444,7 +444,7 @@ class Mod_List(pyDLASYIAS.scenes.Base):
         self.mod_list = []
         self.active_list = cocos.cocosnode.CocosNode()
         self.back = Menu_Item("Back", (16, 16), self.go_back, font_size=16, font_name="Fnaf UI")
-        self.next = Menu_Item("Next", (256, 16), self.on_next_page, font_size=16, font_name="Fnaf UI")
+        self.next = Menu_Item("Next", (272, 16), self.on_next_page, font_size=16, font_name="Fnaf UI")
         self.previous = Menu_Item("Previous", (128, 16), self.on_previous_page, font_size=16, font_name="Fnaf UI")
         self.page_label = cocos.text.Label("Page %s / %s" %(self.page, len(self.mods) // 2), (512, 16), font_size=16, font_name="Fnaf UI")
 
