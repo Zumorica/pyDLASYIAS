@@ -16,7 +16,7 @@ import pyDLASYIAS.gameObjects as gameObjects
 class Main(object):
     def __init__(self, power=100, hour=0, hours_to_seconds=86, night="pyDLASYIAS", \
                        bear_level=0, rabbit_level=0, chicken_level=0, fox_level=0, \
-                       lose_power=True, time_advance=True, ending="custom", menu=None):
+                       lose_power=True, time_advance=True, ending="custom", menu=None, mods=[]):
 
         for channel in pyDLASYIAS.assets.Channel: channel.set_volume(1.0)
 
@@ -24,6 +24,11 @@ class Main(object):
         self.power = power
         self.hour = hour
         self.night = night
+        self.mods = []
+
+        for mod in mods:
+            if mod.ENABLED:
+                self.mods.append(mod.Mod(self))
 
         self.window = director.window
         self.main_menu = menu
@@ -102,6 +107,12 @@ class Main(object):
 
                 pyglet.clock.schedule_once(self.power_calculations, random.choice([1.9, 2.9]), old_usage=4)
 
+            for mod in self.mods:
+                mod.on_power_calculation(dt)
+
     def next_hour(self, dt=0):
         if self.hour != 6:
             self.hour += 1
+
+        for mod in self.mods:
+            mod.on_power_calculation(dt)

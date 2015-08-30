@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
+import glob
+import importlib
 import cocos
 import pyglet
 import pygame.mixer
+import platform
 import random
 import cocos
 import time
@@ -164,15 +167,21 @@ class Main_Menu(pyDLASYIAS.scenes.Base):
     def setup(self):
         self.static = gameObjects.Static(87, 120)
         self.background = gameObjects.Base("images\\intro\\b-0.png", (0,0))
-        self.custom_night = Menu_Item("Custom Night", position=(40, 120), callback=self.enter_custom_night, font_size=16, font_name="Fnaf UI")
+        self.custom_night = Menu_Item("Custom Night", position=(40, 128), callback=self.enter_custom_night, font_size=16, font_name="Fnaf UI")
+        self.mod_list = Menu_Item("Mods", position=(40, 160), callback=self.enter_mods_list, font_size = 16, font_name="Fnaf UI")
+
 
         self.add(self.static, z=1)
         self.add(self.background, z=0)
         self.add(self.custom_night, z=2)
+        self.add(self.mod_list, z=2)
         self.add(Menu_Title(position=(32, director.window.height - 64), font_size=32, font_name="Fnaf UI"))
 
     def enter_custom_night(self):
         director.run(custom_night)
+
+    def enter_mods_list(self):
+        director.run(mod_list)
 
     def on_enter(self):
         super().on_enter()
@@ -181,9 +190,12 @@ class Main_Menu(pyDLASYIAS.scenes.Base):
         super().update(dt)
 
 class Menu_Item(cocos.text.Label):
-    def __init__(self, text='', position=(0, 0), callback=None, **kwargs):
+    def __init__(self, text='', position=(0, 0), callback=None, rect=None, **kwargs):
         super().__init__(text, position, **kwargs)
-        self.rect = cocos.rect.Rect(position[0], position[1], self.element.content_width, self.element.content_height)
+        if rect == None:
+            self.rect = cocos.rect.Rect(position[0], position[1], self.element.content_width, self.element.content_height)
+        else:
+            self.rect = rect
         self.callback = callback
         self.isSelected = False
 
@@ -211,7 +223,7 @@ class Menu_Item(cocos.text.Label):
 class Menu_Title(cocos.text.Label):
     def __init__(self, position=(0, 0), **kwargs):
         super().__init__(">pyDLASYIAS", position, **kwargs)
-        self.rect = cocos.rect.Rect(position[0], position[1], self.element.content_width, self.element.content_height)
+        self.rect = cocos.rect.Rect(self.position[0], self.position[1], self.element.content_width, self.element.content_height)
         self.isSelected = False
 
     def on_enter(self):
@@ -250,6 +262,7 @@ class Custom_Night(pyDLASYIAS.scenes.Base):
         self.rabbit_level = 0
         self.chicken_level = 0
         self.fox_level = 0
+        self.mods = False
 
         self.label_custom = cocos.text.Label("Custom Night", (64, 624), font_size=32, font_name="Fnaf UI", bold=True)
 
@@ -285,6 +298,11 @@ class Custom_Night(pyDLASYIAS.scenes.Base):
         self.label_power = cocos.text.Label(str(self.power), (510, 125), font_size=24, font_name="Fnaf UI")
         self.label_power_title = cocos.text.Label("Power", (406, 175), font_size=28, font_name="Fnaf UI", bold=True)
 
+        self.button_left_mod = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\0.png"), (690, 110), anchor=(0,0))
+        self.button_right_mod = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\1.png"), (876, 110), anchor=(0,0))
+        self.label_mod_title = cocos.text.Label("Enable Mods", (690, 175), font_size=28, font_name="Fnaf UI", bold=True)
+        self.label_mods = cocos.text.Label(str(self.mods), (792, 125), font_size=18, font_name="Fnaf UI")
+
         self.button_ready = cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\custom\\buttons\\2.png"), (1044, 117), anchor=(0,0))
         self.back = Menu_Item("Back", (16, 16), self.go_back, font_size=16, font_name="Fnaf UI")
 
@@ -306,12 +324,13 @@ class Custom_Night(pyDLASYIAS.scenes.Base):
         self.add(self.button_left_chicken, z=1)
         self.add(self.button_right_chicken, z=1)
         self.add(self.button_left_fox, z=1)
-        self.add(self.button_right_fox, z=1)
-        self.add(self.button_left_time, z=1)
-        self.add(self.button_right_time, z=1)
         self.add(self.label_time, z=1)
         self.add(self.button_left_power, z=1)
         self.add(self.button_right_power, z=1)
+        self.add(self.button_left_mod, z=1)
+        self.add(self.button_right_mod, z=1)
+        self.add(self.label_mod_title, z=1)
+        self.add(self.label_mods, z=1)
         self.add(self.label_power, z=1)
         self.add(self.button_ready, z=1)
         self.add(self.back, z=1)
@@ -378,13 +397,27 @@ class Custom_Night(pyDLASYIAS.scenes.Base):
             if self.fox_level != 20:
                 self.fox_level += 1
 
+        if self.button_left_mod.contains(x, y):
+            if self.mods:
+                self.mods = False
+
+        if self.button_right_mod.contains(x, y):
+            if not self.mods:
+                self.mods = True
+
         if self.button_ready.contains(x, y):
-            pyDLASYIAS.main.Main(power=self.power, hour=self.hour, \
-                                 night="Custom Night", ending="custom", \
-                                 bear_level = self.bear_level, \
-                                 rabbit_level = self.rabbit_level, \
-                                 chicken_level = self.chicken_level, \
-                                 fox_level = self.fox_level, menu=main_menu)
+            global mods
+            if not self.mods:
+                mods = []
+            else:
+                mods = mods
+
+            self.Game = pyDLASYIAS.main.Main(power=self.power, hour=self.hour, \
+                                                                        night="Custom Night", ending="custom", \
+                                                                        bear_level = self.bear_level, \
+                                                                        rabbit_level = self.rabbit_level, \
+                                                                        chicken_level = self.chicken_level, \
+                                                                        fox_level = self.fox_level, menu=main_menu, mods=mods)
 
     def update(self, dt=0):
         super().update(dt)
@@ -394,9 +427,123 @@ class Custom_Night(pyDLASYIAS.scenes.Base):
         self.label_rabbit_level.element.text = str(self.rabbit_level)
         self.label_chicken_level.element.text = str(self.chicken_level)
         self.label_fox_level.element.text = str(self.fox_level)
+        self.label_mods.element.text = str(self.mods)
+
+class Mod_List(pyDLASYIAS.scenes.Base):
+    def __init__(self):
+        super().__init__(None)
+
+        self.setup()
+
+    def go_back(self):
+        director.run(main_menu)
+
+    def setup(self):
+        self.page = 0
+        self.mods = mods
+        self.mod_list = []
+        self.active_list = cocos.cocosnode.CocosNode()
+        self.back = Menu_Item("Back", (16, 16), self.go_back, font_size=16, font_name="Fnaf UI")
+        self.next = Menu_Item("Next", (256, 16), self.on_next_page, font_size=16, font_name="Fnaf UI")
+        self.previous = Menu_Item("Pevious", (128, 16), self.on_next_page, font_size=16, font_name="Fnaf UI")
+        self.page_label = cocos.text.Label("Page %s / %s" %(self.page, len(self.mod_list) // 2), (512, 16), font_size=16, font_name="Fnaf UI")
+
+
+        for num, mod in enumerate(self.mods):
+            if num % 2 == 0:
+                self.mod_list.append(Mod_Listed(mod, (64, director.window.height - 264)))
+            else:
+                self.mod_list.append(Mod_Listed(mod, (64, 128)))
+
+        self.add(self.active_list, z=2)
+        self.add(cocos.layer.util_layers.ColorLayer(0, 0, 0, 255), z=0)
+        self.add(gameObjects.Static(), z=1)
+        self.add(self.back, z=2)
+        self.add(self.next, z=2)
+        self.add(self.previous, z=2)
+        self.add(self.page_label, z=2)
+
+        self.active_list.add(self.mod_list[self.page * 2])
+        self.active_list.add(self.mod_list[(self.page * 2) + 1])
+
+    def on_next_page(self, dt=0):
+        if not self.page + 1 == len(self.mod_list) / 2:
+            self.page += 1
+            self.page_label.element.text = "Page %s / %s" %(self.page, len(self.mod_list) // 2)
+            for children in self.active_list.get_children():
+                children.kill()
+
+            self.active_list.add(self.mod_list[self.page * 2])
+            self.active_list.add(self.mod_list[(self.page * 2) + 1])
+
+    def on_previous_page(self, dt=0):
+        if not self.page == 0:
+            self.page -= 1
+            self.page_label.element.text = "Page %s / %s" %(self.page, len(self.mod_list) // 2)
+            for children in self.active_list.get_children():
+                children.kill()
+
+            self.active_list.add(self.mod[self.page * 2])
+            self.active_list.add(self.mod[(self.page * 2) + 1])
+
+
+class Mod_Listed(gameObjects.Base):
+    def __init__(self, mod, img_pos):
+        self.mod = mod
+        try:
+            super().__init__(self.mod.IMAGE, img_pos)
+
+        except:
+            super().__init__(pyDLASYIAS.assets.load("images\\modding\\no_image.png"), img_pos)
+
+        self.setup()
+
+    def on_enter(self):
+        super().on_enter()
+        pyglet.clock.schedule(self.update)
+
+    def on_exit(self):
+        super().on_exit()
+        pyglet.clock.unschedule(self.update)
+
+    def on_press(self):
+        if self.mod.ENABLED:
+            self.mod.ENABLED = False
+        else:
+            self.mod.ENABLED = True
+
+    def update(self, dt=0):
+        if self.enabled.isSelected:
+            self.enabled_bool.element.text = " " + str(self.mod.ENABLED)
+        else:
+            self.enabled_bool.element.text = str(self.mod.ENABLED)
+
+    def setup(self):
+        self.title = cocos.text.Label(self.mod.TITLE, position=(self.width + 20, self.height - 16), font_size=24, font_name="Fnaf UI")
+        self.description = cocos.text.Label(self.mod.DESCRIPTION, position=(self.width + 20,  + self.height - 64), font_size=12, font_name="Fnaf UI", multiline=True, width=director.window.width - self.width - 20)
+        self.author = cocos.text.Label("By " + self.mod.AUTHOR, position=(self.width + self.title.element.content_width + 40, self.height - 18), font_size=18, font_name="Fnaf UI")
+        self.enabled = Menu_Item("Enabled: ", callback=self.on_press, position = (self.width + 20, 16), font_size=16, font_name="Fnaf UI")
+        self.enabled_bool = cocos.text.Label(str(self.mod.ENABLED), position = (self.width + 20 + self.enabled.element.content_width, 16), font_size=12, font_name="Fnaf UI")
+
+        self.enabled.rect = cocos.rect.Rect(self.position[0] + self.width + 20, self.position[1] +  16, self.enabled.element.content_width, self.enabled.element.content_height)
+
+        if self.title.element.content_width > self.description.element.content_width:
+            self.layer = cocos.layer.util_layers.ColorLayer(0, 0, 0, 255, width=self.width + self.title.element.content_width + self.author.element.content_width + 60 + 64, height = 264)
+        else:
+            self.layer = cocos.layer.util_layers.ColorLayer(0, 0, 0, 255, width=self.width + self.description.element.content_width + 64, height = 264)
+
+        self.layer.position = (-32, -32)
+
+        self.add(self.layer, z=-1)
+        self.add(self.title, z=4)
+        self.add(self.description, z=4)
+        self.add(self.author, z=4)
+        self.add(self.enabled, z=4)
+        self.add(self.enabled_bool, z=4)
+
 
 if __name__ == "__main__":
-    global intro, main_menu, custom_night
+    global intro, main_menu, custom_night, mods
     director.init(autoscale=True, audio_backend="sdl", \
                   audio=None, fullscreen=False, \
                   resizable=False, vsync=True, width=1280,
@@ -406,4 +553,24 @@ if __name__ == "__main__":
     intro = Intro()
     main_menu = Main_Menu()
     custom_night = Custom_Night()
+    mods = []
+    if platform.system == "Windows":
+        pass
+        # TO-DO.
+        # for mod in glob.iglob("./mods//*//*.py"):
+        #     split = mod.split("/")
+        #     loaded = __import__(split[1] + "." + split[2] + "." + split[3].replace(".py", ""))
+        #     print(split[1] + "." + split[2] + "." + split[3].replace(".py", ""))
+        #     if split[3] != "__init__.py":
+        #         exec("mods.append(loaded.%s.%s.Mod(self))" %(split[2], split[3]))
+        #         print(mods[0])
+    else:
+        for mod in glob.iglob("./mods//*//*.py"):
+            split = mod.split("/")
+            loaded = __import__(split[1] + "." + split[2] + "." + split[3].replace(".py", ""))
+            if split[3] != "__init__.py":
+                exec("mods.append(loaded.%s.%s)" %(split[2], split[3].replace(".py", "")))
+
+    mod_list = Mod_List()
+
     director.run(intro)

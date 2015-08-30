@@ -87,6 +87,9 @@ class Office(Base):
         self.add(self.tablet, z=7)
         self.add(self.fan, z=1)
 
+        for mod in self.Game.mods:
+            mod.on_office_setup(self)
+
         @pyDLASYIAS.gameObjects.Button.EventDispatcher.event
         def on_button_press(isRightButton, button, state):
             if not isRightButton:
@@ -205,13 +208,19 @@ class Office(Base):
         pyDLASYIAS.assets.Channel[8].set_volume(0.0)
         pyDLASYIAS.assets.Channel[21].set_volume(0.0)
         pyDLASYIAS.assets.Channel[10].set_volume(0.0)
-
+        for mod in self.Game.mods:
+            mod.on_office_enter()
 
     def on_exit(self):
         super().on_exit()
+        for mod in self.Game.mods:
+            mod.on_office_exit()
 
     def update(self, dt=0):
         super().update(dt)
+
+        for mod in self.Game.mods:
+            mod.on_office_update_begin(dt)
 
         if self.Game.hour >= 6:
             pygame.mixer.stop()
@@ -334,6 +343,9 @@ class Office(Base):
                 else:
                     self.right_discovered = False
                     self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["office"]["0"], pyDLASYIAS.assets.Backgrounds["office"]["2"]])
+
+        for mod in self.Game.mods:
+            mod.on_office_update_end(dt)
 
 class Camera(Base):
     def __init__(self, main_game, *args, **kwargs):
@@ -582,6 +594,9 @@ class Camera(Base):
             if self.isActive:
                 director.run(self.Game.office)
 
+        for mod in self.Game.mods:
+            mod.on_camera_setup(self)
+
         return True
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -606,9 +621,19 @@ class Camera(Base):
                                                           pyDLASYIAS.assets.Sounds["camera"]["garble3"]]), -1)
 
         self.Game.fox.cooldown = True
+        for mod in self.Game.mods:
+            mod.on_camera_enter()
+
+    def on_exit(self):
+        super().on_exit()
+        for mod in self.Game.mods:
+            mod.on_camera_exit()
 
     def update(self, dt=0):
         super().update(dt)
+
+        for mod in self.Game.mods:
+            mod.on_camera_update_begin(dt)
 
         try:
             if self.Game.fox.status >= 4 and self.fox_animation._frame_index == 26 and self.fox_animation in self.get_children():
@@ -796,6 +821,9 @@ class Camera(Base):
         else:
             self.background.image = pyDLASYIAS.assets.Backgrounds["camera"]["cam6"]["0"]
 
+        for mod in self.Game.mods:
+            mod.on_camera_update_end()
+
 class Powerout(Base):
     def __init__(self, main_game, *args, **kwargs):
         super().__init__(main_game, *args, **kwargs)
@@ -814,6 +842,9 @@ class Powerout(Base):
         self.add(self.background, z=0)
         self.add(self.left_door, z=1)
         self.add(self.right_door, z=1)
+
+        for mod in self.Game.mods:
+            mod.on_powerout_setup(self)
 
     def on_enter(self):
         super().on_enter()
@@ -848,6 +879,14 @@ class Powerout(Base):
         else:
             pyglet.clock.schedule_once(self.stage_2, random.randint(4, 21))
 
+        for mod in self.Game.mods:
+            mod.on_powerout_enter()
+
+    def on_exit(self):
+        super().on_exit()
+        for mod in self.Game.mods:
+            mod.on_powerout_exit()
+
     def stage_2(self, dt=0):
         self.stage += 1
 
@@ -858,6 +897,8 @@ class Powerout(Base):
         else:
             pyDLASYIAS.assets.Channel[30].play(pyDLASYIAS.assets.Sounds["misc"]["musicbox"])
             pyDLASYIAS.assets.Channel[30].fadeout(26000)
+        for mod in self.Game.mods:
+            mod.on_powerout_stage_2
 
     def stage_3(self, dt=0):
         pygame.mixer.stop()
@@ -878,6 +919,8 @@ class Powerout(Base):
         self.right_door.color = (255, 255, 255)
 
         pyglet.clock.schedule_once(self.change_scene, delay=random.randint(2, 7))
+        for mod in self.Game.mods:
+            mod.on_powerout_stage_3()
 
     def change_scene(self, dt=0):
         self.stage += 1
@@ -895,6 +938,8 @@ class Powerout(Base):
 
     def update(self, dt=0):
         super().update(dt)
+        for mod in self.Game.mods:
+            mod.on_powerout_update_begin(dt)
         if self.stage == 2:
             self.background.image = random.choice([pyDLASYIAS.assets.Backgrounds["powerout"]["0"], pyDLASYIAS.assets.Backgrounds["powerout"]["0"], pyDLASYIAS.assets.Backgrounds["powerout"]["0"], pyDLASYIAS.assets.Backgrounds["powerout"]["1"]])
             if not pyDLASYIAS.assets.Channel[30].get_busy():
@@ -959,6 +1004,9 @@ class Powerout(Base):
                     pass
             self.moving = "right"
 
+        for mod in self.Game.mods:
+            mod.on_powerout_update_end(dt)
+
 class Scarejump(Base):
     def __init__(self, main_game, *args, **kwargs):
         super().__init__(main_game, *args, **kwargs)
@@ -974,6 +1022,8 @@ class Scarejump(Base):
         self.rabbit_scarejump = gameObjects.Animation("images\\office\\scarejump\\rabbit", 10, 0.030, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
         self.chicken_scarejump = gameObjects.Animation("images\\office\\scarejump\\chicken", 12, 0.030, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
         self.fox_scarejump = gameObjects.Animation("images\\office\\scarejump\\fox", 18, 0.030, img_pos=(0,0), looping=False, isMovable=True, autostart=False)
+        for mod in self.Game.mods:
+            mod.on_scarejump_setup(self)
 
     def on_enter(self):
         pygame.mixer.stop()
@@ -1007,17 +1057,16 @@ class Scarejump(Base):
             self.fox_scarejump.play()
             pyglet.clock.schedule_once(self.static_end, delay=0.06*18)
 
-        else:
-            raise ValueError("value of death_cause variable unknown")
-
-        pyglet.clock.schedule(self.update)
-        self.Game.bear.isActive = False
-        self.Game.rabbit.isActive = False
-        self.Game.chicken.isActive = False
-        self.Game.fox.isActive = False
-
         pyDLASYIAS.assets.Channel[11].set_volume(1.0)
         pyDLASYIAS.assets.Channel[11].play(pyDLASYIAS.assets.Sounds["scary"]["XSCREAM"])
+
+        for mod in self.Game.mods:
+            mod.on_powerout_enter()
+
+    def on_exit(self):
+        super().on_exit()
+        for mod in self.Game.mods:
+            mod.on_scarejump_exit()
 
     def static_end(self, dt=0):
         pygame.mixer.stop()
@@ -1030,8 +1079,13 @@ class Scarejump(Base):
 
         self.end_game_now = True
 
+        for mod in self.Game.mods:
+            mod.on_scarejump_static(dt)
+
     def update(self, dt=0):
         super().update(dt)
+        for mod in self.Game.mods:
+            mod.on_powerout_update_begin(dt)
         if not self.end_game_now and self.Game.hour >= 6:
             pyDLASYIAS.assets.Channel[11].set_volume(0.0)
             director.run(FadeTransition(self.Game.night_end, duration=1, src=cocos.scene.Scene(gameObjects.Base(self.powerout_scarejump.animation.frames[self.powerout_scarejump._frame_index].image, (0,0))), color=(0, 0, 0)))
@@ -1042,6 +1096,8 @@ class Scarejump(Base):
             director.run(FadeTransition(self.Game.stuffed, duration=3, src=cocos.scene.Scene(self.static), color=(0, 0, 0)))
 
             pyglet.clock.unschedule(self.update)
+        for mod in self.Game.mods:
+            mod.on_powerout_update_end(dt)
 
 class Stuffed(Base):
     def __init__(self, main_game, *args, **kwargs):
@@ -1057,6 +1113,9 @@ class Stuffed(Base):
         self.add(self.background, z=0)
         self.add(self.label, z=1)
 
+        for mod in self.Game.mods:
+            mod.on_stuffed_setup(self)
+
     def goBack(self, dt=0):
         director.run(FadeTransition(self.Game.main_menu, duration=3, src=cocos.scene.Scene(cocos.sprite.Sprite(pyDLASYIAS.assets.load("images\\intro\\stuffed.png"))), color=(0, 0, 0)))
 
@@ -1065,14 +1124,24 @@ class Stuffed(Base):
 
         pyglet.clock.schedule(self.update)
         pyglet.clock.schedule_once(self.goBack, delay=5)
+        for mod in self.Game.mods:
+            mod.on_stuffed_enter()
 
     def on_exit(self):
         super().on_exit()
 
         pyglet.clock.unschedule(self.update)
+        for mod in self.Game.mods:
+            mod.on_stuffed_exit()
 
     def update(self, dt=0):
+        for mod in self.Game.mods:
+            mod.on_stuffed_update_begin(dt)
+
         pygame.mixer.stop()
+
+        for mod in self.Game.mods:
+            mod.on_stuffed_update_end(dt)
 
 class Night_End(Base):
     def __init__(self, redirect, main_game, *args, **kwargs):
@@ -1091,6 +1160,9 @@ class Night_End(Base):
         self.add(self.layer, z=0)
         self.add(self.label, z=1)
 
+        for mod in self.Game.mods:
+            mod.on_night_end_setup(self)
+
     def on_enter(self):
         super().on_enter()
 
@@ -1101,8 +1173,13 @@ class Night_End(Base):
 
         pyglet.clock.schedule_once(self.stage_2, delay=3)
 
+        for mod in self.Game.mods:
+            mod.on_night_end_enter()
+
     def on_exit(self):
         super().on_exit()
+        for mod in self.Game.mods:
+            mod.on_night_end_exit()
 
     def stage_2(self, dt=0):
         pyDLASYIAS.assets.Channel[2].set_volume(1.0)
@@ -1113,15 +1190,24 @@ class Night_End(Base):
 
         pyglet.clock.schedule_once(self.stage_3, delay=7)
 
+        for mod in self.Game.mods:
+            mod.on_night_end_stage_2(dt)
+
     def stage_3(self, dt=0):
         if not self.redirected:
             self.redirected = True
             director.run(FadeTransition(self.redirect, duration=1, src=cocos.scene.Scene(self.layer, self.label), color=(0, 0, 0)))
 
+        for mod in self.Game.mods:
+            mod.on_night_end_stage_3(dt)
+
     def update(self, dt=0):
+        for mod in self.Game.mods:
+            mod.on_night_end_update_begin(dt)
         pyDLASYIAS.assets.Channel[1].set_volume(1.0)
         pyDLASYIAS.assets.Channel[2].set_volume(1.0)
-
+        for mod in self.Game.mods:
+            mod.on_night_end_update_end(dt)
 
 class Ending(Base):
     def __init__(self, ending, main_game, *args, **kwargs):
@@ -1136,6 +1222,8 @@ class Ending(Base):
         self.background = gameObjects.Base("images\\ending\\%s.png"%(self.ending))
 
         self.add(self.background, z=0)
+        for mod in self.Game.mods:
+            mod.on_ending_setup(self)
 
     def on_mouse_press(self, x, y, button, mod):
         if not self.end:
@@ -1152,9 +1240,13 @@ class Ending(Base):
             pyDLASYIAS.assets.Channel[30].play(pyDLASYIAS.assets.Sounds["misc"]["musicbox"], 0)
 
         director.window.push_handlers(self)
+        for mod in self.Game.mods:
+            mod.on_ending_enter()
 
     def on_exit(self):
         super().on_exit()
         director.window.remove_handlers(self)
         if not pyDLASYIAS.assets.Channel[30].get_busy():
             pygame.mixer.stop()
+        for mod in self.Game.mods:
+            mod.on_ending_enter()
