@@ -575,16 +575,12 @@ if __name__ == "__main__":
     main_menu = Main_Menu()
     custom_night = Custom_Night()
     mods = []
-    if platform.system == "Windows":
-        pass
-        # TO-DO.
-        # for mod in glob.iglob("./mods//*//*.py"):
-        #     split = mod.split("/")
-        #     loaded = __import__(split[1] + "." + split[2] + "." + split[3].replace(".py", ""))
-        #     print(split[1] + "." + split[2] + "." + split[3].replace(".py", ""))
-        #     if split[3] != "__init__.py":
-        #         exec("mods.append(loaded.%s.%s.Mod(self))" %(split[2], split[3]))
-        #         print(mods[0])
+    if platform.system() == "Windows":
+        for mod in glob.iglob(".\\mods\\*\\*.py"):
+            split = mod.split("\\")
+            loaded = __import__(split[1] + "." + split[2] + "." + split[3].replace(".py", ""))
+            if split[3] != "__init__.py":
+                exec("mods.append(loaded.%s.%s)" %(split[2], split[3].replace(".py", "")))
     else:
         for mod in glob.iglob("./mods//*//*.py"):
             split = mod.split("/")
