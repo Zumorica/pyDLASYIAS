@@ -445,8 +445,8 @@ class Mod_List(pyDLASYIAS.scenes.Base):
         self.active_list = cocos.cocosnode.CocosNode()
         self.back = Menu_Item("Back", (16, 16), self.go_back, font_size=16, font_name="Fnaf UI")
         self.next = Menu_Item("Next", (256, 16), self.on_next_page, font_size=16, font_name="Fnaf UI")
-        self.previous = Menu_Item("Pevious", (128, 16), self.on_next_page, font_size=16, font_name="Fnaf UI")
-        self.page_label = cocos.text.Label("Page %s / %s" %(self.page, len(self.mod_list) // 2), (512, 16), font_size=16, font_name="Fnaf UI")
+        self.previous = Menu_Item("Previous", (128, 16), self.on_previous_page, font_size=16, font_name="Fnaf UI")
+        self.page_label = cocos.text.Label("Page %s / %s" %(self.page, len(self.mods) // 2), (512, 16), font_size=16, font_name="Fnaf UI")
 
 
         for num, mod in enumerate(self.mods):
@@ -467,25 +467,43 @@ class Mod_List(pyDLASYIAS.scenes.Base):
         self.active_list.add(self.mod_list[(self.page * 2) + 1])
 
     def on_next_page(self, dt=0):
-        if not self.page + 1 == len(self.mod_list) / 2:
-            self.page += 1
-            self.page_label.element.text = "Page %s / %s" %(self.page, len(self.mod_list) // 2)
-            for children in self.active_list.get_children():
-                children.kill()
+        if (len(self.mods)//2) % 2 == 0:
+            if not self.page == len(self.mods) // 2:
+                self.page += 1
+                self.page_label.element.text = "Page %s / %s" %(self.page, len(self.mods) // 2)
+                for children in self.active_list.get_children():
+                    children.kill()
 
-            self.active_list.add(self.mod_list[self.page * 2])
-            self.active_list.add(self.mod_list[(self.page * 2) + 1])
+                self.active_list.add(self.mod_list[self.page * 2])
+                try:
+                    self.active_list.add(self.mod_list[(self.page * 2) + 1])
+                except IndexError:
+                    pass
+        else:
+            if not (self.page == len(self.mods) // 2):
+                self.page += 1
+                self.page_label.element.text = "Page %s / %s" %(self.page, len(self.mods) // 2)
+                for children in self.active_list.get_children():
+                    children.kill()
+
+                self.active_list.add(self.mod_list[self.page * 2])
+                try:
+                    self.active_list.add(self.mod_list[(self.page * 2) + 1])
+                except IndexError:
+                    pass
 
     def on_previous_page(self, dt=0):
         if not self.page == 0:
             self.page -= 1
-            self.page_label.element.text = "Page %s / %s" %(self.page, len(self.mod_list) // 2)
+            self.page_label.element.text = "Page %s / %s" %(self.page, len(self.mods) // 2)
             for children in self.active_list.get_children():
                 children.kill()
 
-            self.active_list.add(self.mod[self.page * 2])
-            self.active_list.add(self.mod[(self.page * 2) + 1])
-
+            self.active_list.add(self.mod_list[self.page * 2])
+            try:
+                self.active_list.add(self.mod_list[(self.page * 2) + 1])
+            except IndexError:
+                pass
 
 class Mod_Listed(gameObjects.Base):
     def __init__(self, mod, img_pos):
