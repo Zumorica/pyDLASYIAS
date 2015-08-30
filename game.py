@@ -464,7 +464,10 @@ class Mod_List(pyDLASYIAS.scenes.Base):
         self.add(self.page_label, z=2)
 
         self.active_list.add(self.mod_list[self.page * 2])
-        self.active_list.add(self.mod_list[(self.page * 2) + 1])
+        try:
+            self.active_list.add(self.mod_list[(self.page * 2) + 1])
+        except IndexError:
+            pass
 
     def on_next_page(self, dt=0):
         if (len(self.mods)//2) % 2 == 0:
