@@ -24,6 +24,7 @@ class Main(object):
         self.power = power
         self.hour = hour
         self.night = night
+        self.networking = False
         self.mods = []
 
         for mod in mods:

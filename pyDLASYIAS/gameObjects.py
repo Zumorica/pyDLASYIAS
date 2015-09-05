@@ -109,7 +109,10 @@ class Tablet(Base):
         def on_animation_end():
             self.opacity = 0
             self.isAnimPlaying = False
-            self.EventDispatcher.dispatch_event("on_animation_end")
+            try:
+                self.EventDispatcher.dispatch_event("on_animation_end")
+            except:
+                pass
 
     def open(self):
         self.isClosed = False
@@ -161,7 +164,7 @@ class Static(Base):
             self.image = self.Sprites[self.index]
 
 class Camera(Base):
-    def __init__(self, name, img, img_pos):
+    def __init__(self, name, img, img_pos, door_button=False):
         super().__init__("images\\ui\\button\\camera\\0.png", img_pos)
         self.isMovable = False
         if name != "cam1a":
@@ -169,7 +172,10 @@ class Camera(Base):
         else:
             self.pressed = True
         self.name = name
-        self.text = cocos.sprite.Sprite(pyDLASYIAS.assets.load(img), (img_pos[0] + 7.5, img_pos[1] + 7.5))
+        if not door_button:
+            self.text = cocos.sprite.Sprite(pyDLASYIAS.assets.load(img), (img_pos[0] + 7.5, img_pos[1] + 7.5))
+        else:
+            self.text = cocos.sprite.Sprite(pyDLASYIAS.assets.load(img), (img_pos[0], img_pos[1]))
         self.text._set_anchor((0, 0))
         self.Sprites = [pyDLASYIAS.assets.load("images\\ui\\button\\camera\\0.png"),
                         pyDLASYIAS.assets.load("images\\ui\\button\\camera\\1.png")]

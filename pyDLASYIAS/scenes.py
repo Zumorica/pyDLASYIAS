@@ -20,6 +20,7 @@ class Base(cocos.scene.Scene):
     def __init__(self, main_game, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.Game = main_game
+        self.name = "generic"
 
         self.isActive = False
 
@@ -47,6 +48,7 @@ class Office(Base):
         self.setup()
 
     def setup(self):
+        self.name = "office"
         self.moving = "left"
         self.game_start = True
         self.mouse_x = 0
@@ -354,6 +356,7 @@ class Camera(Base):
         self.setup()
 
     def setup(self):
+        self.name = "camera"
         self.active_camera = "cam1a"
         self.camera_movement = "left"
         self.random_number = 0
@@ -397,16 +400,16 @@ class Camera(Base):
         self.whiteline.isMovable = False
 
         self.CamButtons = {"cam1a" : self.cam1a,
-                           "cam1b" : self.cam1b,
-                           "cam1c" : self.cam1c,
-                           "cam2a" : self.cam2a,
-                           "cam2b" : self.cam2b,
-                           "cam3" : self.cam3,
-                           "cam4a" : self.cam4a,
-                           "cam4b" : self.cam4b,
-                           "cam5" : self.cam5,
-                           "cam6" : self.cam6,
-                           "cam7" : self.cam7}
+                                      "cam1b" : self.cam1b,
+                                      "cam1c" : self.cam1c,
+                                      "cam2a" : self.cam2a,
+                                      "cam2b" : self.cam2b,
+                                      "cam3" : self.cam3,
+                                      "cam4a" : self.cam4a,
+                                      "cam4b" : self.cam4b,
+                                      "cam5" : self.cam5,
+                                      "cam6" : self.cam6,
+                                      "cam7" : self.cam7}
 
         self.add(self.cam1a, z=5)
         self.add(self.cam1b, z=5)
@@ -831,6 +834,7 @@ class Powerout(Base):
         self.setup()
 
     def setup(self):
+        self.name = "powerout"
         self.stage = 1
         self.mouse_x = 0
         self.mouse_y = 0
@@ -1017,6 +1021,7 @@ class Scarejump(Base):
         self.setup()
 
     def setup(self):
+        self.name = "scarejump"
         self.powerout_scarejump = gameObjects.Animation("images\\office\\scarejump\\bear\\powerout", 19, 0.030, img_pos=(0,0), looping=False, isMovable=True, autostart=False)
         self.bear_scarejump = gameObjects.Animation("images\\office\\scarejump\\bear\\normal", 29, 0.0325, img_pos=(0,0), looping=False, isMovable=True, autostart=False)
         self.rabbit_scarejump = gameObjects.Animation("images\\office\\scarejump\\rabbit", 10, 0.030, img_pos=(0,0), looping=True, isMovable=True, autostart=False)
@@ -1106,6 +1111,7 @@ class Stuffed(Base):
         self.setup()
 
     def setup(self):
+        self.name = "stuffed"
         self.background = gameObjects.Base("images\\intro\\stuffed.png", (0,0))
         self.label = cocos.text.Label("Game over", position=(1024, 128), font_size=24, font_name="Fnaf UI")
 
@@ -1152,6 +1158,7 @@ class Night_End(Base):
         self.setup()
 
     def setup(self):
+        self.name = "night_end"
         self.redirected = False
 
         self.label = cocos.text.Label("5 AM", position=((director.window.width//2) - 32, director.window.height//2), font_size=32, font_name="Fnaf UI", bold=True)
@@ -1217,6 +1224,7 @@ class Ending(Base):
         self.setup()
 
     def setup(self):
+        self.name = "ending"
         self.end = False
 
         self.background = gameObjects.Base("images\\ending\\%s.png"%(self.ending))
