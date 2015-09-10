@@ -23,7 +23,7 @@ from cocos.scenes import *
 import pyDLASYIAS.gameObjects as gameObjects
 
 class Guard_Main(pyDLASYIAS.main.Main):
-    def __init__(self, online_hall, address):
+    def __init__(self, online_hall, sock, address):
 
         for channel in pyDLASYIAS.assets.Channel: channel.set_volume(1.0)
 
@@ -33,7 +33,7 @@ class Guard_Main(pyDLASYIAS.main.Main):
         self.night = "Online"
         self.networking = True
         self.address =address
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.socket = sock
         self.data = b""
         self.mods = []
 
@@ -105,6 +105,14 @@ class Guard_Main(pyDLASYIAS.main.Main):
             elif obj.kind == "guard":
                 pass        # Probably just a object that this client sent.
 
+            elif obj.kind == "night_state":
+                self.hour = obj.hour
+                self.power = obj.power
+
+            elif obj.kind == "event":
+                if obj.event == "scarejump":
+                    pass
+
             else:
                 print("UNKNOWN OBJECT RECEIVED!", str(obj))
 
@@ -128,7 +136,7 @@ class Guard_Main(pyDLASYIAS.main.Main):
 
 
 class Chicken_Main(pyDLASYIAS.main.Main):
-    def __init__(self, online_hall, address):
+    def __init__(self, online_hall, sock, address):
 
         for channel in pyDLASYIAS.assets.Channel: channel.set_volume(1.0)
 
@@ -140,7 +148,7 @@ class Chicken_Main(pyDLASYIAS.main.Main):
         self.night = "Online"
         self.networking = True
         self.address =address
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.socket = sock
         self.data = b""
         self.mods = []
 
@@ -209,6 +217,14 @@ class Chicken_Main(pyDLASYIAS.main.Main):
                 self.camera.right_button.light = obj.left_light
 
                 self.guard = copy.copy(obj)
+
+            elif obj.kind == "night_state":
+                self.hour = obj.hour
+                self.power = obj.power
+
+            elif obj.kind == "event":
+                if obj.event == "scarejump":
+                    pass
 
             else:
                 print("UNKNOWN OBJECT RECEIVED!", str(obj))

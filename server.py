@@ -1,6 +1,15 @@
 import pyDLASYIAS
 import socketserver
+import socket
+import traceback
+import threading
+import time
 import pickle
+import pyglet
+import pyDLASYIAS.networking.netObjects as netObjects
+import sys
+
+sys.setrecursionlimit(25000)
 
 class Client(object):
     def __init__(self, request, client_address, server):
@@ -8,254 +17,378 @@ class Client(object):
         self.client_address = client_address
         self.server = server
         self.character = None
+        self.character_object = None
+        self.old_character_object = None
+        self.isReady = False
+
+class Dummy(object):
+    def __init__(self, request=socket.socket(socket.AF_INET, socket.SOCK_DGRAM), client_address=("0.0.0.0", 1987), server=None, character=None):
+        self.request = request
+        self.client_address = client_address
+        self.server = server
+        self.character = character
+        self.character_object = None
+        self.old_character_object = None
         self.isReady = False
 
 class pyDLASYIAS_UDPHandler(socketserver.BaseRequestHandler):
 
     def __init__(self, request, client_address, server):
         self.request = request
-        if self.request[0] != b"testing_connection":
-            self.client_address = client_address
-            self.server = server
-            if self.client_address not in self.server.clients and not self.server.isFull:
-                self.server.clients[client_address] = Client(request, client_address, server)
+        self.client_address = client_address
+        self.server = server
+        obj = pickle.loads(self.request[0])
+        if obj.event != "connecting_to_server":
+            # if self.client_address not in self.server.clients and not self.server.isFull:
+            #     self.server.clients[client_address] = Client(request, client_address, server)
+            #     self.client = self.server.clients[self.client_address]
+            if self.client_address in self.server.clients.keys():
                 self.client = self.server.clients[self.client_address]
-            if not self.client_address not in self.server.clients and not self.server.isFull:
                 try:
                     self.handle()
                 finally:
                     self.finish()
-            else:
-                self.request.close()
         else:
-            self.request[1].sendto(b"connection_okay", client_address)
-            self.request.close()
+            if not self.server.isFull:
+                self.request[1].sendto(netObjects.Event("connection_okay").get_pickled(), client_address)
+                self.server.clients[client_address] = Client(request[1], client_address, server)
+                self.client = self.server.clients[self.client_address]
 
     def handle(self):
-        for address, client in self.server.clients.items():
-            if address != self.client_address:
-                client.request[1].sendto(self.request[0], address)
-                print(address, client, self.request[0])
+        obj = pickle.loads(self.request[0])
+        try:
+            if self.server.state == "character_select":
+                # Can only receive events. No other objects will be received here.
+                if obj.event == "connected":
+                    for client in self.server.clients.values():
+                        if client.character == None:
+                            pass
+
+                        elif client.character in ["guard", "rabbit", "chicken", "bear", "fox"]:
+                            for i in range(0, 5):
+                                self.request[1].sendto(netObjects.Event('%s_locked'%(client.character)).get_pickled(), self.client_address)
+
+                elif obj.event == "guard_locked":
+                    self.client.character = "guard"
+                    self.client.character_object = netObjects.Guard()
+                    for address, client in self.server.clients.items():
+                        for i in range(0, 5):
+                            if address != self.client_address:
+                                client.request.sendto(self.request[0], address)
+
+                elif obj.event == "chicken_locked":
+                    self.client.character = "chicken"
+                    self.client.character_object = netObjects.Chicken()
+                    for address, client in self.server.clients.items():
+                        for i in range(0, 5):
+                            if address != self.client_address:
+                                client.request.sendto(self.request[0], address)
+
+                elif obj.event == "rabbit_locked":
+                    self.client.character = "rabbit"
+                    self.client.character_object = netObjects.Rabbit()
+                    for address, client in self.server.clients.items():
+                        for i in range(0, 5):
+                            if address != self.client_address:
+                                client.request.sendto(self.request[0], address)
+
+                elif obj.event == "bear_locked":
+                    self.client.character = "bear"
+                    self.client.character_object = netObjects.Bear()
+                    for address, client in self.server.clients.items():
+                        for i in range(0, 5):
+                            if address != self.client_address:
+                                client.request.sendto(self.request[0], address)
+
+                elif obj.event == "fox_locked":
+                    self.client.character = "fox"
+                    self.client.character_object = netObjects.Fox()
+                    for address, client in self.server.clients.items():
+                        for i in range(0, 5):
+                            if address != self.client_address:
+                                client.request.sendto(self.request[0], address)
+
+                elif obj.event == "game_start":
+                    pass    # Is someone sending events that they shouldn't?
+
+
+            if self.server.state == "game":
+                if obj.kind == "event":
+                    print(obj.event)
+
+                elif obj.kind == "guard" and self.client.character == "guard":
+                    self.client.old_character_object = self.client.character_object
+                    self.client.character_object = obj
+                    for address, client in self.server.clients.items():
+                        if address != self.client_address:
+                            client.request.sendto(self.request[0], address)
+
+                    if self.client.old_character_object.scene != "scarejump" and self.client.character_object.scene == "scarejump":
+                        for clt in self.server.clients.values():
+                            if clt.character in ["rabbit", "chicken", "bear", "fox"]:
+                                if clt.status == 5 or clt.location == "inside":
+                                    winner = clt.kind
+
+                                    for address, client in self.server.clients.items():
+                                        client.request.sendto(netObjects.Event("scarejump", winner))
+
+                elif obj.kind == "chicken" and self.client.character == "chicken":
+                    self.client.old_character_object = self.client.character_object
+                    self.client.character_object = obj
+                    for address, client in self.server.clients.items():
+                        if address != self.client_address:
+                            client.request.sendto(self.request[0], address)
+
+                elif obj.kind == "rabbit" and self.client.character == "rabbit":
+                    self.client.old_character_object = self.client.character_object
+                    self.client.character_object = obj
+                    for address, client in self.server.clients.items():
+                        if address != self.client_address:
+                            client.request.sendto(self.request[0], address)
+
+                elif obj.kind == "bear" and self.client.character == "bear":
+                    self.client.old_character_object = self.client.character_object
+                    self.client.character_object = obj
+                    for address, client in self.server.clients.items():
+                        if address != self.client_address:
+                            client.request.sendto(self.request[0], address)
+
+                elif obj.kind == "fox" and self.client.character == "fox":
+                    self.client.old_character_object = self.client.character_object
+                    self.client.character_object = obj
+                    for address, client in self.server.clients.items():
+                        if address != self.client_address:
+                            client.request.sendto(self.request[0], address)
+        except Exception as err:
+            print(traceback.format_exc())
+
+        # if obj.kind == "event" and self.server.state == "character_select":
+        #     if obj.event == "connected":
+        #         for i in range(0, 5):
+        #             for client in self.server.clients.values():
+        #                 print(client.character)
+        #                 if client.character == None:
+        #                     pass
+        #                 elif client.character == "guard":
+        #                     self.request[1].sendto(netObjects.Event('guard_locked').get_pickled(), self.client_address)
+        #                 elif client.character == "rabbit":
+        #                     self.request[1].sendto(netObjects.Event('rabbit_locked').get_pickled(), self.client_address)
+        #                 elif client.character == "chicken":
+        #                     self.request[1].sendto(netObjects.Event('chicken_locked').get_pickled(), self.client_address)
+        #                 elif client.character == "bear":
+        #                     self.request[1].sendto(netObjects.Event('bear_locked').get_pickled(), self.client_address)
+        #                 elif client.character == "fox":
+        #                     self.request[1].sendto(netObjects.Event('fox_locked').get_pickled(), self.client_address)
+        #
+        #     if obj.event == "guard_locked":
+        #         self.client.character = "guard"
+        #
+        #     elif obj.event == "bear_locked":
+        #         self.client.character = "bear"
+        #
+        #     elif obj.event == "chicken_locked":
+        #         self.client.character = "chicken"
+        #
+        #     elif obj.event == "bear_locked":
+        #         self.client.character = "bear"
+        #
+        #     elif obj.event == "fox_locked":
+        #         self.client.character = "fox"
+        #
+        # for address, client in self.server.clients.items():
+        #     try:
+        #         if address != self.client_address:
+        #             if self.server.state != "game":
+        #                 if obj.kind == "event":
+        #                     if obj.event == "guard_locked":
+        #                         self.client.character = "guard"
+        #
+        #                     elif obj.event == "bear_locked":
+        #                         self.client.character = "bear"
+        #
+        #                     elif obj.event == "chicken_locked":
+        #                         self.client.character = "chicken"
+        #
+        #                     elif obj.event == "bear_locked":
+        #                         self.client.character = "bear"
+        #
+        #                     elif obj.event == "fox_locked":
+        #                         self.client.character = "fox"
+        #                 client.request.sendto(self.request[0], address)
+        #             elif self.client.character == "guard" and self.server.state == "game":
+        #                 self.client.old_character_object = self.client.character_object
+        #                 self.client.character_object = pickle.loads(self.request[0])
+        #
+        #                 if self.client.old_character_object.scene != "scarejump" and self.client.character_object.scene == "scarejump":
+        #                     for clt in self.server.clients.values():
+        #                         if clt.character in ["rabbit", "chicken", "bear", "fox"]:
+        #                             if clt.status == 5 or clt.location == "inside":
+        #                                 winner = clt.kind
+        #
+        #                                 client.request.sendto(netObjects.Event("scarejump", winner))
+        #
+        #             elif self.client.character == "chicken" and self.server.state == "game":
+        #                 self.client.old_character_object = self.client.character_object
+        #                 self.client.character_object = pickle.loads(self.request[0])
+        #
+        #             elif self.client.character == "rabbit" and self.server.state == "game":
+        #                 self.client.old_character_object = self.client.character_object
+        #                 self.client.character_object = pickle.loads(self.request[0])
+        #
+        #             elif self.client.character == "bear" and self.server.state == "game":
+        #                 self.client.old_character_object = self.client.character_object
+        #                 self.client.character_object = pickle.loads(self.request[0])
+        #
+        #             elif self.client.character == "fox" and self.server.state == "game":
+        #                 self.client.old_character_object = self.client.character_object
+        #                 self.client.character_object = pickle.loads(self.request[0])
+        #
+        #         else:
+        #             pass
+        #
+        #     except AttributeError as e:
+        #         print("Warning:", e)
 
 class Server(socketserver.UDPServer):
     def __init__(self, host=(), handler=pyDLASYIAS_UDPHandler):
-        self.clients = {}
+        self.clients = {("0.0.0.0", 1987) : Dummy(server=self, character="bear"),
+                        ("0.0.0.0", 1988) : Dummy(server=self, character="rabbit"),
+                        ("0.0.0.0", 1989) : Dummy(server=self, character="fox")}
         self.isFull = False
 
+        self.hour = -1
+        self.power = 100
+
+        self.state = "character_select"
+
+        self.update_thread = threading.Thread(target=self.update)
+        self.time_thread = threading.Thread(target=self.next_hour)
+        self.power_thread = threading.Thread(target=self.power_calculations)
+        self.command_thread = threading.Thread(target=self.commands)
+        self.state_thread = threading.Thread(target=self.send_state)
+
+        self.update_thread.start()
+        self.command_thread.start()
 
         super().__init__(host, handler)
+
+    def on_game_start(self):
+        for client in self.clients.values():
+            if client.character == "guard":
+                self.guard = client
+            elif client.character == "chicken":
+                self.chicken = client
+            elif client.character == "rabbit":
+                self.rabbit = client
+            elif client.character == "bear":
+                self.bear = client
+            elif client.character == "fox":
+                self.fox = client
+            client.request.sendto(pyDLASYIAS.networking.netObjects.Event("game_start").get_pickled(), client.client_address)
+
+        self.power_thread.start()
+        self.time_thread.start()
+        self.state_thread.start()
+
+    def send_state(self):
+        for client in self.clients.values():
+            for i in range(0, 2):
+                client.request.sendto(pyDLASYIAS.networking.netObjects.Night_State(self.power, self.hour).get_pickled(), client.client_address)
+
+        time.sleep(5)
+        self.send_state()
+
+    def power_calculations(self, dt=0, old_usage=1):
+        if dt == 0:
+            if self.power >= 0:
+                try:
+                    if self.guard.character_object.usage == 1:
+                        if old_usage == 1:
+                            self.power -= 1
+
+                        if old_usage >= 2:
+                            self.power -= 2
+
+                        self.power_calculations(9.6, 1)
+
+                    if self.guard.character_object.usage == 2:
+                        if old_usage == 1:
+                            self.power -= 1
+
+                        if old_usage == 2:
+                            self.power -= 1
+
+                        if old_usage >= 3:
+                            self.power -= 2
+
+                        self.power_calculations(4.8, 2)
+
+                    if self.guard.character_object.usage == 3:
+                        if old_usage == 1:
+                            self.power -= 1
+
+                        if old_usage == 2:
+                            self.power -= 1
+
+                        if old_usage == 3:
+                            self.power -= 1
+
+                        if old_usage == 4:
+                            self.power -= 2
+
+                        self.power_calculations(random.choice([2.8, 2.9, 3.9]), 3)
+
+                    if self.guard.character_object.usage == 4:
+                        self.power -= 1
+
+                        self.power_calculations(random.choice([1.9, 2.9]), 4)
+
+                    if self.guard.character_object.usage == 5:
+                        self.guard.character_object.usage = 4
+                        self.power -= 1
+
+                        self.power_calculations(random.choice([1.9, 2.9]), 4)
+                except AttributeError:
+                    pass
+            else:
+                time.sleep(dt)
+                self.power_calculations(0, old_usage)
+
+    def next_hour(self):
+        if self.hour != 6:
+            self.hour += 1
+            time.sleep(86)
+            self.next_hour()
+
+    def update(self):
+        if self.state == "character_select":
+            if len(self.clients) == 5:
+                self.isFull = True
+                values = list(self.clients.values())
+                if values[0].character and values[1].character \
+                and values[2].character and values[3].character \
+                and values[4].character and self.state != "game":
+                    self.state == "game"
+                    try:
+                        self.on_game_start()
+                    except RuntimeError:
+                        pass
+
+        elif self.state == "game":
+            pass
+
+        time.sleep(0.15)
+        self.update()
+
+    def commands(self):
+        cmd = input("> ")
+        try:
+            exec(cmd)
+        except Exception as err:
+            print(traceback.format_exc())
+        self.commands()
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 9999
     server = Server((HOST, PORT), pyDLASYIAS_UDPHandler)
     server.serve_forever()
-
-
-# class client():
-#     '''Class for the client.'''
-#     def __init__(self, request, client_address, server):
-#         self.request = request
-#         self.client_address = client_address
-#
-#         self.server = server
-#
-#         self.isClosed = False
-#         self.data = b''
-#
-#         self.character = "None"
-#         self.location = "None"
-#         self.lastcam = "None"
-#         self.scene = "None"
-#         self.status = 0
-#
-#         self.isReady = False
-#
-#         threading.Thread(target=self.update).start()
-#
-#     def __str__(self):
-#         return "(%s, %s)" %(self.client_address, self.character)
-#
-#     def __repr__(self):
-#         return "(%s, %s)" %(self.client_address, self.character)
-#
-#     def setup(self):
-#         if self.character != "guard":
-#             if self.character != "fox":
-#                 self.location = "cam1a"
-#                 del self.status
-#             else:
-#                 self.location = "cam1c"
-#                 self.status = 1
-#                 del self.lastcam
-#                 del self.scene
-#         else:
-#             self.lastcam = "cam1a"
-#             self.scene = "office"
-#             del self.location
-#             del self.status
-#
-#     def receive(self):
-#         if not self.isClosed:
-#             return self.request.recv(1024)
-#
-#     def send(self, data):
-#         if not self.isClosed:
-#             self.request.send(bytes(str(data), "utf-8"))
-#
-#     def update(self):
-#         try:
-#             self.data = self.receive()
-#         except:
-#             self.kick()
-#
-#         if not self.isClosed and self.server.isRunning:
-#             self.update()
-#
-#     def kick(self):
-#         self.request.close()
-#         self.isClosed = True
-#
-# class requestHandler(socketserver.BaseRequestHandler):
-#     '''Handles the requests.'''
-#     def setup(self):
-#         '''When a new client connects to the server, this function gets called.'''
-#         self.server.clients.append(client(self.request, self.client_address, self.server))
-#
-#
-#     def handle(self):
-#         '''Handles requests.'''
-#         while self.server.isRunning:
-#             pass
-#
-#     def finish(self):
-#         '''When a clients disconnects this function gets called.'''
-#         print(self.client_address, 'disconnected!')
-#
-# class pyDLASYIAS_Server(ThreadingMixIn, TCPServer):
-#
-#     def __init__(self, server_Address, request_Handler):
-#
-#         super(pyDLASYIAS_Server, self).__init__(server_Address, request_Handler)
-#
-#         self.clients = []
-#
-#         self.time = 0
-#         self.power = 100
-#         self.usage = 1
-#
-#         self.leftdoor = False
-#         self.rightdoor = False
-#
-#         self.leftlight = False
-#         self.rightlight = False
-#
-#         self.bearSelected = False
-#         self.rabbitSelected = False
-#         self.chickenSelected = False
-#         self.foxSelected = False
-#         self.guardSelected = False
-#
-#         self.bear = None
-#         self.rabbit = None
-#         self.chicken = None
-#         self.fox = None
-#         self.guard = None
-#
-#         self.stage = "multihall"
-#
-#         self.isRunning = True
-#
-#         self.cmdThread = threading.Thread(target=self.cmd)
-#         self.updateThread = threading.Thread(target=self.update)
-#         self.timeThread = threading.Thread(target=self.timeUpdate)
-#         self.powerThread = threading.Thread(target=self.powerUpdate)
-#
-#         self.cmdThread.setDaemon(True)
-#         self.updateThread.setDaemon(True)
-#         self.timeThread.setDaemon(True)
-#         self.powerThread.setDaemon(True)
-#
-#         self.cmdThread.start()
-#         self.updateThread.start()
-#
-#     def update(self):
-#         for client in self.clients:
-#
-#             if self.stage == "multihall":
-#                 if client.data == b"bear selected" and not self.bearSelected:
-#                     client.character = "bear"
-#                     self.bearSelected = True
-#                     self.bear = client
-#                     self.bear.isReady = True
-#                     self.broadcast("bear selected")
-#
-#                 if client.data == b"rabbit selected" and not self.rabbitSelected:
-#                     client.character = "rabbit"
-#                     self.rabbitSelected = True
-#                     self.rabbit = client
-#                     self.rabbit.isReady = True
-#                     self.broadcast("rabbit selected")
-#
-#                 if client.data == b"chicken selected" and not self.chickenSelected:
-#                     client.character = "chicken"
-#                     self.chickenSelected = True
-#                     self.chicken = client
-#                     self.chicken.isReady = True
-#                     self.broadcast("chicken selected")
-#
-#                 if client.data == b"fox selected" and not self.foxSelected:
-#                     client.character = "fox"
-#                     self.foxSelected = True
-#                     self.fox = client
-#                     self.fox.isReady = True
-#                     self.broadcast("fox selected")
-#
-#                 if client.data == b"guard selected" and not self.guardSelected:
-#                     client.character = "guard"
-#                     self.guardSelected = True
-#                     self.guard = client
-#                     self.guard.isReady = True
-#                     self.broadcast("guard selected")
-#
-#                 try:
-#                     if self.bear.isReady and self.rabbit.isReady and self.chicken.isReady and self.fox.isReady and self.guard.isReady:
-#                         self.stage = "game"
-#                         self.broadcast("game start")
-#
-#                         self.timeThread.start()
-#                         self.powerThread.start()
-#
-#                 except:
-#                     pass
-#
-#             if self.stage == "game":
-#                 for client in self.clients:
-#                     bdata = client.data()
-#
-#                     try:
-#                         data = pickle.loads(bdata)
-#
-#                     except:
-#                         pass
-#
-#                     else:
-#                         if data.type == "Animatronic":
-#                             client.location = data.location
-#                             client.name = data.name
-#                             client.kind = data.kind
-#                             client.status = data.status
-#                             self.broadcast(bdata, exclude=[client])
-#
-#                         if data.type == "Guard":
-#                             client.name = data.name
-#                             client.scene = data.scene
-#                             client.lastcam = data.lastcam
-#                             client.usage = data.usage
-#                             client.leftdoor = data.leftdoor
-#                             client.leftlight = data.leftlight
-#                             client.rightdoor = data.rightdoor
-#                             client.rightlight = data.rightlight
-#                             self.broadcast(bdata, exclude=[client])
-#
-#                         if data.type == "Message":
-#                             print("%s: %s" %(data.name, data.message))

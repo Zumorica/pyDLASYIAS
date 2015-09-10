@@ -6,6 +6,7 @@ import socket
 import cocos
 import pyglet
 import socket
+import pickle
 import pygame.mixer
 import platform
 import random
@@ -18,6 +19,7 @@ from pyglet.gl.glu import *
 from pyglet.window import key
 from cocos.director import director
 from cocos.scenes import *
+import pyDLASYIAS.networking.netObjects as netObjects
 
 sys.setrecursionlimit(25000)
 
@@ -183,7 +185,7 @@ class Main_Menu(pyDLASYIAS.scenes.Base):
         self.add(Menu_Title(position=(32, director.window.height - 64), font_size=32, font_name="Fnaf UI"))
 
     def enter_online_menu(self):
-        director_run(Connect_Client())
+        director.run(Connect_Client())
 
     def enter_custom_night(self):
         director.run(custom_night)
@@ -343,9 +345,12 @@ class Custom_Night(pyDLASYIAS.scenes.Base):
         self.add(self.button_left_chicken, z=1)
         self.add(self.button_right_chicken, z=1)
         self.add(self.button_left_fox, z=1)
+        self.add(self.button_right_fox, z=1)
         self.add(self.label_time, z=1)
         self.add(self.button_left_power, z=1)
         self.add(self.button_right_power, z=1)
+        self.add(self.button_left_time, z=1)
+        self.add(self.button_right_time, z=1)
         self.add(self.button_left_mod, z=1)
         self.add(self.button_right_mod, z=1)
         self.add(self.label_mod_title, z=1)
@@ -615,15 +620,15 @@ class Connect_Client(pyDLASYIAS.scenes.Base):
 
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            sock.sendto(b"testing_connection", address)
+            sock.sendto(netObjects.Event("connecting_to_server").get_pickled(), address)
             sock.settimeout(10)
-            sock.recv(1024)
+            print(sock.recv(1024))
+
         except socket.error as e:
             print("Error: %s" %(e))
             director.run(main_menu)
         else:
-            sock.close()
-            director.run(Online_Hall(address))
+            director.run(Online_Hall(address, sock))
 
 class Input_Text(cocos.cocosnode.CocosNode):
     def __init__(self, position):
@@ -689,15 +694,16 @@ class Input_Text(cocos.cocosnode.CocosNode):
         director.window.remove_handlers(self)
 
 class Online_Hall(pyDLASYIAS.scenes.Base):
-    def __init__(self, address=()):
+    def __init__(self, address=(), sock=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)):
         super().__init__(None)
 
         self.address = address
+        self.socket = sock
+        self.socket.setblocking(True)
 
         self.setup()
 
     def setup(self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.hasGameStarted = False
         self.thread = threading.Thread(target=self.update_networking)
 
@@ -762,40 +768,43 @@ class Online_Hall(pyDLASYIAS.scenes.Base):
         self.add(self.waiting_label, z=1)
         self.add(gameObjects.Static(80, 125))
 
+        for i in range(0, 5):
+            self.socket.sendto(netObjects.Event("connected").get_pickled(), self.address)
+
     def lock_character(self):
         self.lock.visible = False
         if self.isGuardSelected:
             self.character = "guard"
             for i in range(0, 10):
-                self.socket.sendto(b'guard_locked', self.address)
+                self.socket.sendto(netObjects.Event('guard_locked').get_pickled(), self.address)
             self.isGuardLocked = True
             self.guard_layer.color = (0, 0, 255)
 
         if self.isBearSelected:
             self.character = "bear"
             for i in range(0, 10):
-                self.socket.sendto(b'bear_locked', self.address)
+                self.socket.sendto(netObjects.Event('bear_locked').get_pickled(), self.address)
             self.isBearLocked = True
             self.bear_layer.color = (0, 0, 255)
 
         if self.isRabbitSelected:
             self.character = "rabbit"
             for i in range(0, 10):
-                self.socket.sendto(b'rabbit_locked', self.address)
+                self.socket.sendto(netObjects.Event('rabbit_locked').get_pickled(), self.address)
             self.isRabbitLocked = True
             self.rabbit_layer.color = (0, 0, 255)
 
         if self.isChickenSelected:
             self.character = "chicken"
             for i in range(0, 10):
-                self.socket.sendto(b'chicken_locked', self.address)
+                self.socket.sendto(netObjects.Event('chicken_locked').get_pickled(), self.address)
             self.isChickenLocked = True
             self.chicken_layer.color = (0, 0, 255)
 
         if self.isFoxSelected:
             self.character = "fox"
             for i in range(0, 10):
-                self.socket.sendto(b'fox_locked', self.address)
+                self.socket.sendto(netObjects.Event('fox_locked').get_pickled(), self.address)
             self.isFoxLocked = True
             self.fox_layer.color == (0, 0, 255)
 
@@ -805,6 +814,7 @@ class Online_Hall(pyDLASYIAS.scenes.Base):
                 self.lock_character()
 
             self.lock.visible = False
+
             if self.guard_sprite.get_rect().contains(x, y) and not self.isGuardLocked and button == 1:
                 self.guard_layer.color = (255, 255, 0)
                 self.isGuardSelected = True
@@ -833,7 +843,7 @@ class Online_Hall(pyDLASYIAS.scenes.Base):
             else:
                 if not self.isRabbitLocked:
                     self.rabbit_layer.color = (0, 255, 0)
-                    self.isGuardSelected = False
+                    self.isRabbitSelected = False
 
             if self.chicken_sprite.get_rect().contains(x, y) and not self.isChickenLocked and button == 1:
                 self.chicken_layer.color = (255, 255, 0)
@@ -858,38 +868,92 @@ class Online_Hall(pyDLASYIAS.scenes.Base):
     def on_enter(self):
         super().on_enter()
         director.window.push_handlers(self)
+        pyglet.clock.schedule(self.update)
         self.thread.start()
 
     def on_exit(self):
         super().on_exit()
         director.window.remove_handlers(self)
-        self.hasGameStarted = True
+        pyglet.clock.unschedule(self.update)
 
     def receive_data(self):
         data = self.socket.recv(1024)
 
-        if str(data) == "guard_locked":
-            self.isGuardLocked = True
+        obj = pickle.loads(data)
 
-        if str(data) == "bear_locked":
-            self.isBearLocked = True
+        if obj.kind == "event":
+            if obj.event == "guard_locked":
+                self.isGuardLocked = True
+                self.guard_layer.color = (255, 0, 0)
 
-        if str(data) == "rabbit_locked":
-            self.isRabbitLocked = True
+            elif obj.event == "bear_locked":
+                self.isBearLocked = True
+                self.bear_layer.color = (255, 0, 0)
 
-        if str(data) == "chicken_locked":
-            self.isChickenLocked = True
+            elif obj.event == "chicken_locked":
+                self.isChickenLocked = True
+                self.chicken_layer.color = (255, 0, 0)
 
-        if str(data) == "fox_locked":
-            self.isFoxLocked = True
+            elif obj.event == "rabbit_locked":
+                self.isRabbitLocked = True
+                self.rabbit_layer.color = (255, 0, 0)
 
-        if str(data) == "game_start" and not self.hasGameStarted:
-            pyglet.clock.unschedule(self.receive_data)
-            self.on_exit()
-            pyDLASYIAS.networking.Main(self, self.address)
+            elif obj.event == "fox_locked":
+                self.isFoxLocked = True
+                self.fox_layer.color = (255, 0, 0)
+
+            elif obj.event == "game_start":
+                self.hasGameStarted = True
 
     def update(self, dt=0):
-        pass
+        if self.isGuardLocked and not self.character == "guard":
+            self.guard_layer.color = (255, 0, 0)
+
+        if self.isBearLocked and not self.character == "bear":
+            self.bear_layer.color = (255, 0, 0)
+
+        if self.isRabbitLocked and not self.character == "rabbit":
+            self.rabbit_layer.color = (255, 0, 0)
+
+        if self.isChickenLocked and not self.character == "chicken":
+            self.chicken_layer.color = (255, 0, 0)
+
+        if self.isFoxLocked and not self.character == "fox":
+            self.fox_layer.color = (255, 0, 0)
+
+        if self.character == "guard":
+            self.guard_layer.color == (0, 0, 255)
+
+        if self.character == "bear":
+            self.bear_layer.color == (0, 0, 255)
+
+        if self.character == "rabbit":
+            self.rabbit_layer.color == (0, 0, 255)
+
+        if self.character == "chicken":
+            self.chicken_layer.color == (0, 0, 255)
+
+        if self.character == "fox":
+            self.fox_layer.color == (0, 0, 255)
+
+        if self.hasGameStarted:
+            pyglet.clock.unschedule(self.receive_data)
+            pyglet.clock.unschedule(self.update)
+            director.window.remove_handlers(self)
+            self.hasGameStarted = None
+            if self.character == "guard":
+                pyDLASYIAS.networking.Guard_Main(self, self.socket, self.address)
+            elif self.character == "chicken":
+                pyDLASYIAS.networking.Chicken_Main(self, self.socket, self.address)
+            elif self.character == "rabbit":
+                #pyDLASYIAS.networking.Rabbit_Main(self, socket, self.address)
+                pass
+            elif self.character == "bear":
+                #pyDLASYIAS.networking.Bear_Main(self, socket, self.address)
+                pass
+            elif self.character == "fox":
+                #pyDLASYIAS.networking.Fox_Main(self, socket, self.address)
+                pass
 
     def update_networking(self):
         if not self.hasGameStarted:

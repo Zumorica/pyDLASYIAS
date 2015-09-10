@@ -317,7 +317,7 @@ class SceneButton(Base):
         director.window.remove_handlers(self.on_mouse_motion)
 
 class Button(Base):
-    def __init__(self, isRightButton, door, img_pos):
+    def __init__(self, isRightButton, door, img_pos, functional=True):
         if not isinstance(door, object):
             raise ValueError("'door' is not an object.")
 
@@ -326,6 +326,7 @@ class Button(Base):
         self.isRightButton = isRightButton
         self.isMovable = True
         self.cooldown = False
+        self.functional = functional
 
         if not self.isRightButton:
             self.Sprite = {"0" : pyDLASYIAS.assets.load("images\\office\\button\\left\\0.png"),
@@ -348,30 +349,31 @@ class Button(Base):
         pass
 
     def on_mouse_press(self, x, y, button, modifiers):
-        real_pos = director.get_virtual_coordinates(x, y)
-        position = director.get_virtual_coordinates(self.position[0], self.position[1])
-        rect_light = cocos.rect.Rect((position[0] + 30), (position[1] + 62), ((position[0] + 68)-(position[0] + 30)), ((position[1] + 118)-(position[1] + 62)))
-        rect_door = cocos.rect.Rect((position[0] + 30), (position[1] + 144), ((position[0] + 68)-(position[0] + 30)), ((position[1] + 193)-(position[1] + 155)))
-        #if real_pos[0] in range((int(position[0]) + 30), (int(position[0]) + 68)) and real_pos[1] in range((int(position[1]) + 62), (int(position[1]) + 118)) and button == 1:
-        if rect_light.contains(real_pos[0], real_pos[1]) and button == 1:
-            if self.light:
-                self.light = False
-                self.buttonPress("light", self.light)
-            else:
-                self.light = True
-                self.buttonPress("light", self.light)
+        if self.functional:
+            real_pos = director.get_virtual_coordinates(x, y)
+            position = director.get_virtual_coordinates(self.position[0], self.position[1])
+            rect_light = cocos.rect.Rect((position[0] + 30), (position[1] + 62), ((position[0] + 68)-(position[0] + 30)), ((position[1] + 118)-(position[1] + 62)))
+            rect_door = cocos.rect.Rect((position[0] + 30), (position[1] + 144), ((position[0] + 68)-(position[0] + 30)), ((position[1] + 193)-(position[1] + 155)))
+            #if real_pos[0] in range((int(position[0]) + 30), (int(position[0]) + 68)) and real_pos[1] in range((int(position[1]) + 62), (int(position[1]) + 118)) and button == 1:
+            if rect_light.contains(real_pos[0], real_pos[1]) and button == 1:
+                if self.light:
+                    self.light = False
+                    self.buttonPress("light", self.light)
+                else:
+                    self.light = True
+                    self.buttonPress("light", self.light)
 
-        #if real_pos[0] in range((int(self.position[0]) + 30), (int(self.position[0]) + 68)) and real_pos[1] in range((int(self.position[1]) + 144), (int(self.position[1]) + 193)) and button == 1 and not self.cooldown:
-        if rect_door.contains(real_pos[0], real_pos[1]) and button == 1 and not self.cooldown:
-            if self.door:
-                self.door.open()
-                self.buttonPress("door", self.door)
-                self.cooldown = True
+            #if real_pos[0] in range((int(self.position[0]) + 30), (int(self.position[0]) + 68)) and real_pos[1] in range((int(self.position[1]) + 144), (int(self.position[1]) + 193)) and button == 1 and not self.cooldown:
+            if rect_door.contains(real_pos[0], real_pos[1]) and button == 1 and not self.cooldown:
+                if self.door:
+                    self.door.open()
+                    self.buttonPress("door", self.door)
+                    self.cooldown = True
 
-            else:
-                self.door.close()
-                self.buttonPress("door", self.door)
-                self.cooldown = True
+                else:
+                    self.door.close()
+                    self.buttonPress("door", self.door)
+                    self.cooldown = True
 
 
     def update(self, dt=0):

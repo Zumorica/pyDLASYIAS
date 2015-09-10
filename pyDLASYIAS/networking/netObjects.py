@@ -17,6 +17,7 @@ import pyDLASYIAS.gameObjects as gameObjects
 class Base(object):
     def __init__(self):
         self.kind = "generic"
+        self.event = None
 
     def get_pickled(self):
         return pickle.dumps(self)
@@ -25,6 +26,7 @@ class Guard(Base):
     def __init__(self, name="Victim", left_door=False, left_light=False, right_door=False, right_light=False, last_cam="cam1a", scene="office", usage=1):
         self.name = name
         self.kind = "guard"
+        self.event = "character_update"
         self.left_door = left_door
         self.left_light = left_light
         self.right_door = right_door
@@ -37,6 +39,7 @@ class Animatronic(Base):
     def __init__(self, name="Endoskeleton"):
         self.name = name
         self.kind = "generic"
+        self.event = "character_update"
         self.location = "cam1a"
         self.isOnCamera = False
         self.status = 0
@@ -73,6 +76,13 @@ class Fox(Animatronic):
 class Night_State(Base):
     def __init__(self, power, hour):
         self.name = "no_name"
-        self.kind = "event"
+        self.kind = "night_state"
         self.power = power
         self.hour = hour
+
+class Event(Base):
+    def __init__(self, event, event_2=None):
+        self.name = "no_name"
+        self.kind = "event"
+        self.event = event
+        self.event_2 = event_2

@@ -36,8 +36,8 @@ class Chicken_Camera(pyDLASYIAS.scenes.Base):
         self.right_door = gameObjects.Door(True, (1270, 0))
         self.left_door.visible = False
         self.right_door.visible = False
-        self.left_button = gameObjects.Button(False, self.left_door, (0, 180))
-        self.right_button = gameObjects.Button(True, self.right_door, (1500, 180))
+        self.left_button = gameObjects.Button(False, self.left_door, (0, 180), False)
+        self.right_button = gameObjects.Button(True, self.right_door, (1500, 180), False)
         self.left_button.visible = False
         self.right_button.visible = False
         self.fan = gameObjects.Fan((781, 221))
@@ -62,6 +62,7 @@ class Chicken_Camera(pyDLASYIAS.scenes.Base):
         self.night_label = cocos.text.Label(self.Game.night, position=(1080, 640), font_size=14, font_name="Fnaf UI")
         self.camera_label = cocos.text.Label(pyDLASYIAS.assets.Cameras[self.Game.chicken.location], position=(848, 440), font_size=24, font_name="Fnaf UI")
         self.guard_camera_label = cocos.text.Label("Guard is watching " + self.Game.guard.last_cam, position=(40, 90), font_size=16, font_name="Fnaf UI")
+        self.door_time_label = cocos.text.Label("Door time:  " + str(self.Game.door_time), position=(40, 210), font_size=16, font_name="Fnaf UI")
         self.add(self.cooldown_label, z=10)
         self.add(self.power_label, z=10)
         self.add(self.usage_label, z=10)
@@ -69,11 +70,14 @@ class Chicken_Camera(pyDLASYIAS.scenes.Base):
         self.add(self.night_label, z=10)
         self.add(self.camera_label, z=10)
         self.add(self.guard_camera_label, z=10)
+        self.add(self.door_time_label, z=10)
 
         self.map.isMovable = False
         self.reddot.isMovable = False
         self.static.isMovable = False
         self.whiteline.isMovable = False
+        self.left_button.isMovable = False
+        self.right_button.isMovable = False
 
         self.CamButtons = {"cam1a" : self.cam1a,
                                       "cam1b" : self.cam1b,
@@ -181,8 +185,8 @@ class Chicken_Camera(pyDLASYIAS.scenes.Base):
             if not self.Game.cooldown and self.Game.chicken.location in ["cam4b"]:
                 for camera in self.CamButtons.values():
                     camera.pressed = False
-                self.cam7.pressed = True
-                self.Game.chicken.location = "cam7"
+                self.cam_door.pressed = True
+                self.Game.chicken.location = "right_door"
                 pyDLASYIAS.assets.Channel[21].set_volume(0.0)
                 pyDLASYIAS.assets.Channel[11].set_volume(0.1)
                 pyDLASYIAS.assets.Channel[9].play(pyDLASYIAS.assets.Sounds["camera"]["blip"], 0)
@@ -228,8 +232,16 @@ class Chicken_Camera(pyDLASYIAS.scenes.Base):
         if self.Game.cooldown and not (self.Game.guard.last_cam == self.Game.chicken.location and self.Game.guard.scene == "camera"):
             self.Game.cooldown -= 1
 
-        if self.Game.door_time and self.Game.chicken.location == "right_door":
-            self.Game.door_time -= 1
+        if self.Game.door_time >= 0 and self.Game.chicken.location == "right_door":
+            self.Game.door_time -= 2
+            if self.Game.door_time < 0:
+                self.Game.door_time = 0
+
+        if self.Game.chicken.location == "cam7":
+            self.Game.door_time += 1
+
+        if self.Game.chicken.location == "cam6":
+            self.Game.door_time += 2
 
         if not self.Game.door_time and self.Game.chicken.location == "right_door":
             self.door_time = 100
@@ -263,6 +275,7 @@ class Chicken_Camera(pyDLASYIAS.scenes.Base):
         else:
             self.hour_label.element.text = str(self.Game.hour)+" AM"
         self.camera_label.element.text = pyDLASYIAS.assets.Cameras[self.active_camera]
+        self.door_time_label.element.text = "Door time:  " + str(self.Game.door_time)
 
         self.active_camera = self.Game.chicken.location
 
@@ -273,7 +286,7 @@ class Chicken_Camera(pyDLASYIAS.scenes.Base):
             self.background.dx = 89
             self.left_door.dx = 89
             self.right_door.dx = 89
-            self.right_button.dx = 89
+            self.left_button.dx = 89
             self.right_button.dx = 89
             self.fan.dx = 89
 
@@ -281,7 +294,7 @@ class Chicken_Camera(pyDLASYIAS.scenes.Base):
             self.background.dx = -95
             self.left_door.dx = -95
             self.right_door.dx = -95
-            self.right_button.dx = -95
+            self.left_button.dx = -95
             self.right_button.dx = -95
             self.fan.dx = -95
 
