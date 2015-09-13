@@ -86,3 +86,18 @@ class Event(Base):
         self.kind = "event"
         self.event = event
         self.event_2 = event_2
+
+class World(Base):
+    def __init__(self, power=100, hour=0, guard=Guard(), chicken=Chicken(), rabbit=Rabbit(), bear=Bear(), fox=Fox()):
+        self.name = "world"
+        self.kind = "world"
+        self.event = "world_update"
+
+        self.power = power
+        self.hour = hour
+
+        self.guard = guard
+        self.chicken = chicken
+        self.rabbit = rabbit
+        self.bear = bear
+        self.fox = fox

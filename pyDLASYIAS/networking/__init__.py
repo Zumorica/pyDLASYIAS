@@ -8,6 +8,7 @@ import cocos
 import pyglet
 import pickle
 import threading
+import traceback
 import pygame.mixer
 import time
 import pickle
@@ -72,53 +73,44 @@ class Guard_Main(pyDLASYIAS.main.Main):
             pyglet.clock.schedule_once(self.camera.static.get_random_opacity, random.randint(2, 5))
 
     def send_data(self):
-        self.socket.sendto(pickle.dumps(self.guard), self.address)
+        self.socket.sendto(self.guard.get_pickled(), self.address)
 
     def receive_data(self):
         self.data = self.socket.recv(2048)
         try:
             obj = pickle.loads(self.data)
-            if obj.kind == "chicken":
-                if obj.location != self.chicken.location:
-                    self.change_static_opacity(self.chicken.location)
-                    self.change_static_opacity(obj.location)
-
-                self.chicken = copy.copy(obj)
-
-            elif obj.kind == "rabbit":
-                if obj.location != self.rabbit.location:
-                    self.change_static_opacity(self.rabbit.location)
-                    self.change_static_opacity(obj.location)
-
-                self.rabbit = copy.copy(obj)
-
-            elif obj.kind == "fox":
-                self.fox = copy.copy(obj)
-
-            elif obj.kind == "bear":
-                if obj.location != self.chicken.location:
-                    self.change_static_opacity(self.bear.location)
-                    self.change_static_opacity(obj.location)
-
-                self.bear = copy.copy(obj)
-
-            elif obj.kind == "guard":
-                pass        # Probably just a object that this client sent.
-
-            elif obj.kind == "night_state":
-                self.hour = obj.hour
+            if obj.kind == "world":
                 self.power = obj.power
+                self.hour = obj.hour
+
+                if obj.chicken.location != self.chicken.location:
+                    self.change_static_opacity(self.chicken.location)
+                    self.change_static_opacity(obj.chicken.location)
+                    self.chicken = obj.chicken
+
+                if obj.rabbit.location != self.rabbit.location:
+                    self.change_static_opacity(self.rabbit.location)
+                    self.change_static_opacity(obj.rabbit.location)
+                    self.rabbit = obj.rabbit
+
+                if obj.bear.location != self.bear.location:
+                    self.change_static_opacity(self.bear.location)
+                    self.change_static_opacity(obj.bear.location)
+                    self.bear = obj.bear
+
+                self.fox = obj.fox
 
             elif obj.kind == "event":
                 if obj.event == "scarejump":
                     pass
 
             else:
-                print("UNKNOWN OBJECT RECEIVED!", str(obj))
+                print("WARNING: Unknown object received:")
+                print(repr(obj))
+                print()
 
-        except:
-            raise
-            print("Not an pickled object?")
+        except Exception as err:
+            print(traceback.format_exc())
 
     def update_networking(self, dt=0):
         self.guard.left_door = self.office.left_door.isClosed
@@ -128,7 +120,8 @@ class Guard_Main(pyDLASYIAS.main.Main):
         self.guard.last_cam = self.camera.active_camera
         try:
             self.guard.scene = director.scene.name
-        except:
+        except Exception as err:
+            print(traceback.format_exc())
             self.guard.scene = "office"
         self.guard.usage = self.usage
         self.send_data()
@@ -185,53 +178,107 @@ class Chicken_Main(pyDLASYIAS.main.Main):
         self.data = self.socket.recv(2048)
         try:
             obj = pickle.loads(self.data)
-            if obj.kind == "chicken":
-                pass
+            if obj.kind == "world":
+                self.power = obj.power
+                self.hour = obj.hour
 
-            elif obj.kind == "rabbit":
-                self.rabbit = obj
-
-            elif obj.kind == "fox":
-                self.fox = obj
-
-            elif obj.kind == "bear":
-                self.bear = obj
-
-            elif obj.kind == "guard":
-                if self.guard.left_door == False and obj.left_door == True:
+                if self.guard.left_door == False and obj.guard.left_door == True:
                     self.camera.left_door.close()
-                if self.guard.left_door == True and obj.left_door == False:
+                if self.guard.left_door == True and obj.guard.left_door == False:
                     self.camera.left_door.open()
 
-                if self.guard.right_door == False and obj.right_door == True:
+                if self.guard.right_door == False and obj.guard.right_door == True:
                     self.camera.right_door.close()
-                if self.guard.right_door == True and obj.right_door == False:
+                if self.guard.right_door == True and obj.guard.right_door == False:
                     self.camera.right_door.open()
 
-                if obj.last_cam == self.chicken.location:
+                if obj.guard.last_cam == self.chicken.location:
                     self.chicken.isOnCamera = True
                 else:
                     self.chicken.isOnCamera = False
 
-                self.camera.left_button.light = obj.left_light
-                self.camera.right_button.light = obj.left_light
+                self.camera.left_button.light = obj.guard.left_light
+                self.camera.right_button.light = obj.guard.left_light
+                self.usage = obj.guard.usage
 
-                self.guard = copy.copy(obj)
+                self.guard = obj.guard
 
-            elif obj.kind == "night_state":
-                self.hour = obj.hour
-                self.power = obj.power
+                if obj.rabbit.location != self.rabbit.location:
+                    self.change_static_opacity(self.rabbit.location)
+                    self.change_static_opacity(obj.rabbit.location)
+                    self.rabbit = obj.rabbit
+
+                if obj.bear.location != self.bear.location:
+                    self.change_static_opacity(self.bear.location)
+                    self.change_static_opacity(obj.bear.location)
+                    self.bear = obj.bear
+
+                self.fox = obj.fox
+
 
             elif obj.kind == "event":
                 if obj.event == "scarejump":
                     pass
 
             else:
-                print("UNKNOWN OBJECT RECEIVED!", str(obj))
+                print("WARNING: Unknown object received:")
+                print(repr(obj))
+                print()
 
-        except:
-            raise
-            print("Not an pickled object?")
+        except Exception as err:
+            print(traceback.format_exc())
+
+    # def receive_data(self):
+    #     self.data = self.socket.recv(2048)
+    #     try:
+    #         obj = pickle.loads(self.data)
+    #         if obj.kind == "chicken":
+    #             pass
+    #
+    #         elif obj.kind == "rabbit":
+    #             self.rabbit = obj
+    #
+    #         elif obj.kind == "fox":
+    #             self.fox = obj
+    #
+    #         elif obj.kind == "bear":
+    #             self.bear = obj
+    #
+    #         elif obj.kind == "guard":
+    #             if self.guard.left_door == False and obj.left_door == True:
+    #                 self.camera.left_door.close()
+    #             if self.guard.left_door == True and obj.left_door == False:
+    #                 self.camera.left_door.open()
+    #
+    #             if self.guard.right_door == False and obj.right_door == True:
+    #                 self.camera.right_door.close()
+    #             if self.guard.right_door == True and obj.right_door == False:
+    #                 self.camera.right_door.open()
+    #
+    #             if obj.last_cam == self.chicken.location:
+    #                 self.chicken.isOnCamera = True
+    #             else:
+    #                 self.chicken.isOnCamera = False
+    #
+    #             self.camera.left_button.light = obj.left_light
+    #             self.camera.right_button.light = obj.left_light
+    #
+    #             self.guard = copy.copy(obj)
+    #
+    #         elif obj.kind == "night_state":
+    #             self.hour = obj.hour
+    #             self.power = obj.power
+    #
+    #         elif obj.kind == "event":
+    #             if obj.event == "scarejump":
+    #                 pass
+    #
+    #         else:
+    #             print("UNKNOWN OBJECT RECEIVED!", str(obj))
+    #
+    #     except:
+    #         raise
+    #         print("Not an pickled object?")
 
     def update_networking(self, dt=0):
         self.send_data()

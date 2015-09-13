@@ -1,6 +1,7 @@
 import pyDLASYIAS
 import socketserver
 import socket
+import copy
 import traceback
 import threading
 import time
@@ -27,8 +28,26 @@ class Dummy(object):
         self.client_address = client_address
         self.server = server
         self.character = character
-        self.character_object = None
-        self.old_character_object = None
+
+        if character == "guard":
+            self.character_object = netObjects.Guard()
+            self.old_character_object = netObjects.Guard()
+        if character == "chicken":
+            self.character_object = netObjects.Chicken()
+            self.old_character_object = netObjects.Chicken()
+        if character == "rabbit":
+            self.character_object = netObjects.Rabbit()
+            self.old_character_object = netObjects.Rabbit()
+        if character == "bear":
+            self.character_object = netObjects.Bear()
+            self.old_character_object = netObjects.Bear()
+        if character == "fox":
+            self.character_object = netObjects.Fox()
+            self.old_character_object = netObjects.Fox()
+        else:
+            self.character_object = None
+            self.old_character_object = None
+
         self.isReady = False
 
 class pyDLASYIAS_UDPHandler(socketserver.BaseRequestHandler):
@@ -117,11 +136,9 @@ class pyDLASYIAS_UDPHandler(socketserver.BaseRequestHandler):
                     print(obj.event)
 
                 elif obj.kind == "guard" and self.client.character == "guard":
-                    self.client.old_character_object = self.client.character_object
-                    self.client.character_object = obj
-                    for address, client in self.server.clients.items():
-                        if address != self.client_address:
-                            client.request.sendto(self.request[0], address)
+                    self.client.old_character_object = copy.copy(self.client.character_object)
+                    self.client.character_object = copy.copy(obj)
+                    print(self.client.character_object.scene)
 
                     if self.client.old_character_object.scene != "scarejump" and self.client.character_object.scene == "scarejump":
                         for clt in self.server.clients.values():
@@ -133,32 +150,21 @@ class pyDLASYIAS_UDPHandler(socketserver.BaseRequestHandler):
                                         client.request.sendto(netObjects.Event("scarejump", winner))
 
                 elif obj.kind == "chicken" and self.client.character == "chicken":
-                    self.client.old_character_object = self.client.character_object
-                    self.client.character_object = obj
-                    for address, client in self.server.clients.items():
-                        if address != self.client_address:
-                            client.request.sendto(self.request[0], address)
+                    self.client.old_character_object = copy.copy(self.client.character_object)
+                    self.client.character_object = copy.copy(obj)
 
                 elif obj.kind == "rabbit" and self.client.character == "rabbit":
-                    self.client.old_character_object = self.client.character_object
-                    self.client.character_object = obj
-                    for address, client in self.server.clients.items():
-                        if address != self.client_address:
-                            client.request.sendto(self.request[0], address)
+                    self.client.old_character_object = copy.copy(self.client.character_object)
+                    self.client.character_object = copy.copy(obj)
 
                 elif obj.kind == "bear" and self.client.character == "bear":
-                    self.client.old_character_object = self.client.character_object
-                    self.client.character_object = obj
-                    for address, client in self.server.clients.items():
-                        if address != self.client_address:
-                            client.request.sendto(self.request[0], address)
+                    self.client.old_character_object = copy.copy(self.client.character_object)
+                    self.client.character_object = copy.copy(obj)
 
                 elif obj.kind == "fox" and self.client.character == "fox":
-                    self.client.old_character_object = self.client.character_object
-                    self.client.character_object = obj
-                    for address, client in self.server.clients.items():
-                        if address != self.client_address:
-                            client.request.sendto(self.request[0], address)
+                    self.client.old_character_object = copy.copy(self.client.character_object)
+                    self.client.character_object = copy.copy(obj)
+
         except Exception as err:
             print(traceback.format_exc())
 
@@ -265,7 +271,7 @@ class Server(socketserver.UDPServer):
         self.time_thread = threading.Thread(target=self.next_hour)
         self.power_thread = threading.Thread(target=self.power_calculations)
         self.command_thread = threading.Thread(target=self.commands)
-        self.state_thread = threading.Thread(target=self.send_state)
+        self.world_thread = threading.Thread(target=self.send_world)
 
         self.update_thread.start()
         self.command_thread.start()
@@ -286,17 +292,17 @@ class Server(socketserver.UDPServer):
                 self.fox = client
             client.request.sendto(pyDLASYIAS.networking.netObjects.Event("game_start").get_pickled(), client.client_address)
 
+        self.state = "game"
         self.power_thread.start()
         self.time_thread.start()
-        self.state_thread.start()
+        self.world_thread.start()
 
-    def send_state(self):
-        for client in self.clients.values():
-            for i in range(0, 2):
-                client.request.sendto(pyDLASYIAS.networking.netObjects.Night_State(self.power, self.hour).get_pickled(), client.client_address)
-
-        time.sleep(5)
-        self.send_state()
+    def send_world(self):
+        while True:
+            world = netObjects.World(self.power, self.hour, self.guard.character_object, self.chicken.character_object, netObjects.Rabbit(), netObjects.Bear(), netObjects.Fox())
+            for client in self.clients.values():
+                client.request.sendto(world.get_pickled(), client.client_address)
+            time.sleep(1/30)
 
     def power_calculations(self, dt=0, old_usage=1):
         if dt == 0:
