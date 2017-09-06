@@ -1,0 +1,172 @@
+[gd_scene load_steps=34 format=1]
+
+[ext_resource path="res://src/office/Office.gd" type="Script" id=1]
+[ext_resource path="res://images/office/0.png" type="Texture" id=2]
+[ext_resource path="res://images/office/1.png" type="Texture" id=3]
+[ext_resource path="res://images/office/2.png" type="Texture" id=4]
+[ext_resource path="res://images/office/c.png" type="Texture" id=5]
+[ext_resource path="res://images/office/r.png" type="Texture" id=6]
+[ext_resource path="res://images/office/fan/0.png" type="Texture" id=7]
+[ext_resource path="res://images/office/fan/1.png" type="Texture" id=8]
+[ext_resource path="res://images/office/fan/2.png" type="Texture" id=9]
+[ext_resource path="res://src/office/Buttons.tscn" type="PackedScene" id=10]
+[ext_resource path="res://src/office/RightButtons.tscn" type="PackedScene" id=11]
+[ext_resource path="res://images/office/doors/left/15.png" type="Texture" id=12]
+[ext_resource path="res://images/office/doors/left/14.png" type="Texture" id=13]
+[ext_resource path="res://images/office/doors/left/13.png" type="Texture" id=14]
+[ext_resource path="res://images/office/doors/left/12.png" type="Texture" id=15]
+[ext_resource path="res://images/office/doors/left/11.png" type="Texture" id=16]
+[ext_resource path="res://images/office/doors/left/10.png" type="Texture" id=17]
+[ext_resource path="res://images/office/doors/left/9.png" type="Texture" id=18]
+[ext_resource path="res://images/office/doors/left/8.png" type="Texture" id=19]
+[ext_resource path="res://images/office/doors/left/7.png" type="Texture" id=20]
+[ext_resource path="res://images/office/doors/left/6.png" type="Texture" id=21]
+[ext_resource path="res://images/office/doors/left/5.png" type="Texture" id=22]
+[ext_resource path="res://images/office/doors/left/4.png" type="Texture" id=23]
+[ext_resource path="res://images/office/doors/left/3.png" type="Texture" id=24]
+[ext_resource path="res://images/office/doors/left/2.png" type="Texture" id=25]
+[ext_resource path="res://images/office/doors/left/1.png" type="Texture" id=26]
+[ext_resource path="res://images/office/doors/left/0.png" type="Texture" id=27]
+[ext_resource path="res://images/ui/button/camera.png" type="Texture" id=28]
+[ext_resource path="res://src/office/Camera2D.gd" type="Script" id=29]
+
+[sub_resource type="SpriteFrames" id=1]
+
+animations = [ { "frames":[ ExtResource( 7 ), ExtResource( 8 ), ExtResource( 9 ) ], "loop":true, "name":"default", "speed":60.0 } ]
+
+[sub_resource type="SpriteFrames" id=2]
+
+animations = [ { "frames":[ ExtResource( 12 ), ExtResource( 13 ), ExtResource( 14 ), ExtResource( 15 ), ExtResource( 16 ), ExtResource( 17 ), ExtResource( 18 ), ExtResource( 19 ), ExtResource( 20 ), ExtResource( 21 ), ExtResource( 22 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ) ], "loop":false, "name":"reversed", "speed":60.0 }, { "frames":[ ExtResource( 27 ), ExtResource( 26 ), ExtResource( 25 ), ExtResource( 24 ), ExtResource( 23 ), ExtResource( 22 ), ExtResource( 21 ), ExtResource( 20 ), ExtResource( 19 ), ExtResource( 18 ), ExtResource( 17 ), ExtResource( 16 ), ExtResource( 15 ), ExtResource( 14 ), ExtResource( 13 ), ExtResource( 12 ) ], "loop":false, "name":"default", "speed":60.0 } ]
+
+[sub_resource type="GDScript" id=3]
+
+script/source = "extends Sprite\n\n# class member variables go here, for example:\n# var a = 2\n# var b = \"textvar\"\n\nfunc _ready():\n\tset_fixed_process(true)\n\t\nfunc _fixed_process(delta):\n\tset_offset(get_node(\"../Camera2D\").get_offset())"
+
+[sub_resource type="ConvexPolygonShape2D" id=4]
+
+custom_solver_bias = 0.0
+points = Vector2Array( -296.412, 20.2061, -295.214, -20.508, 295.14, -19.9093, 296.338, 20.2061 )
+
+[node name="Office" type="Node2D"]
+
+script/script = ExtResource( 1 )
+
+[node name="Background" type="Node2D" parent="."]
+
+[node name="Normal" type="Sprite" parent="Background"]
+
+texture = ExtResource( 2 )
+centered = false
+
+[node name="Left" type="Sprite" parent="Background"]
+
+visibility/visible = false
+texture = ExtResource( 3 )
+centered = false
+
+[node name="Right" type="Sprite" parent="Background"]
+
+visibility/visible = false
+texture = ExtResource( 4 )
+centered = false
+
+[node name="Chicken" type="Sprite" parent="Background"]
+
+visibility/visible = false
+texture = ExtResource( 5 )
+centered = false
+
+[node name="Rabbit" type="Sprite" parent="Background"]
+
+visibility/visible = false
+texture = ExtResource( 6 )
+centered = false
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="Background"]
+
+transform/pos = Vector2( 847.93, 401.033 )
+frames = SubResource( 1 )
+animation = "default"
+playing = true
+
+[node name="Left_buttons" parent="." instance=ExtResource( 10 )]
+
+transform/pos = Vector2( 47.1028, 441.175 )
+
+[node name="Right_buttons" parent="." instance=ExtResource( 11 )]
+
+transform/pos = Vector2( 1541.17, 441.175 )
+
+[node name="Left_door" type="AnimatedSprite" parent="."]
+
+transform/pos = Vector2( 182.29, 359.139 )
+frames = SubResource( 2 )
+animation = "reversed"
+frame = 15
+playing = true
+
+[node name="Right_door" type="AnimatedSprite" parent="."]
+
+transform/pos = Vector2( 1379.42, 359.139 )
+frames = SubResource( 2 )
+animation = "default"
+flip_h = true
+
+[node name="Button" type="Sprite" parent="."]
+
+transform/pos = Vector2( 634.253, 669.289 )
+texture = ExtResource( 28 )
+script/script = SubResource( 3 )
+
+[node name="Area2D" type="Area2D" parent="Button"]
+
+input/pickable = true
+shapes/0/shape = SubResource( 4 )
+shapes/0/transform = Matrix32( 1, 0, 0, 1, 0, 0 )
+shapes/0/trigger = false
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+collision/layers = 3
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Button/Area2D"]
+
+build_mode = 0
+polygon = Vector2Array( 296.338, 20.2061, 295.14, -19.9093, -295.214, -20.508, -296.412, 20.2061 )
+shape_range = Vector2( 0, 0 )
+trigger = false
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+anchor_mode = 0
+rotating = false
+current = true
+zoom = Vector2( 1, 1 )
+limit/left = 0
+limit/top = 0
+limit/right = 1600
+limit/bottom = 0
+limit/smoothed = true
+drag_margin/h_enabled = true
+drag_margin/v_enabled = true
+smoothing/enable = false
+smoothing/speed = 5.0
+drag_margin/left = 0.2
+drag_margin/top = 0.2
+drag_margin/right = 0.2
+drag_margin/bottom = 0.2
+script/script = ExtResource( 29 )
+camera_speed = 500
+
+[connection signal="door_press" from="Left_buttons" to="." method="_on_Left_buttons_door_press"]
+
+[connection signal="light_press" from="Left_buttons" to="." method="_on_Left_buttons_light_press"]
+
+[connection signal="door_press" from="Right_buttons" to="." method="_on_Right_buttons_door_press"]
+
+[connection signal="light_press" from="Right_buttons" to="." method="_on_Right_buttons_light_press"]
+
+[connection signal="input_event" from="Button/Area2D" to="." method="_on_CameraEnterButton_input_event"]
+
+
